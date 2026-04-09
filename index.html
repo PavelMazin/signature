@@ -41,6 +41,64 @@
     line-height: 1.7;
     font-size: 14px;
   }
+  .clients {
+    margin-top: 16px;
+    border-top: 1px solid #eee;
+    padding-top: 14px;
+  }
+  .clients h3 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #333;
+  }
+  .clients details {
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    background: #fafafa;
+  }
+  .clients details[open] {
+    background: #fff;
+  }
+  .clients summary {
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: #121212;
+    list-style: none;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .clients summary::-webkit-details-marker { display: none; }
+  .clients summary::after {
+    content: '+';
+    font-size: 18px;
+    font-weight: 400;
+    color: #888;
+    margin-left: 8px;
+  }
+  .clients details[open] summary::after { content: '–'; }
+  .clients .steps {
+    margin: 0;
+    padding: 0 16px 14px 36px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #444;
+  }
+  .clients .steps li { margin-bottom: 2px; }
+  .clients .note {
+    margin: 4px 16px 12px 36px;
+    padding: 8px 10px;
+    background: #fff8e1;
+    border-left: 3px solid #f0b400;
+    font-size: 12px;
+    color: #5c4500;
+    line-height: 1.5;
+  }
   .layout {
     display: grid;
     grid-template-columns: 360px 1fr;
@@ -149,16 +207,118 @@
     <div class="intro">
       <h1>AEC Email Signature Builder</h1>
       <ol class="steps" style="margin:12px 0 0 20px; padding:0; color:#333; line-height:1.6;">
-        <li>Fill in your details in the form, including website.</li>
-        <li>Check the live signature preview.</li>
+        <li>Fill in your details in the form on the left.</li>
+        <li>Check the live signature preview on the right.</li>
         <li>Click <strong>Copy Signature</strong>.</li>
-        <li>Open Gmail and go to <strong>Settings → See all settings → General → Signature</strong>.</li>
-        <li>Create a new signature or open an existing one, then paste the copied block.</li>
-        <li>At the very bottom of the page, click <strong>Save Changes</strong>.</li>
+        <li>Open your email client and follow the instructions below.</li>
       </ol>
-    
+
       <p>This page is made for employees. You do not need to edit any HTML code.</p>
+
+      <div class="clients">
+        <h3>Installation instructions by email client</h3>
+
+        <details>
+          <summary>Gmail (web)</summary>
+          <ol class="steps">
+            <li>Click the gear icon in the top right → <strong>See all settings</strong>.</li>
+            <li>On the <strong>General</strong> tab, scroll to <strong>Signature</strong>.</li>
+            <li>Click <strong>Create new</strong>, enter a name, and paste the copied signature into the editor.</li>
+            <li>Under <strong>Signature defaults</strong>, select your new signature for new emails and replies.</li>
+            <li>Scroll to the bottom and click <strong>Save Changes</strong>.</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Outlook (Microsoft 365 / new Outlook for Windows &amp; Mac)</summary>
+          <ol class="steps">
+            <li>Open Outlook and go to <strong>Settings</strong> (gear icon) → <strong>Accounts</strong> → <strong>Signatures</strong>.</li>
+            <li>Click <strong>+ New signature</strong> and give it a name.</li>
+            <li>Paste the copied signature into the editor.</li>
+            <li>Under <strong>Select default signatures</strong>, assign it to <strong>New messages</strong> and <strong>Replies/forwards</strong>.</li>
+            <li>Click <strong>Save</strong>.</li>
+          </ol>
+          <div class="note">If icons or the logo look broken, make sure "Download external images" is enabled in Outlook's privacy settings.</div>
+        </details>
+
+        <details>
+          <summary>Outlook (classic desktop for Windows)</summary>
+          <ol class="steps">
+            <li>Go to <strong>File → Options → Mail → Signatures…</strong></li>
+            <li>Click <strong>New</strong>, name the signature, and click <strong>OK</strong>.</li>
+            <li>Click inside the edit box and paste the copied signature.</li>
+            <li>On the right, choose the signature for <strong>New messages</strong> and <strong>Replies/forwards</strong>.</li>
+            <li>Click <strong>OK</strong> to save.</li>
+          </ol>
+          <div class="note">Classic Outlook uses Word's rendering engine and may display images slightly differently. Paste using <strong>Ctrl+V</strong>, not "Keep Text Only".</div>
+        </details>
+
+        <details>
+          <summary>Outlook on the web (outlook.com / Office 365 webmail)</summary>
+          <ol class="steps">
+            <li>Click the gear icon in the top right → <strong>View all Outlook settings</strong>.</li>
+            <li>Go to <strong>Mail → Compose and reply</strong>.</li>
+            <li>Under <strong>Email signature</strong>, click <strong>+ New signature</strong>, name it, and paste the signature.</li>
+            <li>Select it as the default for new messages and replies.</li>
+            <li>Click <strong>Save</strong>.</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Apple Mail (macOS)</summary>
+          <ol class="steps">
+            <li>Open <strong>Mail → Settings… → Signatures</strong>.</li>
+            <li>Select your email account on the left, then click <strong>+</strong> to add a new signature.</li>
+            <li>Name the signature and paste the copied block into the right panel.</li>
+            <li><strong>Important:</strong> uncheck <strong>"Always match my default message font"</strong> so formatting is preserved.</li>
+            <li>Drag the signature to the account, or pick it from the dropdown when composing.</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Front</summary>
+          <ol class="steps">
+            <li>Click your avatar in the bottom left → <strong>Settings</strong>.</li>
+            <li>Go to <strong>Signatures</strong> (under "Personal preferences" or "Company").</li>
+            <li>Click <strong>Create signature</strong>, enter a name, and paste the copied signature into the editor.</li>
+            <li>Under <strong>Channel access</strong>, assign it to the channels where it should appear.</li>
+            <li>Click <strong>Save</strong>.</li>
+          </ol>
+          <div class="note">Front may resize images based on their natural dimensions. If icons look too large, let IT know — the hosted versions are sized to display correctly.</div>
+        </details>
+
+        <details>
+          <summary>Yahoo Mail</summary>
+          <ol class="steps">
+            <li>Click <strong>Settings</strong> (gear icon) → <strong>More Settings</strong>.</li>
+            <li>Go to <strong>Writing email</strong>.</li>
+            <li>Toggle on <strong>Signature</strong>, then paste the copied block into the editor.</li>
+            <li>The signature saves automatically.</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Thunderbird</summary>
+          <ol class="steps">
+            <li>Go to <strong>Account Settings</strong> for your email account.</li>
+            <li>Check <strong>Use HTML</strong> under Signature text.</li>
+            <li>Paste the copied signature into the text area.</li>
+            <li>Click <strong>OK</strong> to save.</li>
+          </ol>
+          <div class="note">If pasting as plain text, save the signature as an .html file and use "Attach the signature from a file" instead.</div>
+        </details>
+
+        <details>
+          <summary>Spark / Superhuman / Mimestream / other modern clients</summary>
+          <ol class="steps">
+            <li>Open the app's <strong>Settings</strong> or <strong>Preferences</strong>.</li>
+            <li>Find the <strong>Signatures</strong> section.</li>
+            <li>Create a new signature and paste the copied block into the rich-text editor.</li>
+            <li>Assign it as the default for your account and save.</li>
+          </ol>
+        </details>
       </div>
+    </div>
 
     <div class="layout">
       <div class="card">
