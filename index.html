@@ -141,6 +141,74 @@
     border-color: #353391;
     box-shadow: 0 0 0 3px rgba(53, 51, 145, 0.08);
   }
+  .field textarea,
+  .field .rich-area {
+    width: 100%;
+    min-height: 60px;
+    border: 1px solid #cfcfcf;
+    background: #fff;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: #121212;
+    font-family: Helvetica, Arial, sans-serif;
+    resize: vertical;
+    line-height: 1.5;
+    overflow-y: auto;
+  }
+  .field .rich-area:focus {
+    outline: none;
+    border-color: #353391;
+    box-shadow: 0 0 0 3px rgba(53, 51, 145, 0.08);
+  }
+  .field .rich-area a {
+    color: #2A2590;
+    text-decoration: underline;
+  }
+  .field .rich-area:empty::before {
+    content: attr(data-placeholder);
+    color: #999;
+    pointer-events: none;
+  }
+  .field textarea:focus {
+    outline: none;
+    border-color: #353391;
+    box-shadow: 0 0 0 3px rgba(53, 51, 145, 0.08);
+  }
+  .link-toolbar {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+  }
+  .link-toolbar input {
+    flex: 1;
+    height: 32px;
+    border: 1px solid #cfcfcf;
+    padding: 0 8px;
+    font-size: 12px;
+  }
+  .link-toolbar input:focus {
+    outline: none;
+    border-color: #353391;
+  }
+  .link-toolbar button {
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid #cfcfcf;
+    background: #f5f5f5;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .link-toolbar button:hover {
+    background: #eee;
+  }
+  .link-hint {
+    font-size: 11px;
+    color: #888;
+    margin-top: 4px;
+    line-height: 1.4;
+  }
   .small-note {
     font-size: 12px;
     line-height: 1.6;
@@ -354,6 +422,17 @@
           <input id="address" type="text" value="[address]" />
         </div>
 
+        <div class="field">
+          <label for="extraText">Additional text</label>
+          <div class="rich-area" id="extraText" contenteditable="true" data-placeholder="Enter any extra info you'd like to add…"></div>
+          <div class="link-hint">Select a word in the text above, enter a URL below and click "Add link".</div>
+          <div class="link-toolbar">
+            <input id="linkUrl" type="text" placeholder="https://example.com" />
+            <button type="button" id="addLinkBtn">Add link</button>
+            <button type="button" id="removeLinkBtn">Remove link</button>
+          </div>
+        </div>
+
         <button class="copy-btn" id="copyBtn" type="button">Copy Signature</button>
         <span class="copy-status" id="copyStatus"></span>
 
@@ -408,6 +487,9 @@
                   </table>
                 </td>
               </tr>
+              <tr id="sig-extra-row" style="display:none;">
+                <td id="sig-extra" style="padding:0 0 16px 0; font-size:12px; line-height:18px; color:#121212;"></td>
+              </tr>
               <tr>
                 <td style="border-top:1px solid #D9D9D9; font-size:0; line-height:0; height:0;"></td>
               </tr>
@@ -450,11 +532,55 @@
     address: document.getElementById('sig-address')
   };
 
-  const websiteLink = document.getElementById('websiteLink');
+  const extraText = document.getElementById('extraText');
+  const sigExtra = document.getElementById('sig-extra');
+  const sigExtraRow = document.getElementById('sig-extra-row');
+  const linkUrlInput = document.getElementById('linkUrl');
+  const addLinkBtn = document.getElementById('addLinkBtn');
+  const removeLinkBtn = document.getElementById('removeLinkBtn');
   const copyBtn = document.getElementById('copyBtn');
   const copyStatus = document.getElementById('copyStatus');
   const copyTarget = document.getElementById('copyTarget');
 
+  /* ---- sanitize HTML to only allow <a>, <br>, text ---- */
+  function sanitizeHTML(html) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    const walk = (node) => {
+      const children = Array.from(node.childNodes);
+      children.forEach((child) => {
+        if (child.nodeType === Node.TEXT_NODE) return;
+        if (child.nodeType === Node.ELEMENT_NODE) {
+          const tag = child.tagName.toLowerCase();
+          if (tag === 'br') return;
+          if (tag === 'a') {
+            // keep only href
+            const href = child.getAttribute('href') || '';
+            Array.from(child.attributes).forEach((a) => child.removeAttribute(a.name));
+            if (href) child.setAttribute('href', href);
+            child.setAttribute('target', '_blank');
+            child.style.color = '#2A2590';
+            child.style.textDecoration = 'underline';
+            walk(child);
+            return;
+          }
+          // unwrap other elements, keep children
+          const frag = document.createDocumentFragment();
+          while (child.firstChild) frag.appendChild(child.firstChild);
+          node.replaceChild(frag, child);
+          // re-walk since we changed structure
+          walk(node);
+          return;
+        }
+        // remove comments etc
+        node.removeChild(child);
+      });
+    };
+    walk(tmp);
+    return tmp.innerHTML;
+  }
+
+  /* ---- load / save ---- */
   function loadSavedValues() {
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
@@ -463,6 +589,9 @@
           fields[key].value = saved[key];
         }
       });
+      if (typeof saved.extraTextHTML === 'string') {
+        extraText.innerHTML = sanitizeHTML(saved.extraTextHTML);
+      }
     } catch (e) {}
   }
 
@@ -471,11 +600,13 @@
     Object.keys(fields).forEach((key) => {
       payload[key] = fields[key].value;
     });
+    payload.extraTextHTML = extraText.innerHTML;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     } catch (e) {}
   }
 
+  /* ---- update signature preview ---- */
   function updateSignature() {
     const defaults = {
       fullName: '[Full Name]',
@@ -498,13 +629,60 @@
     targets.website.textContent = cleanWebsite || defaults.website;
     targets.website.style.opacity = '1';
 
+    // extra text
+    const extraHTML = sanitizeHTML(extraText.innerHTML);
+    const hasExtra = extraText.textContent.trim().length > 0;
+    sigExtraRow.style.display = hasExtra ? '' : 'none';
+    sigExtra.innerHTML = hasExtra ? extraHTML : '';
+
     saveValues();
   }
 
+  /* ---- link toolbar ---- */
+  addLinkBtn.addEventListener('click', () => {
+    const url = linkUrlInput.value.trim();
+    if (!url) { linkUrlInput.focus(); return; }
+
+    const sel = window.getSelection();
+    if (!sel.rangeCount || sel.isCollapsed || !extraText.contains(sel.anchorNode)) {
+      alert('Select some text in the "Additional text" field first.');
+      return;
+    }
+
+    const range = sel.getRangeAt(0);
+    const a = document.createElement('a');
+    a.href = url.match(/^https?:\/\//) ? url : 'https://' + url;
+    a.target = '_blank';
+    a.style.color = '#2A2590';
+    a.style.textDecoration = 'underline';
+
+    range.surroundContents(a);
+    sel.removeAllRanges();
+    linkUrlInput.value = '';
+    updateSignature();
+  });
+
+  removeLinkBtn.addEventListener('click', () => {
+    const sel = window.getSelection();
+    if (!sel.rangeCount || !extraText.contains(sel.anchorNode)) return;
+
+    let node = sel.anchorNode;
+    while (node && node !== extraText) {
+      if (node.tagName && node.tagName.toLowerCase() === 'a') {
+        const parent = node.parentNode;
+        while (node.firstChild) parent.insertBefore(node.firstChild, node);
+        parent.removeChild(node);
+        updateSignature();
+        return;
+      }
+      node = node.parentNode;
+    }
+  });
+
+  /* ---- copy signature ---- */
   async function copySignature() {
     copyStatus.textContent = '';
 
-    // First try modern clipboard API with HTML support
     try {
       if (navigator.clipboard && window.ClipboardItem) {
         const blobHtml = new Blob([copyTarget.outerHTML], { type: 'text/html' });
@@ -519,7 +697,6 @@
       }
     } catch (e) {}
 
-    // Fallback: select DOM and copy
     try {
       const range = document.createRange();
       range.selectNode(copyTarget);
@@ -536,9 +713,17 @@
     }
   }
 
+  /* ---- event listeners ---- */
   Object.values(fields).forEach((input) => {
     input.addEventListener('input', updateSignature);
     input.addEventListener('change', updateSignature);
+  });
+
+  extraText.addEventListener('input', updateSignature);
+  extraText.addEventListener('paste', (e) => {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+    document.execCommand('insertText', false, text);
   });
 
   copyBtn.addEventListener('click', copySignature);
