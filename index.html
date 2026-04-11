@@ -1032,9 +1032,8 @@
   });
 
   /* ---- sanitize HTML ---- */
-  /* ---- GitHub API: upload avatar to repo ---- */
-  const GH_TOKEN = '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';
-  const GH_REPO  = 'PavelMazin/signature';
+  /* ---- Upload avatar via Cloudflare Worker ---- */
+  const WORKER_URL = 'https://signature-upload.pavel-d51.workers.dev/';
 
   function generateAvatarId() {
     const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -1044,47 +1043,30 @@
   }
 
   async function uploadAvatarToGitHub(dataURL) {
-    const fileName = 'avatar_' + generateAvatarId() + '.jpg';
+    const fileName = 'avatar_' + generateAvatarId() + '.png';
     const base64 = dataURL.split(',')[1];
 
     // delete old avatar if exists
     if (avatarFileName) {
       try {
-        const old = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + avatarFileName, {
-          headers: { 'Authorization': 'Bearer ' + GH_TOKEN }
+        await fetch(WORKER_URL, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fileName: avatarFileName })
         });
-        if (old.ok) {
-          const oldData = await old.json();
-          await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + avatarFileName, {
-            method: 'DELETE',
-            headers: {
-              'Authorization': 'Bearer ' + GH_TOKEN,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              message: 'Delete old avatar ' + avatarFileName,
-              sha: oldData.sha
-            })
-          });
-        }
       } catch (e) {}
     }
 
     // upload new avatar
-    const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + fileName, {
+    const res = await fetch(WORKER_URL, {
       method: 'PUT',
-      headers: {
-        'Authorization': 'Bearer ' + GH_TOKEN,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        message: 'Add avatar ' + fileName,
-        content: base64
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fileName: fileName, content: base64 })
     });
 
+    const result = await res.json();
     if (!res.ok) {
-      throw new Error('GitHub upload failed: ' + res.status);
+      throw new Error(result.error || 'Upload failed');
     }
 
     return fileName;
@@ -1234,11 +1216,11 @@
     sigLogo.style.minHeight = company.logoH + 'px';
     sigLogo.style.maxHeight = company.logoH + 'px';
 
-    const avatarSrc = avatarFileName ? (ASSET_BASE + avatarFileName) : avatarDataURL;
-    const showAvatar = avatarToggle.checked && avatarSrc;
+    const showAvatar = avatarToggle.checked && (avatarDataURL || avatarFileName);
     sigAvatarCell.style.display = showAvatar ? 'table-cell' : 'none';
     if (showAvatar) {
-      sigAvatarImg.src = avatarSrc;
+      // preview always uses base64 for instant display
+      sigAvatarImg.src = avatarDataURL || (ASSET_BASE + avatarFileName);
     }
 
     const extraHTML = sanitizeHTML(extraText.innerHTML);
@@ -1359,7 +1341,7 @@
 
   cropApply.addEventListener('click', () => {
     const containerSize = 280;
-    const outputSize = 96;
+    const outputSize = 192;
     const baseScale = Math.max(containerSize / cropState.imgW, containerSize / cropState.imgH);
     const s = baseScale * parseFloat(cropZoom.value);
 
@@ -1376,7 +1358,7 @@
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(cropImage, sx, sy, sSize, sSize, 0, 0, outputSize, outputSize);
 
-    avatarDataURL = canvas.toDataURL('image/jpeg', 0.92);
+    avatarDataURL = canvas.toDataURL('image/png');
     avatarThumb.src = avatarDataURL;
     cropOverlay.classList.remove('open');
 
@@ -1384,11 +1366,11 @@
 
     uploadAvatarToGitHub(avatarDataURL).then((name) => {
       avatarFileName = name;
-      showAvatarStatus('success', 'Photo uploaded! It may take 1-2 min for GitHub Pages to update.');
+      showAvatarStatus('success', 'Photo uploaded successfully!');
       updateSignature();
     }).catch((err) => {
       console.error(err);
-      showAvatarStatus('error', 'Upload failed. Using embedded photo instead.');
+      showAvatarStatus('error', 'Upload failed: ' + err.message);
       avatarFileName = '';
       updateSignature();
     });
@@ -1442,12 +1424,19 @@
   async function copySignature() {
     copyStatus.textContent = '';
 
+    // swap avatar src to GitHub URL for the copy, then restore
+    const prevSrc = sigAvatarImg.src;
+    if (avatarFileName && sigAvatarCell.style.display !== 'none') {
+      sigAvatarImg.src = ASSET_BASE + avatarFileName;
+    }
+
     try {
       if (navigator.clipboard && window.ClipboardItem) {
         const blobHtml = new Blob([copyTarget.outerHTML], { type: 'text/html' });
         const blobText = new Blob([copyTarget.innerText], { type: 'text/plain' });
         const item = new ClipboardItem({ 'text/html': blobHtml, 'text/plain': blobText });
         await navigator.clipboard.write([item]);
+        sigAvatarImg.src = prevSrc;
         showCopied();
         return;
       }
@@ -1461,9 +1450,11 @@
       selection.addRange(range);
       const ok = document.execCommand('copy');
       selection.removeAllRanges();
+      sigAvatarImg.src = prevSrc;
       if (ok) { showCopied(); return; }
     } catch (e) {}
 
+    sigAvatarImg.src = prevSrc;
     copyStatus.textContent = 'Copy did not work. Please select the signature manually.';
   }
 
