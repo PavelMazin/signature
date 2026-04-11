@@ -783,6 +783,12 @@
                 <img class="avatar-preview-thumb" id="avatarThumb" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect fill='%23e0e0e0' width='40' height='40' rx='20'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='11' fill='%23999'%3E?%3C/text%3E%3C/svg%3E" alt="avatar" />
                 <button type="button" class="avatar-upload-btn" id="avatarUploadBtn">Upload photo</button>
                 <input type="file" id="avatarFileInput" accept="image/*" style="display:none" />
+                <div id="avatarUrlBlock" style="width:100%; margin-top:10px; display:none;">
+                  <div style="display:flex; align-items:center; gap:6px; padding:8px 10px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:6px; font-size:12px; color:#166534; line-height:1.4;">
+                    <span style="flex-shrink:0;">&#10003;</span>
+                    <span>Photo saved. Commit <strong id="avatarFileName"></strong> to the <a href="https://github.com/PavelMazin/signature" target="_blank" style="color:var(--accent);">GitHub repo</a>, then it will work everywhere.</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -872,8 +878,8 @@
                   <td style="padding:0 0 16px 0;">
                     <table cellpadding="0" cellspacing="0" border="0" style="font-family: Helvetica, Arial, sans-serif;">
                       <tr>
-                        <td id="sig-avatar-cell" style="display:none; padding:0 12px 0 0; vertical-align:middle;">
-                          <img id="sig-avatar-img" src="" alt="Photo" width="48" height="48" style="display:block; width:48px; height:48px; min-width:48px; max-width:48px; min-height:48px; max-height:48px; border-radius:50%; border:0; outline:none; text-decoration:none;">
+                        <td id="sig-avatar-cell" style="display:none; padding:0 18px 0 0; vertical-align:middle;">
+                          <img id="sig-avatar-img" src="" alt="Photo" width="48" height="48" style="display:block; width:48px; height:48px; border-radius:50%; border:0; outline:none; text-decoration:none;">
                         </td>
                         <td style="vertical-align:middle;">
                           <div id="sig-name" style="font-size:16px; line-height:20px; font-weight:700; color:#121212; padding:0 0 4px 0;">[Full Name]</div>
@@ -1009,6 +1015,8 @@
   const avatarUploadBtn = document.getElementById('avatarUploadBtn');
   const avatarFileInput = document.getElementById('avatarFileInput');
   const avatarThumb     = document.getElementById('avatarThumb');
+  const avatarUrlBlock  = document.getElementById('avatarUrlBlock');
+  const avatarFileNameEl = document.getElementById('avatarFileName');
 
   const cropOverlay   = document.getElementById('cropOverlay');
   const cropContainer = document.getElementById('cropContainer');
@@ -1022,6 +1030,7 @@
 
   let currentCompany = 'aec';
   let avatarDataURL = '';
+  let avatarFileName = '';
 
   /* ---- Instructions toggle ---- */
   instructionsToggle.addEventListener('click', () => {
@@ -1029,6 +1038,25 @@
   });
 
   /* ---- sanitize HTML ---- */
+  /* ---- resize avatar to exactly 48x48 ---- */
+  function resizeAvatar(dataURL, callback) {
+    const img = new Image();
+    img.onload = () => {
+      if (img.naturalWidth === 48 && img.naturalHeight === 48) {
+        callback(dataURL);
+        return;
+      }
+      const c = document.createElement('canvas');
+      c.width = 48; c.height = 48;
+      const ctx = c.getContext('2d');
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, 0, 0, 48, 48);
+      callback(c.toDataURL('image/jpeg', 0.92));
+    };
+    img.src = dataURL;
+  }
+
   function sanitizeHTML(html) {
     const tmp = document.createElement('div');
     tmp.innerHTML = html;
@@ -1088,6 +1116,11 @@
         avatarDataURL = saved.avatarDataURL;
         avatarThumb.src = avatarDataURL;
       }
+      if (saved.avatarFileName) {
+        avatarFileName = saved.avatarFileName;
+        avatarFileNameEl.textContent = avatarFileName;
+        avatarUrlBlock.style.display = '';
+      }
     } catch (e) {}
   }
 
@@ -1100,6 +1133,7 @@
     payload.company = currentCompany;
     payload.avatarEnabled = avatarToggle.checked;
     payload.avatarDataURL = avatarDataURL;
+    payload.avatarFileName = avatarFileName;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     } catch (e) {}
@@ -1157,10 +1191,11 @@
     sigLogo.style.minHeight = company.logoH + 'px';
     sigLogo.style.maxHeight = company.logoH + 'px';
 
-    const showAvatar = avatarToggle.checked && avatarDataURL;
+    const avatarSrc = avatarFileName ? (ASSET_BASE + avatarFileName) : avatarDataURL;
+    const showAvatar = avatarToggle.checked && avatarSrc;
     sigAvatarCell.style.display = showAvatar ? 'table-cell' : 'none';
     if (showAvatar) {
-      sigAvatarImg.src = avatarDataURL;
+      sigAvatarImg.src = avatarSrc;
     }
 
     const extraHTML = sanitizeHTML(extraText.innerHTML);
@@ -1294,14 +1329,27 @@
     const sy = -cropState.offsetY / s;
     const sSize = containerSize / s;
 
-    ctx.beginPath();
-    ctx.arc(outputSize / 2, outputSize / 2, outputSize / 2, 0, Math.PI * 2);
-    ctx.closePath();
-    ctx.clip();
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(cropImage, sx, sy, sSize, sSize, 0, 0, outputSize, outputSize);
 
-    avatarDataURL = canvas.toDataURL('image/png');
+    avatarDataURL = canvas.toDataURL('image/jpeg', 0.92);
     avatarThumb.src = avatarDataURL;
+
+    // generate filename and auto-download
+    const safeName = (fields.fullName.value || 'avatar').trim().replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+    avatarFileName = 'avatar_' + safeName + '.jpg';
+    avatarFileNameEl.textContent = avatarFileName;
+    avatarUrlBlock.style.display = '';
+
+    // auto-download the file
+    const dlLink = document.createElement('a');
+    dlLink.href = avatarDataURL;
+    dlLink.download = avatarFileName;
+    document.body.appendChild(dlLink);
+    dlLink.click();
+    document.body.removeChild(dlLink);
+
     cropOverlay.classList.remove('open');
     updateSignature();
   });
