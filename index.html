@@ -783,12 +783,7 @@
                 <img class="avatar-preview-thumb" id="avatarThumb" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect fill='%23e0e0e0' width='40' height='40' rx='20'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='11' fill='%23999'%3E?%3C/text%3E%3C/svg%3E" alt="avatar" />
                 <button type="button" class="avatar-upload-btn" id="avatarUploadBtn">Upload photo</button>
                 <input type="file" id="avatarFileInput" accept="image/*" style="display:none" />
-                <div id="avatarUrlBlock" style="width:100%; margin-top:10px; display:none;">
-                  <div style="display:flex; align-items:center; gap:6px; padding:8px 10px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:6px; font-size:12px; color:#166534; line-height:1.4;">
-                    <span style="flex-shrink:0;">&#10003;</span>
-                    <span>Photo saved. Commit <strong id="avatarFileName"></strong> to the <a href="https://github.com/PavelMazin/signature" target="_blank" style="color:var(--accent);">GitHub repo</a>, then it will work everywhere.</span>
-                  </div>
-                </div>
+                <div id="avatarStatus" style="width:100%; margin-top:8px; display:none;"></div>
               </div>
             </div>
           </div>
@@ -1015,8 +1010,7 @@
   const avatarUploadBtn = document.getElementById('avatarUploadBtn');
   const avatarFileInput = document.getElementById('avatarFileInput');
   const avatarThumb     = document.getElementById('avatarThumb');
-  const avatarUrlBlock  = document.getElementById('avatarUrlBlock');
-  const avatarFileNameEl = document.getElementById('avatarFileName');
+  const avatarStatus    = document.getElementById('avatarStatus');
 
   const cropOverlay   = document.getElementById('cropOverlay');
   const cropContainer = document.getElementById('cropContainer');
@@ -1038,23 +1032,73 @@
   });
 
   /* ---- sanitize HTML ---- */
-  /* ---- resize avatar to exactly 48x48 ---- */
-  function resizeAvatar(dataURL, callback) {
-    const img = new Image();
-    img.onload = () => {
-      if (img.naturalWidth === 48 && img.naturalHeight === 48) {
-        callback(dataURL);
-        return;
-      }
-      const c = document.createElement('canvas');
-      c.width = 48; c.height = 48;
-      const ctx = c.getContext('2d');
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(img, 0, 0, 48, 48);
-      callback(c.toDataURL('image/jpeg', 0.92));
+  /* ---- GitHub API: upload avatar to repo ---- */
+  const GH_TOKEN = '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';
+  const GH_REPO  = 'PavelMazin/signature';
+
+  function generateAvatarId() {
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let id = '';
+    for (let i = 0; i < 10; i++) id += chars[Math.floor(Math.random() * chars.length)];
+    return id;
+  }
+
+  async function uploadAvatarToGitHub(dataURL) {
+    const fileName = 'avatar_' + generateAvatarId() + '.jpg';
+    const base64 = dataURL.split(',')[1];
+
+    // delete old avatar if exists
+    if (avatarFileName) {
+      try {
+        const old = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + avatarFileName, {
+          headers: { 'Authorization': 'Bearer ' + GH_TOKEN }
+        });
+        if (old.ok) {
+          const oldData = await old.json();
+          await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + avatarFileName, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': 'Bearer ' + GH_TOKEN,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              message: 'Delete old avatar ' + avatarFileName,
+              sha: oldData.sha
+            })
+          });
+        }
+      } catch (e) {}
+    }
+
+    // upload new avatar
+    const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + fileName, {
+      method: 'PUT',
+      headers: {
+        'Authorization': 'Bearer ' + GH_TOKEN,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: 'Add avatar ' + fileName,
+        content: base64
+      })
+    });
+
+    if (!res.ok) {
+      throw new Error('GitHub upload failed: ' + res.status);
+    }
+
+    return fileName;
+  }
+
+  function showAvatarStatus(type, text) {
+    const colors = {
+      loading: { bg: '#eff6ff', border: '#bfdbfe', color: '#1e40af', icon: '&#8987;' },
+      success: { bg: '#f0fdf4', border: '#bbf7d0', color: '#166534', icon: '&#10003;' },
+      error:   { bg: '#fef2f2', border: '#fecaca', color: '#991b1b', icon: '&#10007;' }
     };
-    img.src = dataURL;
+    const c = colors[type];
+    avatarStatus.style.display = '';
+    avatarStatus.innerHTML = '<div style="display:flex;align-items:center;gap:6px;padding:8px 10px;background:' + c.bg + ';border:1px solid ' + c.border + ';border-radius:6px;font-size:12px;color:' + c.color + ';line-height:1.4;"><span style="flex-shrink:0;">' + c.icon + '</span><span>' + text + '</span></div>';
   }
 
   function sanitizeHTML(html) {
@@ -1118,8 +1162,7 @@
       }
       if (saved.avatarFileName) {
         avatarFileName = saved.avatarFileName;
-        avatarFileNameEl.textContent = avatarFileName;
-        avatarUrlBlock.style.display = '';
+        showAvatarStatus('success', 'Photo: ' + avatarFileName);
       }
     } catch (e) {}
   }
@@ -1335,23 +1378,20 @@
 
     avatarDataURL = canvas.toDataURL('image/jpeg', 0.92);
     avatarThumb.src = avatarDataURL;
-
-    // generate filename and auto-download
-    const safeName = (fields.fullName.value || 'avatar').trim().replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
-    avatarFileName = 'avatar_' + safeName + '.jpg';
-    avatarFileNameEl.textContent = avatarFileName;
-    avatarUrlBlock.style.display = '';
-
-    // auto-download the file
-    const dlLink = document.createElement('a');
-    dlLink.href = avatarDataURL;
-    dlLink.download = avatarFileName;
-    document.body.appendChild(dlLink);
-    dlLink.click();
-    document.body.removeChild(dlLink);
-
     cropOverlay.classList.remove('open');
-    updateSignature();
+
+    showAvatarStatus('loading', 'Uploading photo...');
+
+    uploadAvatarToGitHub(avatarDataURL).then((name) => {
+      avatarFileName = name;
+      showAvatarStatus('success', 'Photo uploaded! It may take 1-2 min for GitHub Pages to update.');
+      updateSignature();
+    }).catch((err) => {
+      console.error(err);
+      showAvatarStatus('error', 'Upload failed. Using embedded photo instead.');
+      avatarFileName = '';
+      updateSignature();
+    });
   });
 
   /* ---- link toolbar ---- */
