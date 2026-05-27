@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AEC Email Signature Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --accent: #353391;
+    --accent-light: #eeedff;
+    --accent-glow: rgba(53, 51, 145, 0.12);
+    --bg: #f0f2f5;
+    --card: #ffffff;
+    --border: #e2e5ea;
+    --text: #1a1a2e;
+    --text-secondary: #5f6577;
+    --text-muted: #9299a6;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+    --transition: 0.2s ease;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---- Header ---- */
+  .header {
+    background: linear-gradient(135deg, #2a2590 0%, #353391 40%, #4a45b0 100%);
+    color: #fff;
+    padding: 32px 32px 28px;
+  }
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .header p {
+    font-size: 14px;
+    opacity: 0.82;
+    line-height: 1.6;
+  }
+
+  /* ---- Page ---- */
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 32px 48px;
+  }
+
+  /* ---- Steps bar ---- */
+  .steps-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .step-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    box-shadow: var(--shadow);
+  }
+  .step-chip .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* ---- Instructions accordion ---- */
+  .instructions-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .instructions-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .instructions-toggle:hover { background: #fafbfc; }
+  .instructions-toggle .arrow {
+    font-size: 18px;
+    color: var(--text-muted);
+    transition: transform var(--transition);
+  }
+  .instructions-body {
+    display: none;
+    padding: 0 20px 18px;
+    border-top: 1px solid var(--border);
+  }
+  .instructions-card.open .instructions-body { display: block; }
+  .instructions-card.open .arrow { transform: rotate(180deg); }
+
+  .clients details {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin: 10px 0 6px;
+    background: #fafbfc;
+    transition: background var(--transition);
+  }
+  .clients details[open] { background: var(--card); }
+  .clients summary {
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    list-style: none;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .clients summary::-webkit-details-marker { display: none; }
+  .clients summary::after {
+    content: '+';
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-left: 8px;
+  }
+  .clients details[open] summary::after { content: '\2212'; }
+  .clients .steps {
+    margin: 0;
+    padding: 0 16px 14px 36px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+  .clients .steps li { margin-bottom: 2px; }
+  .clients .note {
+    margin: 4px 16px 12px 36px;
+    padding: 8px 12px;
+    background: #fffbeb;
+    border-left: 3px solid #f0b400;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-size: 12px;
+    color: #6b5900;
+    line-height: 1.5;
+  }
+
+  /* ---- Layout ---- */
+  .layout {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  /* ---- Form card ---- */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .card-section {
+    padding: 20px 22px;
+  }
+  .card-section + .card-section {
+    border-top: 1px solid var(--border);
+  }
+  .card-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+
+  /* ---- Fields ---- */
+  .field {
+    margin-bottom: 14px;
+  }
+  .field:last-child { margin-bottom: 0; }
+  .field label:not(.company-option):not(.avatar-toggle) {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--text-secondary);
+    letter-spacing: 0.01em;
+  }
+  .field input[type="text"] {
+    width: 100%;
+    height: 40px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--card);
+    padding: 0 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text);
+    transition: border-color var(--transition), box-shadow var(--transition);
+  }
+  .field input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  .field .rich-area {
+    width: 100%;
+    min-height: 60px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--card);
+    padding: 10px 12px;
+    font-size: 14px;
+    color: var(--text);
+    font-family: inherit;
+    resize: vertical;
+    line-height: 1.5;
+    overflow-y: auto;
+    transition: border-color var(--transition), box-shadow var(--transition);
+  }
+  .field .rich-area:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  .field .rich-area a {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+  .field .rich-area:empty::before {
+    content: attr(data-placeholder);
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+
+  .link-toolbar {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+  }
+  .link-toolbar input {
+    flex: 1;
+    height: 32px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0 8px;
+    font-size: 12px;
+    font-family: inherit;
+    transition: border-color var(--transition);
+  }
+  .link-toolbar input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .link-toolbar button {
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #f7f8fa;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--transition);
+  }
+  .link-toolbar button:hover {
+    background: #eef0f3;
+    border-color: #ccc;
+  }
+  .link-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  /* ---- Company selector ---- */
+  .company-options {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .company-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all var(--transition);
+  }
+  .company-option:hover {
+    background: #f7f8fa;
+    border-color: #ccc;
+  }
+  .company-option input[type="radio"] {
+    margin: 0;
+    accent-color: var(--accent);
+    width: 15px;
+    height: 15px;
+  }
+  .company-option.selected {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  /* ---- Avatar section ---- */
+  .avatar-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .avatar-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+  .avatar-toggle input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  .avatar-upload-area {
+    display: none;
+    align-items: center;
+    gap: 10px;
+  }
+  .avatar-upload-area.visible {
+    display: flex;
+  }
+  .avatar-preview-thumb {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    object-fit: cover;
+    background: #f0f0f0;
+  }
+  .avatar-upload-btn {
+    height: 34px;
+    padding: 0 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #f7f8fa;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--transition);
+  }
+  .avatar-upload-btn:hover {
+    background: #eef0f3;
+    border-color: #ccc;
+  }
+
+  /* ---- Copy button ---- */
+  .copy-wrap {
+    padding: 18px 22px;
+    border-top: 1px solid var(--border);
+    background: #fafbfc;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: #fff;
+    border: 0;
+    padding: 12px 22px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+  .copy-btn:hover {
+    background: #2a2780;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(53, 51, 145, 0.25);
+  }
+  .copy-btn:active { transform: translateY(0); }
+  .copy-btn.copied {
+    background: #16a34a;
+  }
+  .copy-btn .btn-icon {
+    display: inline-flex;
+    width: 18px;
+    height: 18px;
+  }
+  .copy-status {
+    font-size: 13px;
+    color: #16a34a;
+    font-weight: 500;
+  }
+  .small-note {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-muted);
+    padding: 0 22px 16px;
+  }
+
+  /* ---- Preview card ---- */
+  .preview-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    position: sticky;
+    top: 24px;
+  }
+  .preview-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    background: #fafbfc;
+  }
+  .preview-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #16a34a;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .preview-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+  .preview-body {
+    padding: 24px;
+  }
+  .gmail-zone {
+    background: #f7f8fa;
+    border: 1px dashed #d0d4db;
+    border-radius: var(--radius-sm);
+    padding: 28px;
+  }
+  .signature-block {
+    display: inline-block;
+    background: #fff;
+  }
+  .copy-source {
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+    background: #fafbfc;
+  }
+  .copy-source p {
+    margin: 0 0 6px 0;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .copy-source p:last-child { margin-bottom: 0; }
+
+  /* ---- Crop modal ---- */
+  .crop-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+  }
+  .crop-overlay.open {
+    display: flex;
+  }
+  .crop-dialog {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 28px;
+    width: 400px;
+    max-width: 92vw;
+    box-shadow: var(--shadow-lg);
+  }
+  .crop-dialog h3 {
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .crop-container {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    margin: 0 auto 20px;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 3px solid var(--accent);
+    background: #f0f0f0;
+    cursor: grab;
+    box-shadow: 0 0 0 6px var(--accent-glow);
+  }
+  .crop-container:active { cursor: grabbing; }
+  .crop-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  .crop-zoom {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .crop-zoom label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+  .crop-zoom input[type="range"] {
+    flex: 1;
+    accent-color: var(--accent);
+  }
+  .crop-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+  .crop-actions button {
+    height: 40px;
+    padding: 0 20px;
+    border: 1px solid var(--border);
+    background: #f7f8fa;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition);
+  }
+  .crop-actions button:hover { background: #eef0f3; }
+  .crop-actions .crop-apply {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .crop-actions .crop-apply:hover {
+    background: #2a2780;
+  }
+
+  @media (max-width: 900px) {
+    .header { padding: 24px 18px 20px; }
+    .page { padding: 18px; }
+    .layout { grid-template-columns: 1fr; }
+    .preview-wrap { position: static; }
+    .gmail-zone { overflow-x: auto; }
+    .steps-bar { gap: 8px; }
+    .step-chip { padding: 6px 12px; font-size: 12px; }
+  }
+
+  /* ---- Template / Theme selectors ---- */
+  .template-options { display: flex; gap: 6px; }
+  .template-option {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all var(--transition);
+  }
+  .template-option:hover { background: #f7f8fa; border-color: #ccc; }
+  .template-option.selected {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  .template-option input[type="radio"] { margin: 0; accent-color: var(--accent); width: 15px; height: 15px; }
+
+  .theme-section { display: none; margin-top: 14px; }
+  .theme-section.visible { display: block; }
+  .theme-toggle { display: flex; gap: 6px; }
+  .theme-btn {
+    flex: 1;
+    padding: 8px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    background: #f7f8fa;
+    color: var(--text);
+    transition: all var(--transition);
+  }
+  .theme-btn:hover { background: #eef0f3; border-color: #ccc; }
+  .theme-btn.active { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+</style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-inner">
+      <h1>Email Signature Builder</h1>
+      <p>Create a professional email signature for your company in minutes.</p>
+    </div>
+  </div>
+
+  <div class="page">
+    <!-- Steps -->
+    <div class="steps-bar">
+      <div class="step-chip"><span class="num">1</span> Fill in your details</div>
+      <div class="step-chip"><span class="num">2</span> Check the preview</div>
+      <div class="step-chip"><span class="num">3</span> Copy &amp; paste into your email client</div>
+    </div>
+
+    <!-- Instructions accordion -->
+    <div class="instructions-card" id="instructionsCard">
+      <button class="instructions-toggle" id="instructionsToggle" type="button">
+        <span>Installation instructions by email client</span>
+        <span class="arrow">&#9662;</span>
+      </button>
+      <div class="instructions-body clients">
+        <details>
+          <summary>Gmail (web)</summary>
+          <ol class="steps">
+            <li>Click the gear icon in the top right &rarr; <strong>See all settings</strong>.</li>
+            <li>On the <strong>General</strong> tab, scroll to <strong>Signature</strong>.</li>
+            <li>Click <strong>Create new</strong>, enter a name, and paste the copied signature into the editor.</li>
+            <li>Under <strong>Signature defaults</strong>, select your new signature for new emails and replies.</li>
+            <li>Scroll to the bottom and click <strong>Save Changes</strong>.</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Outlook (Microsoft 365 / new Outlook for Windows &amp; Mac)</summary>
+          <ol class="steps">
+            <li>Open Outlook and go to <strong>Settings</strong> (gear icon) &rarr; <strong>Accounts</strong> &rarr; <strong>Signatures</strong>.</li>
+            <li>Click <strong>+ New signature</strong> and give it a name.</li>
+            <li>Paste the copied signature into the editor.</li>
+            <li>Under <strong>Select default signatures</strong>, assign it to <strong>New messages</strong> and <strong>Replies/forwards</strong>.</li>
+            <li>Click <strong>Save</strong>.</li>
+          </ol>
+          <div class="note">If icons or the logo look broken, make sure "Download external images" is enabled in Outlook's privacy settings.</div>
+        </details>
+
+        <details>
+          <summary>Outlook (classic desktop for Windows)</summary>
+          <ol class="steps">
+            <li>Go to <strong>File &rarr; Options &rarr; Mail &rarr; Signatures&hellip;</strong></li>
+            <li>Click <strong>New</strong>, name the signature, and click <strong>OK</strong>.</li>
+            <li>Click inside the edit box and paste the copied signature.</li>
+            <li>On the right, choose the signature for <strong>New messages</strong> and <strong>Replies/forwards</strong>.</li>
+            <li>Click <strong>OK</strong> to save.</li>
+          </ol>
+          <div class="note">Classic Outlook uses Word's rendering engine and may display images slightly differently. Paste using <strong>Ctrl+V</strong>, not "Keep Text Only".</div>
+        </details>
+
+        <details>
+          <summary>Outlook on the web (outlook.com / Office 365 webmail)</summary>
+          <ol class="steps">
+            <li>Click the gear icon in the top right &rarr; <strong>View all Outlook settings</strong>.</li>
+            <li>Go to <strong>Mail &rarr; Compose and reply</strong>.</li>
+            <li>Under <strong>Email signature</strong>, click <strong>+ New signature</strong>, name it, and paste the signature.</li>
+            <li>Select it as the default for new messages and replies.</li>
+            <li>Click <strong>Save</strong>.</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Apple Mail (macOS)</summary>
+          <ol class="steps">
+            <li>Open <strong>Mail &rarr; Settings&hellip; &rarr; Signatures</strong>.</li>
+            <li>Select your email account on the left, then click <strong>+</strong> to add a new signature.</li>
+            <li>Name the signature and paste the copied block into the right panel.</li>
+            <li><strong>Important:</strong> uncheck <strong>"Always match my default message font"</strong> so formatting is preserved.</li>
+            <li>Drag the signature to the account, or pick it from the dropdown when composing.</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Front</summary>
+          <ol class="steps">
+            <li>Click your avatar in the bottom left &rarr; <strong>Settings</strong>.</li>
+            <li>Go to <strong>Signatures</strong> (under "Personal preferences" or "Company").</li>
+            <li>Click <strong>Create signature</strong>, enter a name, and paste the copied signature into the editor.</li>
+            <li>Under <strong>Channel access</strong>, assign it to the channels where it should appear.</li>
+            <li>Click <strong>Save</strong>.</li>
+          </ol>
+          <div class="note">Front may resize images based on their natural dimensions. If icons look too large, let IT know.</div>
+        </details>
+
+        <details>
+          <summary>Yahoo Mail</summary>
+          <ol class="steps">
+            <li>Click <strong>Settings</strong> (gear icon) &rarr; <strong>More Settings</strong>.</li>
+            <li>Go to <strong>Writing email</strong>.</li>
+            <li>Toggle on <strong>Signature</strong>, then paste the copied block into the editor.</li>
+            <li>The signature saves automatically.</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Thunderbird</summary>
+          <ol class="steps">
+            <li>Go to <strong>Account Settings</strong> for your email account.</li>
+            <li>Check <strong>Use HTML</strong> under Signature text.</li>
+            <li>Paste the copied signature into the text area.</li>
+            <li>Click <strong>OK</strong> to save.</li>
+          </ol>
+          <div class="note">If pasting as plain text, save the signature as an .html file and use "Attach the signature from a file" instead.</div>
+        </details>
+
+        <details>
+          <summary>Spark / Superhuman / Mimestream / other modern clients</summary>
+          <ol class="steps">
+            <li>Open the app's <strong>Settings</strong> or <strong>Preferences</strong>.</li>
+            <li>Find the <strong>Signatures</strong> section.</li>
+            <li>Create a new signature and paste the copied block into the rich-text editor.</li>
+            <li>Assign it as the default for your account and save.</li>
+          </ol>
+        </details>
+      </div>
+    </div>
+
+    <!-- Main layout -->
+    <div class="layout">
+      <!-- Form -->
+      <div class="card">
+        <!-- Company & Photo -->
+        <div class="card-section">
+          <div class="card-section-title">Company &amp; Photo</div>
+
+          <div class="field">
+            <div class="company-options" id="companyOptions">
+              <label class="company-option selected">
+                <input type="radio" name="company" value="aec" checked /> Atlantic Express Corp.
+              </label>
+              <label class="company-option">
+                <input type="radio" name="company" value="jumbobee" /> JumboBee
+              </label>
+              <label class="company-option">
+                <input type="radio" name="company" value="apc" /> Atlantic Project Cargo
+              </label>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="avatar-section">
+              <label class="avatar-toggle">
+                <input type="checkbox" id="avatarToggle" /> Show avatar in signature
+              </label>
+              <div class="avatar-upload-area" id="avatarUploadArea">
+                <img class="avatar-preview-thumb" id="avatarThumb" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect fill='%23e0e0e0' width='40' height='40' rx='20'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='11' fill='%23999'%3E?%3C/text%3E%3C/svg%3E" alt="avatar" />
+                <button type="button" class="avatar-upload-btn" id="avatarUploadBtn">Upload photo</button>
+                <input type="file" id="avatarFileInput" accept="image/*" style="display:none" />
+                <div id="avatarStatus" style="width:100%; margin-top:8px; display:none;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Signature style -->
+        <div class="card-section">
+          <div class="card-section-title">Signature style</div>
+          <div class="field">
+            <div class="template-options" id="templateOptions">
+              <label class="template-option selected">
+                <input type="radio" name="template" value="classic" checked /> Classic
+              </label>
+              <label class="template-option">
+                <input type="radio" name="template" value="template1" /> Template 1
+              </label>
+            </div>
+          </div>
+          <div class="theme-section" id="themeSection">
+            <label style="display:block; font-size:12px; font-weight:600; margin-bottom:8px; color:var(--text-secondary); letter-spacing:0.01em;">Theme</label>
+            <div class="theme-toggle">
+              <button class="theme-btn active" id="themeLight" type="button">☀ Light</button>
+              <button class="theme-btn" id="themeDark" type="button">◑ Dark</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Personal info -->
+        <div class="card-section">
+          <div class="card-section-title">Personal info</div>
+
+          <div class="field">
+            <label for="fullName">Full name</label>
+            <input id="fullName" type="text" value="[Full Name]" />
+          </div>
+
+          <div class="field">
+            <label for="jobTitle">Job title</label>
+            <input id="jobTitle" type="text" value="[Job Title]" />
+          </div>
+        </div>
+
+        <!-- Contact details -->
+        <div class="card-section">
+          <div class="card-section-title">Contact details</div>
+
+          <div class="field">
+            <label for="phone">Phone number</label>
+            <input id="phone" type="text" value="[phone number]" />
+          </div>
+
+          <div class="field">
+            <label for="email">Work email</label>
+            <input id="email" type="text" value="[email]" />
+          </div>
+
+          <div class="field">
+            <label for="website">Website</label>
+            <input id="website" type="text" value="atlanticexpresscorp.com" />
+          </div>
+
+          <div class="field">
+            <label for="address">Address</label>
+            <input id="address" type="text" value="[address]" />
+          </div>
+        </div>
+
+        <!-- Additional text -->
+        <div class="card-section">
+          <div class="card-section-title">Additional text</div>
+
+          <div class="field">
+            <div class="rich-area" id="extraText" contenteditable="true" data-placeholder="Enter any extra info you'd like to add..."></div>
+            <div class="link-hint">Select a word above, enter a URL below and click "Add link".</div>
+            <div class="link-toolbar">
+              <input id="linkUrl" type="text" placeholder="https://example.com" />
+              <button type="button" id="addLinkBtn">Add link</button>
+              <button type="button" id="removeLinkBtn">Remove link</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Copy -->
+        <div class="copy-wrap">
+          <button class="copy-btn" id="copyBtn" type="button">
+            <span class="btn-icon" id="copyIcon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </span>
+            <span id="copyLabel">Copy Signature</span>
+          </button>
+          <span class="copy-status" id="copyStatus"></span>
+        </div>
+        <div class="small-note">
+          Your data is saved automatically in this browser.
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div class="preview-wrap">
+        <div class="preview-header">
+          <div class="preview-dot"></div>
+          <span class="preview-label">Live Preview</span>
+        </div>
+        <div class="preview-body">
+          <div class="gmail-zone">
+            <div class="signature-block" id="copyTarget">
+              <table cellpadding="0" cellspacing="0" border="0" style="width:420px; background:#ffffff; font-family: Helvetica, Arial, sans-serif; color:#121212;">
+                <tr>
+                  <td style="padding:0 0 16px 0;">
+                    <table cellpadding="0" cellspacing="0" border="0" style="font-family: Helvetica, Arial, sans-serif;">
+                      <tr>
+                        <td id="sig-avatar-cell" style="display:none; padding:0 18px 0 0; vertical-align:middle;">
+                          <img id="sig-avatar-img" src="" alt="Photo" width="48" height="48" style="display:block; width:48px; height:48px; border-radius:50%; border:0; outline:none; text-decoration:none;">
+                        </td>
+                        <td style="vertical-align:middle;">
+                          <div id="sig-name" style="font-size:16px; line-height:20px; font-weight:700; color:#121212; padding:0 0 4px 0;">[Full Name]</div>
+                          <div style="font-size:12px; line-height:16px; font-weight:400; color:#121212;">
+                            <span id="sig-title">[Job Title]</span> | <span id="sig-company">Atlantic Express Corp.</span>
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="border-top:1px solid #D9D9D9; font-size:0; line-height:0; height:0;"></td>
+                </tr>
+                <tr>
+                  <td style="padding:16px 0 16px 0;">
+                    <table cellpadding="0" cellspacing="0" border="0" style="font-family: Helvetica, Arial, sans-serif; color:#121212;">
+                      <tr>
+                        <td style="padding:0 8px 8px 0; vertical-align:middle;">
+                          <img src="https://pavelmazin.github.io/signature/PhoneCall.png" alt="Phone" width="16" height="16" style="display:block; width:16px; height:16px; min-width:16px; max-width:16px; min-height:16px; max-height:16px; border:0; outline:none; text-decoration:none;">
+                        </td>
+                        <td id="sig-phone" style="padding:0 0 8px 0; vertical-align:middle; font-size:12px; line-height:16px; color:#121212;">[phone number]</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:0 8px 8px 0; vertical-align:middle;">
+                          <img src="https://pavelmazin.github.io/signature/EnvelopeSimple.png" alt="Email" width="16" height="16" style="display:block; width:16px; height:16px; min-width:16px; max-width:16px; min-height:16px; max-height:16px; border:0; outline:none; text-decoration:none;">
+                        </td>
+                        <td id="sig-email" style="padding:0 0 8px 0; vertical-align:middle; font-size:12px; line-height:16px; color:#121212;">[email]</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:0 8px 8px 0; vertical-align:middle;">
+                          <img src="https://pavelmazin.github.io/signature/MapPin.png" alt="Address" width="16" height="16" style="display:block; width:16px; height:16px; min-width:16px; max-width:16px; min-height:16px; max-height:16px; border:0; outline:none; text-decoration:none;">
+                        </td>
+                        <td id="sig-address" style="padding:0 0 8px 0; vertical-align:middle; font-size:12px; line-height:16px; color:#121212;">[address]</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:0 8px 0 0; vertical-align:middle;">
+                          <img src="https://pavelmazin.github.io/signature/GlobeSimple.png" alt="Website" width="16" height="16" style="display:block; width:16px; height:16px; min-width:16px; max-width:16px; min-height:16px; max-height:16px; border:0; outline:none; text-decoration:none;">
+                        </td>
+                        <td style="padding:0; vertical-align:middle; font-size:12px; line-height:16px; color:#2A2590;" id="sig-website">atlanticexpresscorp.com</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr id="sig-extra-row" style="display:none;">
+                  <td id="sig-extra" style="padding:0 0 16px 0; font-size:12px; line-height:18px; color:#121212;"></td>
+                </tr>
+                <tr>
+                  <td style="border-top:1px solid #D9D9D9; font-size:0; line-height:0; height:0;"></td>
+                </tr>
+                <tr>
+                  <td style="padding:16px 0 0 0;">
+                    <img id="sig-logo" src="https://pavelmazin.github.io/signature/old_logo.png" alt="Atlantic Express Corp." width="130" height="36" style="display:block; border:0; outline:none; text-decoration:none;">
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div class="signature-block" id="copyTarget1" style="display:none;"></div>
+          </div>
+        </div>
+
+        <div class="copy-source">
+          <p><strong>Tip:</strong> copy only the signature block above. After pasting into your email client, check that it looks correct in a new email.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Crop modal -->
+  <div class="crop-overlay" id="cropOverlay">
+    <div class="crop-dialog">
+      <h3>Crop photo</h3>
+      <div class="crop-container" id="cropContainer">
+        <img id="cropImage" src="" alt="" />
+      </div>
+      <div class="crop-zoom">
+        <label>Zoom</label>
+        <input type="range" id="cropZoom" min="1" max="3" step="0.02" value="1" />
+      </div>
+      <div class="crop-actions">
+        <button type="button" id="cropCancel">Cancel</button>
+        <button type="button" id="cropApply" class="crop-apply">Apply</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const STORAGE_KEY = 'aec-email-signature-builder-v1';
+  const ASSET_BASE = 'https://pavelmazin.github.io/signature/';
+
+  const COMPANIES = {
+    aec:      { name: 'Atlantic Express Corp.',  website: 'atlanticexpresscorp.com',   logo: 'old_logo.png',                    logoW: 130, logoH: 36 },
+    jumbobee: { name: 'JumboBee',                website: 'jumbobee.com',              logo: 'JumboBee_logo.png',               logoW: 149, logoH: 22 },
+    apc:      { name: 'Atlantic Project Cargo',  website: 'atlanticprojectcargo.com',   logo: 'Atlantic_Project_Cargo_logo.png', logoW: 210, logoH: 30 }
+  };
+
+  const fields = {
+    fullName: document.getElementById('fullName'),
+    jobTitle: document.getElementById('jobTitle'),
+    phone:    document.getElementById('phone'),
+    email:    document.getElementById('email'),
+    website:  document.getElementById('website'),
+    address:  document.getElementById('address')
+  };
+
+  const sigName       = document.getElementById('sig-name');
+  const sigTitle      = document.getElementById('sig-title');
+  const sigCompany    = document.getElementById('sig-company');
+  const sigPhone      = document.getElementById('sig-phone');
+  const sigEmail      = document.getElementById('sig-email');
+  const sigWebsite    = document.getElementById('sig-website');
+  const sigAddress    = document.getElementById('sig-address');
+  const sigLogo       = document.getElementById('sig-logo');
+  const sigAvatarCell = document.getElementById('sig-avatar-cell');
+  const sigAvatarImg  = document.getElementById('sig-avatar-img');
+
+  const extraText     = document.getElementById('extraText');
+  const sigExtra      = document.getElementById('sig-extra');
+  const sigExtraRow   = document.getElementById('sig-extra-row');
+
+  const linkUrlInput  = document.getElementById('linkUrl');
+  const addLinkBtn    = document.getElementById('addLinkBtn');
+  const removeLinkBtn = document.getElementById('removeLinkBtn');
+
+  const copyBtn       = document.getElementById('copyBtn');
+  const copyIcon      = document.getElementById('copyIcon');
+  const copyLabel     = document.getElementById('copyLabel');
+  const copyStatus    = document.getElementById('copyStatus');
+  const copyTarget    = document.getElementById('copyTarget');
+  const copyTarget1   = document.getElementById('copyTarget1');
+
+  const companyOptions  = document.getElementById('companyOptions');
+  const avatarToggle    = document.getElementById('avatarToggle');
+  const avatarUploadArea = document.getElementById('avatarUploadArea');
+  const avatarUploadBtn = document.getElementById('avatarUploadBtn');
+  const avatarFileInput = document.getElementById('avatarFileInput');
+  const avatarThumb     = document.getElementById('avatarThumb');
+  const avatarStatus    = document.getElementById('avatarStatus');
+
+  const cropOverlay   = document.getElementById('cropOverlay');
+  const cropContainer = document.getElementById('cropContainer');
+  const cropImage     = document.getElementById('cropImage');
+  const cropZoom      = document.getElementById('cropZoom');
+  const cropApply     = document.getElementById('cropApply');
+  const cropCancel    = document.getElementById('cropCancel');
+
+  const instructionsCard   = document.getElementById('instructionsCard');
+  const instructionsToggle = document.getElementById('instructionsToggle');
+
+  let currentCompany  = 'aec';
+  let currentTemplate = 'classic';
+  let currentTheme    = 'light';
+  let avatarDataURL = '';
+  let avatarFileName = '';
+
+  /* ---- Instructions toggle ---- */
+  instructionsToggle.addEventListener('click', () => {
+    instructionsCard.classList.toggle('open');
+  });
+
+  /* ---- sanitize HTML ---- */
+  /* ---- Upload avatar via Cloudflare Worker ---- */
+  const WORKER_URL = 'https://signature-upload.pavel-d51.workers.dev/';
+
+  function generateAvatarId() {
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let id = '';
+    for (let i = 0; i < 10; i++) id += chars[Math.floor(Math.random() * chars.length)];
+    return id;
+  }
+
+  async function uploadAvatarToGitHub(dataURL) {
+    const fileName = 'avatar_' + generateAvatarId() + '.png';
+    const base64 = dataURL.split(',')[1];
+
+    // delete old avatar if exists
+    if (avatarFileName) {
+      try {
+        await fetch(WORKER_URL, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fileName: avatarFileName })
+        });
+      } catch (e) {}
+    }
+
+    // upload new avatar
+    const res = await fetch(WORKER_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fileName: fileName, content: base64 })
+    });
+
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.error || 'Upload failed');
+    }
+
+    return fileName;
+  }
+
+  function showAvatarStatus(type, text) {
+    const colors = {
+      loading: { bg: '#eff6ff', border: '#bfdbfe', color: '#1e40af', icon: '&#8987;' },
+      success: { bg: '#f0fdf4', border: '#bbf7d0', color: '#166534', icon: '&#10003;' },
+      error:   { bg: '#fef2f2', border: '#fecaca', color: '#991b1b', icon: '&#10007;' }
+    };
+    const c = colors[type];
+    avatarStatus.style.display = '';
+    avatarStatus.innerHTML = '<div style="display:flex;align-items:center;gap:6px;padding:8px 10px;background:' + c.bg + ';border:1px solid ' + c.border + ';border-radius:6px;font-size:12px;color:' + c.color + ';line-height:1.4;"><span style="flex-shrink:0;">' + c.icon + '</span><span>' + text + '</span></div>';
+  }
+
+  function sanitizeHTML(html) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    const walk = (node) => {
+      const children = Array.from(node.childNodes);
+      children.forEach((child) => {
+        if (child.nodeType === Node.TEXT_NODE) return;
+        if (child.nodeType === Node.ELEMENT_NODE) {
+          const tag = child.tagName.toLowerCase();
+          if (tag === 'br') return;
+          if (tag === 'a') {
+            const href = child.getAttribute('href') || '';
+            Array.from(child.attributes).forEach((a) => child.removeAttribute(a.name));
+            if (href) child.setAttribute('href', href);
+            child.setAttribute('target', '_blank');
+            child.style.color = '#2A2590';
+            child.style.textDecoration = 'underline';
+            walk(child);
+            return;
+          }
+          const frag = document.createDocumentFragment();
+          while (child.firstChild) frag.appendChild(child.firstChild);
+          node.replaceChild(frag, child);
+          walk(node);
+          return;
+        }
+        node.removeChild(child);
+      });
+    };
+    walk(tmp);
+    return tmp.innerHTML;
+  }
+
+  /* ---- load / save ---- */
+  function loadSavedValues() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      Object.keys(fields).forEach((key) => {
+        if (typeof saved[key] === 'string' && saved[key] !== '') {
+          fields[key].value = saved[key];
+        }
+      });
+      if (typeof saved.extraTextHTML === 'string') {
+        extraText.innerHTML = sanitizeHTML(saved.extraTextHTML);
+      }
+      if (saved.company && COMPANIES[saved.company]) {
+        currentCompany = saved.company;
+        const radio = companyOptions.querySelector(`input[value="${saved.company}"]`);
+        if (radio) radio.checked = true;
+        highlightCompanyOption();
+      }
+      if (saved.avatarEnabled) {
+        avatarToggle.checked = true;
+        avatarUploadArea.classList.add('visible');
+      }
+      if (saved.avatarDataURL) {
+        avatarDataURL = saved.avatarDataURL;
+        avatarThumb.src = avatarDataURL;
+      }
+      if (saved.avatarFileName) {
+        avatarFileName = saved.avatarFileName;
+        showAvatarStatus('success', 'Photo: ' + avatarFileName);
+      }
+      if (saved.template) {
+        currentTemplate = saved.template;
+        const tRadio = document.querySelector(`input[name="template"][value="${saved.template}"]`);
+        if (tRadio) tRadio.checked = true;
+        highlightTemplateOption();
+      }
+      if (saved.theme) currentTheme = saved.theme;
+    } catch (e) {}
+  }
+
+  function saveValues() {
+    const payload = {};
+    Object.keys(fields).forEach((key) => {
+      payload[key] = fields[key].value;
+    });
+    payload.extraTextHTML = extraText.innerHTML;
+    payload.company = currentCompany;
+    payload.template = currentTemplate;
+    payload.theme = currentTheme;
+    payload.avatarEnabled = avatarToggle.checked;
+    payload.avatarDataURL = avatarDataURL;
+    payload.avatarFileName = avatarFileName;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch (e) {}
+  }
+
+  /* ---- highlight company radio ---- */
+  function highlightCompanyOption() {
+    companyOptions.querySelectorAll('.company-option').forEach((label) => {
+      const radio = label.querySelector('input[type="radio"]');
+      label.classList.toggle('selected', radio.checked);
+    });
+  }
+
+  /* ---- Template 1 builder ---- */
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function buildT1HTML(d) {
+    const B = ASSET_BASE;
+    const light = d.theme === 'light';
+    const gradBg  = light ? 'background:linear-gradient(270deg,#DFDFF3 0%,#FAFAFA 100%)' : 'background:linear-gradient(180deg,#282AAB 0%,#5052D3 100%)';
+    const bgColor = light ? '#F0F0FA' : '#282AAB';
+    const txtMain = light ? '#121212' : '#ffffff';
+    const txtSub  = light ? '#4F4F4F' : '#E8E8E8';
+    const divider = light ? '#DFDFF3' : 'rgba(255,255,255,0.10)';
+    const ftBg    = light ? '#282AAB' : '#FAFAFA';
+    const ftTxt   = light ? '#ffffff' : '#4F4F4F';
+    const socSfx  = light ? 'white'  : 'gray';
+    const logoMap = {
+      aec:      light ? 'sig-logo-aec-light.svg' : 'sig-logo-aec-dark.svg',
+      jumbobee: 'JumboBee_logo.png',
+      apc:      'Atlantic_Project_Cargo_logo.png'
+    };
+    const company = COMPANIES[d.company];
+    const logo    = logoMap[d.company] || logoMap.aec;
+    const website = (d.website || company.website).replace(/^https?:\/\//, '');
+
+    const avatarCell = d.showAvatar && d.avatarSrc
+      ? `<td style="width:80px;height:80px;padding:0;vertical-align:middle;border-right:1px solid ${light ? '#E9E9E9' : 'rgba(255,255,255,0.10)'};">
+           <img src="${d.avatarSrc}" width="80" height="80" alt="Photo" style="display:block;width:80px;height:80px;border:0;object-fit:cover;">
+         </td>` : '';
+
+    const extraRow = d.hasExtra
+      ? `<tr><td style="padding:20px 24px;border-top:1px solid ${divider};font-size:14px;line-height:1.5;font-family:Helvetica,Arial,sans-serif;color:${txtMain};">${d.extraHTML}</td></tr>` : '';
+
+    return `<table cellpadding="0" cellspacing="0" border="0" bgcolor="${bgColor}" style="width:600px;max-width:600px;font-family:Helvetica,Arial,sans-serif;${gradBg};border-radius:8px;overflow:hidden;">
+  <tr><td style="padding-right:24px;border-bottom:1px solid ${divider};">
+    <table cellpadding="0" cellspacing="0" border="0" width="100%"><tr>
+      ${avatarCell}
+      <td style="padding:16px 24px;vertical-align:middle;">
+        <div style="color:${txtMain};font-size:18px;font-family:Helvetica,Arial,sans-serif;font-weight:700;margin-bottom:8px;">${escHtml(d.name)}</div>
+        <div style="color:${txtSub};font-size:14px;font-family:Helvetica,Arial,sans-serif;font-weight:400;">${escHtml(d.title)}</div>
+      </td>
+      <td style="padding:16px 0;vertical-align:middle;white-space:nowrap;">
+        <img src="${B}${logo}" width="130" height="36" alt="${escHtml(company.name)}" style="display:block;border:0;width:130px;height:36px;">
+      </td>
+    </tr></table>
+  </td></tr>
+  <tr><td>
+    <table cellpadding="0" cellspacing="0" border="0"><tr>
+      <td style="padding:24px;vertical-align:top;">
+        <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:18px;"><tr>
+          <td style="padding-right:10px;vertical-align:middle;"><img src="${B}sig-icon-phone.svg" width="28" height="28" alt="" style="display:block;border:0;"></td>
+          <td style="color:${txtMain};font-size:14px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;white-space:nowrap;">${escHtml(d.phone)}</td>
+        </tr></table>
+        <table cellpadding="0" cellspacing="0" border="0"><tr>
+          <td style="padding-right:10px;vertical-align:middle;"><img src="${B}sig-icon-email.svg" width="28" height="28" alt="" style="display:block;border:0;"></td>
+          <td style="color:${txtMain};font-size:14px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;white-space:nowrap;">${escHtml(d.email)}</td>
+        </tr></table>
+      </td>
+      <td style="padding:24px;vertical-align:top;">
+        <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:18px;"><tr>
+          <td style="padding-right:10px;vertical-align:middle;"><img src="${B}sig-icon-address.svg" width="28" height="28" alt="" style="display:block;border:0;"></td>
+          <td style="color:${txtMain};font-size:14px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;white-space:nowrap;">${escHtml(d.address)}</td>
+        </tr></table>
+        <table cellpadding="0" cellspacing="0" border="0"><tr>
+          <td style="padding-right:10px;vertical-align:middle;"><img src="${B}sig-icon-globe.svg" width="28" height="28" alt="" style="display:block;border:0;"></td>
+          <td style="color:${txtMain};font-size:14px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;white-space:nowrap;">${escHtml(website)}</td>
+        </tr></table>
+      </td>
+    </tr></table>
+  </td></tr>
+  ${extraRow}
+  <tr><td bgcolor="${ftBg}" style="background:${ftBg};padding:12px 24px;">
+    <table cellpadding="0" cellspacing="0" border="0" width="100%"><tr>
+      <td style="color:${ftTxt};font-size:12px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;">${escHtml(company.name)}</td>
+      <td style="text-align:right;vertical-align:middle;">
+        <table cellpadding="0" cellspacing="0" border="0" style="display:inline-table;"><tr>
+          <td style="padding-left:10px;"><img src="${B}sig-social-instagram-${socSfx}.svg" width="16" height="16" alt="Instagram" style="display:block;border:0;"></td>
+          <td style="padding-left:10px;"><img src="${B}sig-social-facebook-${socSfx}.svg"  width="16" height="16" alt="Facebook"  style="display:block;border:0;"></td>
+          <td style="padding-left:10px;"><img src="${B}sig-social-linkedin-${socSfx}.svg"  width="16" height="16" alt="LinkedIn"  style="display:block;border:0;"></td>
+          <td style="padding-left:10px;"><img src="${B}sig-social-youtube-${socSfx}.svg"   width="16" height="16" alt="YouTube"   style="display:block;border:0;"></td>
+          <td style="padding-left:10px;"><img src="${B}sig-social-x-${socSfx}.svg"         width="16" height="16" alt="X"         style="display:block;border:0;"></td>
+        </tr></table>
+      </td>
+    </tr></table>
+  </td></tr>
+</table>`;
+  }
+
+  function getT1Data() {
+    const company = COMPANIES[currentCompany];
+    return {
+      name:       fields.fullName.value || '[Full Name]',
+      title:      fields.jobTitle.value || '[Job Title]',
+      phone:      fields.phone.value    || '[phone number]',
+      email:      fields.email.value    || '[email]',
+      address:    fields.address.value  || '[address]',
+      website:    fields.website.value  || company.website,
+      company:    currentCompany,
+      theme:      currentTheme,
+      extraHTML:  sanitizeHTML(extraText.innerHTML),
+      hasExtra:   extraText.textContent.trim().length > 0,
+      avatarSrc:  avatarDataURL || (avatarFileName ? ASSET_BASE + avatarFileName : ''),
+      showAvatar: avatarToggle.checked && !!(avatarDataURL || avatarFileName)
+    };
+  }
+
+  /* ---- template / theme selectors ---- */
+  function highlightTemplateOption() {
+    document.querySelectorAll('.template-option').forEach(label => {
+      const radio = label.querySelector('input[type="radio"]');
+      label.classList.toggle('selected', radio.checked);
+    });
+  }
+
+  function updateThemeBtns() {
+    document.getElementById('themeLight').classList.toggle('active', currentTheme === 'light');
+    document.getElementById('themeDark').classList.toggle('active', currentTheme === 'dark');
+  }
+
+  function switchTemplate() {
+    const isT1 = currentTemplate === 'template1';
+    copyTarget.style.display  = isT1 ? 'none' : '';
+    copyTarget1.style.display = isT1 ? ''     : 'none';
+    document.getElementById('themeSection').classList.toggle('visible', isT1);
+    if (isT1) copyTarget1.innerHTML = buildT1HTML(getT1Data());
+  }
+
+  document.getElementById('templateOptions').addEventListener('change', e => {
+    if (e.target.type !== 'radio') return;
+    currentTemplate = e.target.value;
+    highlightTemplateOption();
+    switchTemplate();
+    saveValues();
+  });
+
+  document.getElementById('themeLight').addEventListener('click', () => {
+    currentTheme = 'light';
+    updateThemeBtns();
+    copyTarget1.innerHTML = buildT1HTML(getT1Data());
+    saveValues();
+  });
+
+  document.getElementById('themeDark').addEventListener('click', () => {
+    currentTheme = 'dark';
+    updateThemeBtns();
+    copyTarget1.innerHTML = buildT1HTML(getT1Data());
+    saveValues();
+  });
+
+  /* ---- update signature ---- */
+  function updateSignature() {
+    const defaults = {
+      fullName: '[Full Name]',
+      jobTitle: '[Job Title]',
+      phone:    '[phone number]',
+      email:    '[email]',
+      address:  '[address]'
+    };
+
+    const company = COMPANIES[currentCompany];
+
+    const nameVal = fields.fullName.value;
+    sigName.textContent = nameVal || defaults.fullName;
+    sigName.style.opacity = nameVal ? '1' : '0.5';
+
+    const titleVal = fields.jobTitle.value;
+    sigTitle.textContent = titleVal || defaults.jobTitle;
+    sigTitle.style.opacity = titleVal ? '1' : '0.5';
+
+    sigCompany.textContent = company.name;
+
+    ['phone', 'email', 'address'].forEach((key) => {
+      const val = fields[key].value;
+      const el = key === 'phone' ? sigPhone : key === 'email' ? sigEmail : sigAddress;
+      el.textContent = val || defaults[key];
+      el.style.opacity = val ? '1' : '0.5';
+    });
+
+    const websiteVal = (fields.website.value || company.website).trim();
+    const cleanWebsite = websiteVal.replace(/^https?:\/\//, '');
+    sigWebsite.textContent = cleanWebsite || company.website;
+
+    sigLogo.src = ASSET_BASE + company.logo;
+    sigLogo.alt = company.name;
+    sigLogo.width = company.logoW;
+    sigLogo.height = company.logoH;
+    sigLogo.style.width = company.logoW + 'px';
+    sigLogo.style.height = company.logoH + 'px';
+    sigLogo.style.minWidth = company.logoW + 'px';
+    sigLogo.style.maxWidth = company.logoW + 'px';
+    sigLogo.style.minHeight = company.logoH + 'px';
+    sigLogo.style.maxHeight = company.logoH + 'px';
+
+    const showAvatar = avatarToggle.checked && (avatarDataURL || avatarFileName);
+    sigAvatarCell.style.display = showAvatar ? 'table-cell' : 'none';
+    if (showAvatar) {
+      // preview always uses base64 for instant display
+      sigAvatarImg.src = avatarDataURL || (ASSET_BASE + avatarFileName);
+    }
+
+    const extraHTML = sanitizeHTML(extraText.innerHTML);
+    const hasExtra = extraText.textContent.trim().length > 0;
+    sigExtraRow.style.display = hasExtra ? '' : 'none';
+    sigExtra.innerHTML = hasExtra ? extraHTML : '';
+
+    if (currentTemplate === 'template1') copyTarget1.innerHTML = buildT1HTML(getT1Data());
+
+    saveValues();
+  }
+
+  /* ---- company selector ---- */
+  companyOptions.addEventListener('change', (e) => {
+    if (e.target.type !== 'radio') return;
+    currentCompany = e.target.value;
+    highlightCompanyOption();
+    const company = COMPANIES[currentCompany];
+    fields.website.value = company.website;
+    updateSignature();
+  });
+
+  /* ---- avatar toggle ---- */
+  avatarToggle.addEventListener('change', () => {
+    avatarUploadArea.classList.toggle('visible', avatarToggle.checked);
+    updateSignature();
+  });
+
+  avatarUploadBtn.addEventListener('click', () => avatarFileInput.click());
+
+  avatarFileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => openCropModal(ev.target.result);
+    reader.readAsDataURL(file);
+    avatarFileInput.value = '';
+  });
+
+  /* ---- crop modal ---- */
+  let cropState = { imgW: 0, imgH: 0, scale: 1, offsetX: 0, offsetY: 0, dragging: false, startX: 0, startY: 0 };
+
+  function openCropModal(src) {
+    cropOverlay.classList.add('open');
+    cropZoom.value = 1;
+    cropState = { imgW: 0, imgH: 0, scale: 1, offsetX: 0, offsetY: 0, dragging: false, startX: 0, startY: 0 };
+
+    const img = new Image();
+    img.onload = () => {
+      cropState.imgW = img.naturalWidth;
+      cropState.imgH = img.naturalHeight;
+      const containerSize = 280;
+      const minScale = Math.max(containerSize / img.naturalWidth, containerSize / img.naturalHeight);
+      cropState.scale = minScale;
+      cropState.offsetX = (containerSize - img.naturalWidth * minScale) / 2;
+      cropState.offsetY = (containerSize - img.naturalHeight * minScale) / 2;
+      cropZoom.min = 1;
+      cropZoom.max = 3;
+      cropZoom.value = 1;
+      cropImage.src = src;
+      applyCropTransform();
+    };
+    img.src = src;
+  }
+
+  function applyCropTransform() {
+    const containerSize = 280;
+    const baseScale = Math.max(containerSize / cropState.imgW, containerSize / cropState.imgH);
+    const s = baseScale * parseFloat(cropZoom.value);
+    cropImage.style.width = (cropState.imgW * s) + 'px';
+    cropImage.style.height = (cropState.imgH * s) + 'px';
+    cropImage.style.left = cropState.offsetX + 'px';
+    cropImage.style.top = cropState.offsetY + 'px';
+  }
+
+  function clampOffsets() {
+    const containerSize = 280;
+    const baseScale = Math.max(containerSize / cropState.imgW, containerSize / cropState.imgH);
+    const s = baseScale * parseFloat(cropZoom.value);
+    const w = cropState.imgW * s;
+    const h = cropState.imgH * s;
+    cropState.offsetX = Math.min(0, Math.max(containerSize - w, cropState.offsetX));
+    cropState.offsetY = Math.min(0, Math.max(containerSize - h, cropState.offsetY));
+  }
+
+  cropZoom.addEventListener('input', () => { clampOffsets(); applyCropTransform(); });
+
+  cropContainer.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    cropState.dragging = true;
+    cropState.startX = e.clientX - cropState.offsetX;
+    cropState.startY = e.clientY - cropState.offsetY;
+  });
+  document.addEventListener('mousemove', (e) => {
+    if (!cropState.dragging) return;
+    cropState.offsetX = e.clientX - cropState.startX;
+    cropState.offsetY = e.clientY - cropState.startY;
+    clampOffsets();
+    applyCropTransform();
+  });
+  document.addEventListener('mouseup', () => { cropState.dragging = false; });
+
+  cropContainer.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1) return;
+    e.preventDefault();
+    cropState.dragging = true;
+    cropState.startX = e.touches[0].clientX - cropState.offsetX;
+    cropState.startY = e.touches[0].clientY - cropState.offsetY;
+  }, { passive: false });
+  document.addEventListener('touchmove', (e) => {
+    if (!cropState.dragging || e.touches.length !== 1) return;
+    cropState.offsetX = e.touches[0].clientX - cropState.startX;
+    cropState.offsetY = e.touches[0].clientY - cropState.startY;
+    clampOffsets();
+    applyCropTransform();
+  });
+  document.addEventListener('touchend', () => { cropState.dragging = false; });
+
+  cropCancel.addEventListener('click', () => { cropOverlay.classList.remove('open'); });
+
+  cropApply.addEventListener('click', () => {
+    const containerSize = 280;
+    const outputSize = 192;
+    const baseScale = Math.max(containerSize / cropState.imgW, containerSize / cropState.imgH);
+    const s = baseScale * parseFloat(cropZoom.value);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = outputSize;
+    canvas.height = outputSize;
+    const ctx = canvas.getContext('2d');
+
+    const sx = -cropState.offsetX / s;
+    const sy = -cropState.offsetY / s;
+    const sSize = containerSize / s;
+
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(cropImage, sx, sy, sSize, sSize, 0, 0, outputSize, outputSize);
+
+    avatarDataURL = canvas.toDataURL('image/png');
+    avatarThumb.src = avatarDataURL;
+    cropOverlay.classList.remove('open');
+
+    showAvatarStatus('loading', 'Uploading photo...');
+
+    uploadAvatarToGitHub(avatarDataURL).then((name) => {
+      avatarFileName = name;
+      showAvatarStatus('success', 'Photo uploaded successfully!');
+      updateSignature();
+    }).catch((err) => {
+      console.error(err);
+      showAvatarStatus('error', 'Upload failed: ' + err.message);
+      avatarFileName = '';
+      updateSignature();
+    });
+  });
+
+  /* ---- link toolbar ---- */
+  addLinkBtn.addEventListener('click', () => {
+    const url = linkUrlInput.value.trim();
+    if (!url) { linkUrlInput.focus(); return; }
+
+    const sel = window.getSelection();
+    if (!sel.rangeCount || sel.isCollapsed || !extraText.contains(sel.anchorNode)) {
+      alert('Select some text in the "Additional text" field first.');
+      return;
+    }
+
+    const range = sel.getRangeAt(0);
+    const a = document.createElement('a');
+    a.href = url.match(/^https?:\/\//) ? url : 'https://' + url;
+    a.target = '_blank';
+    a.style.color = '#2A2590';
+    a.style.textDecoration = 'underline';
+
+    range.surroundContents(a);
+    sel.removeAllRanges();
+    linkUrlInput.value = '';
+    updateSignature();
+  });
+
+  removeLinkBtn.addEventListener('click', () => {
+    const sel = window.getSelection();
+    if (!sel.rangeCount || !extraText.contains(sel.anchorNode)) return;
+
+    let node = sel.anchorNode;
+    while (node && node !== extraText) {
+      if (node.tagName && node.tagName.toLowerCase() === 'a') {
+        const parent = node.parentNode;
+        while (node.firstChild) parent.insertBefore(node.firstChild, node);
+        parent.removeChild(node);
+        updateSignature();
+        return;
+      }
+      node = node.parentNode;
+    }
+  });
+
+  /* ---- copy signature ---- */
+  const COPY_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  const CHECK_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+
+  async function copySignature() {
+    copyStatus.textContent = '';
+    const isT1 = currentTemplate === 'template1';
+
+    // For T1: temporarily rebuild with GitHub avatar URL (not base64 data URL)
+    let prevT1Html = '';
+    if (isT1) {
+      prevT1Html = copyTarget1.innerHTML;
+      const d = getT1Data();
+      if (avatarFileName) d.avatarSrc = ASSET_BASE + avatarFileName;
+      copyTarget1.innerHTML = buildT1HTML(d);
+    }
+
+    const activeTarget = isT1 ? copyTarget1 : copyTarget;
+
+    // For classic: swap avatar src to GitHub URL, then restore
+    const prevSrc = sigAvatarImg.src;
+    if (!isT1 && avatarFileName && sigAvatarCell.style.display !== 'none') {
+      sigAvatarImg.src = ASSET_BASE + avatarFileName;
+    }
+
+    const restore = () => {
+      if (isT1) copyTarget1.innerHTML = prevT1Html;
+      else sigAvatarImg.src = prevSrc;
+    };
+
+    try {
+      if (navigator.clipboard && window.ClipboardItem) {
+        const blobHtml = new Blob([activeTarget.outerHTML], { type: 'text/html' });
+        const blobText = new Blob([activeTarget.innerText], { type: 'text/plain' });
+        const item = new ClipboardItem({ 'text/html': blobHtml, 'text/plain': blobText });
+        await navigator.clipboard.write([item]);
+        restore();
+        showCopied();
+        return;
+      }
+    } catch (e) {}
+
+    try {
+      const range = document.createRange();
+      range.selectNode(activeTarget);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      const ok = document.execCommand('copy');
+      selection.removeAllRanges();
+      restore();
+      if (ok) { showCopied(); return; }
+    } catch (e) {}
+
+    restore();
+    copyStatus.textContent = 'Copy did not work. Please select the signature manually.';
+  }
+
+  function showCopied() {
+    copyBtn.classList.add('copied');
+    copyIcon.innerHTML = CHECK_SVG;
+    copyLabel.textContent = 'Copied!';
+    copyStatus.textContent = 'Now paste it into your email client.';
+
+    setTimeout(() => {
+      copyBtn.classList.remove('copied');
+      copyIcon.innerHTML = COPY_SVG;
+      copyLabel.textContent = 'Copy Signature';
+    }, 2500);
+  }
+
+  /* ---- event listeners ---- */
+  Object.values(fields).forEach((input) => {
+    input.addEventListener('input', updateSignature);
+    input.addEventListener('change', updateSignature);
+  });
+
+  extraText.addEventListener('input', updateSignature);
+  extraText.addEventListener('paste', (e) => {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+    document.execCommand('insertText', false, text);
+  });
+
+  copyBtn.addEventListener('click', copySignature);
+
+  loadSavedValues();
+  highlightCompanyOption();
+  updateSignature();
+  switchTemplate();
+  updateThemeBtns();
+</script>
+
+</body>
+</html>
