@@ -1278,14 +1278,16 @@
     const ftBg      = light ? (isJB ? '#102A15' : '#282AAB') : '#FAFAFA';
     const ftTxt     = light ? '#ffffff' : '#4F4F4F';
     const socSfx    = light ? 'white'  : 'gray';
-    const iconBadge = isJB ? '#E9EEE9' : null;
-    const iconSz    = isJB ? 16 : 28;
-    const icoTd     = (f) => iconBadge
-      ? `<td style="padding-right:10px;vertical-align:middle;"><table cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="${iconBadge}" style="padding:6px;background:${iconBadge};border-radius:6px;line-height:0;"><img src="${B}${f}" width="${iconSz}" height="${iconSz}" alt="" style="display:block;border:0;width:${iconSz}px;height:${iconSz}px;"></td></tr></table></td>`
-      : `<td style="padding-right:10px;vertical-align:middle;"><img src="${B}${f}" width="${iconSz}" height="${iconSz}" alt="" style="display:block;border:0;width:${iconSz}px;height:${iconSz}px;"></td>`;
+    const iconMap = {
+      phone:   isJB ? (light ? 'sig-icon-jb-phone-light.svg'   : 'sig-icon-jb-phone-dark.svg')   : 'sig-icon-phone.svg',
+      email:   isJB ? (light ? 'sig-icon-jb-email-light.svg'   : 'sig-icon-jb-email-dark.svg')   : 'sig-icon-email.svg',
+      address: isJB ? (light ? 'sig-icon-jb-address-light.svg' : 'sig-icon-jb-address-dark.svg') : 'sig-icon-address.svg',
+      globe:   isJB ? (light ? 'sig-icon-jb-globe-light.svg'   : 'sig-icon-jb-globe-dark.svg')   : 'sig-icon-globe.svg',
+    };
+    const icoTd = (type) => `<td style="padding-right:10px;vertical-align:middle;"><img src="${B}${iconMap[type]}" width="28" height="28" alt="" style="display:block;border:0;width:28px;height:28px;"></td>`;
     const logoMap   = {
       aec:      light ? 'sig-logo-aec-light.svg' : 'sig-logo-aec-dark.svg',
-      jumbobee: 'JumboBee_logo.png',
+      jumbobee: light ? 'JumboBee_logo.png' : 'sig-logo-jb-white.svg',
       apc:      'Atlantic_Project_Cargo_logo.png'
     };
     const company = COMPANIES[d.company];
@@ -1317,21 +1319,21 @@
     <table cellpadding="0" cellspacing="0" border="0"><tr>
       <td style="padding:24px;vertical-align:top;">
         <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:18px;"><tr>
-          ${icoTd('sig-icon-phone.svg')}
+          ${icoTd('phone')}
           <td style="color:${txtMain};font-size:14px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;white-space:nowrap;">${escHtml(d.phone)}</td>
         </tr></table>
         <table cellpadding="0" cellspacing="0" border="0"><tr>
-          ${icoTd('sig-icon-email.svg')}
+          ${icoTd('email')}
           <td style="color:${txtMain};font-size:14px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;white-space:nowrap;">${escHtml(d.email)}</td>
         </tr></table>
       </td>
       <td style="padding:24px;vertical-align:top;">
         <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:18px;"><tr>
-          ${icoTd('sig-icon-address.svg')}
+          ${icoTd('address')}
           <td style="color:${txtMain};font-size:14px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;white-space:nowrap;">${escHtml(d.address)}</td>
         </tr></table>
         <table cellpadding="0" cellspacing="0" border="0"><tr>
-          ${icoTd('sig-icon-globe.svg')}
+          ${icoTd('globe')}
           <td style="color:${txtMain};font-size:14px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;white-space:nowrap;"><a href="https://${escHtml(website)}" target="_blank" style="color:${txtMain};text-decoration:none;">${escHtml(website)}</a></td>
         </tr></table>
       </td>
@@ -1374,15 +1376,17 @@
     const ftBg         = light ? (isJB ? '#102A15' : '#282AAB') : '#FAFAFA';
     const ftTxt        = light ? '#ffffff' : '#4F4F4F';
     const socSfx       = light ? 'white'   : 'gray';
-    const iconBadge    = isJB ? '#E9EEE9' : null;
-    const iconSz       = isJB ? 16 : 28;
-    const icoTd        = (f, pb) => iconBadge
-      ? `<td style="padding-right:10px;padding-bottom:${pb};vertical-align:middle;"><table cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="${iconBadge}" style="padding:6px;background:${iconBadge};border-radius:6px;line-height:0;"><img src="${B}${f}" width="${iconSz}" height="${iconSz}" alt="" style="display:block;border:0;width:${iconSz}px;height:${iconSz}px;"></td></tr></table></td>`
-      : `<td style="padding-right:10px;padding-bottom:${pb};vertical-align:middle;"><img src="${B}${f}" width="${iconSz}" height="${iconSz}" alt="" style="display:block;border:0;width:${iconSz}px;height:${iconSz}px;"></td>`;
+    const iconMap = {
+      phone:   isJB ? (light ? 'sig-icon-jb-phone-light.svg'   : 'sig-icon-jb-phone-dark.svg')   : 'sig-icon-phone.svg',
+      email:   isJB ? (light ? 'sig-icon-jb-email-light.svg'   : 'sig-icon-jb-email-dark.svg')   : 'sig-icon-email.svg',
+      address: isJB ? (light ? 'sig-icon-jb-address-light.svg' : 'sig-icon-jb-address-dark.svg') : 'sig-icon-address.svg',
+      globe:   isJB ? (light ? 'sig-icon-jb-globe-light.svg'   : 'sig-icon-jb-globe-dark.svg')   : 'sig-icon-globe.svg',
+    };
+    const icoTd = (type, pb) => `<td style="padding-right:10px;padding-bottom:${pb};vertical-align:middle;"><img src="${B}${iconMap[type]}" width="28" height="28" alt="" style="display:block;border:0;width:28px;height:28px;"></td>`;
 
     const logoMap = {
       aec:      light ? 'sig-logo-aec-light.svg' : 'sig-logo-aec-dark.svg',
-      jumbobee: 'JumboBee_logo.png',
+      jumbobee: light ? 'JumboBee_logo.png' : 'sig-logo-jb-white.svg',
       apc:      'Atlantic_Project_Cargo_logo.png'
     };
     const company = COMPANIES[d.company];
@@ -1394,16 +1398,16 @@
       : '';
 
     const contactItems = [
-      { icon: 'sig-icon-phone.svg',   text: escHtml(d.phone) },
-      { icon: 'sig-icon-email.svg',   text: escHtml(d.email) },
-      { icon: 'sig-icon-address.svg', text: escHtml(d.address) },
-      { icon: 'sig-icon-globe.svg',   text: `<a href="https://${escHtml(website)}" target="_blank" style="color:${txtMain};text-decoration:none;">${escHtml(website)}</a>` },
+      { type: 'phone',   text: escHtml(d.phone) },
+      { type: 'email',   text: escHtml(d.email) },
+      { type: 'address', text: escHtml(d.address) },
+      { type: 'globe',   text: `<a href="https://${escHtml(website)}" target="_blank" style="color:${txtMain};text-decoration:none;">${escHtml(website)}</a>` },
     ];
 
     const contactRows = contactItems.map((c, i) => {
       const pb = i < contactItems.length - 1 ? '12px' : '0';
       return `<tr>
-          ${icoTd(c.icon, pb)}
+          ${icoTd(c.type, pb)}
           <td style="padding-bottom:${pb};vertical-align:middle;font-size:14px;font-family:Helvetica,Arial,sans-serif;color:${txtMain};white-space:nowrap;">${c.text}</td>
         </tr>`;
     }).join('');
