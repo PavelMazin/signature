@@ -1263,19 +1263,27 @@
   function buildT1HTML(d) {
     const B = ASSET_BASE;
     const light = d.theme === 'light';
-    const bgImg   = light ? `${ASSET_BASE}sig-bg-light.svg` : `${ASSET_BASE}sig-bg-dark.svg`;
-    const bgPos   = light ? 'right top' : 'left top';
-    const gradBg  = light
-      ? `background:url('${bgImg}') no-repeat ${bgPos}, linear-gradient(270deg,#DFDFF3 0%,#FAFAFA 100%)`
-      : `background:url('${bgImg}') no-repeat ${bgPos}, linear-gradient(180deg,#282AAB 0%,#5052D3 100%)`;
-    const bgColor = light ? '#F0F0FA' : '#282AAB';
-    const txtMain = light ? '#121212' : '#ffffff';
-    const txtSub  = light ? '#4F4F4F' : '#E8E8E8';
-    const divider = light ? '#DFDFF3' : 'rgba(255,255,255,0.10)';
-    const ftBg    = light ? '#282AAB' : '#FAFAFA';
-    const ftTxt   = light ? '#ffffff' : '#4F4F4F';
-    const socSfx  = light ? 'white'  : 'gray';
-    const logoMap = {
+    const isJB      = d.company === 'jumbobee';
+    const bgImg     = light ? `${ASSET_BASE}sig-bg-light.svg` : `${ASSET_BASE}sig-bg-dark.svg`;
+    const bgPos     = light ? 'right top' : 'left top';
+    const lightGrad = isJB ? 'linear-gradient(270deg,#E0E6E0 0%,#FFFFFF 100%)' : 'linear-gradient(270deg,#DFDFF3 0%,#FAFAFA 100%)';
+    const darkGrad  = isJB ? 'linear-gradient(180deg,#102A15 0%,#2E5630 100%)' : 'linear-gradient(180deg,#282AAB 0%,#5052D3 100%)';
+    const gradBg    = light
+      ? `background:url('${bgImg}') no-repeat ${bgPos}, ${lightGrad}`
+      : `background:url('${bgImg}') no-repeat ${bgPos}, ${darkGrad}`;
+    const bgColor   = light ? (isJB ? '#F0F5F0' : '#F0F0FA') : (isJB ? '#102A15' : '#282AAB');
+    const txtMain   = light ? '#121212' : '#ffffff';
+    const txtSub    = light ? '#4F4F4F' : '#E8E8E8';
+    const divider   = light ? '#DFDFF3' : 'rgba(255,255,255,0.10)';
+    const ftBg      = light ? (isJB ? '#102A15' : '#282AAB') : '#FAFAFA';
+    const ftTxt     = light ? '#ffffff' : '#4F4F4F';
+    const socSfx    = light ? 'white'  : 'gray';
+    const iconBadge = isJB ? '#E9EEE9' : null;
+    const iconSz    = isJB ? 16 : 28;
+    const icoTd     = (f) => iconBadge
+      ? `<td style="padding-right:10px;vertical-align:middle;"><table cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="${iconBadge}" style="padding:6px;background:${iconBadge};border-radius:6px;line-height:0;"><img src="${B}${f}" width="${iconSz}" height="${iconSz}" alt="" style="display:block;border:0;width:${iconSz}px;height:${iconSz}px;"></td></tr></table></td>`
+      : `<td style="padding-right:10px;vertical-align:middle;"><img src="${B}${f}" width="${iconSz}" height="${iconSz}" alt="" style="display:block;border:0;width:${iconSz}px;height:${iconSz}px;"></td>`;
+    const logoMap   = {
       aec:      light ? 'sig-logo-aec-light.svg' : 'sig-logo-aec-dark.svg',
       jumbobee: 'JumboBee_logo.png',
       apc:      'Atlantic_Project_Cargo_logo.png'
@@ -1309,21 +1317,21 @@
     <table cellpadding="0" cellspacing="0" border="0"><tr>
       <td style="padding:24px;vertical-align:top;">
         <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:18px;"><tr>
-          <td style="padding-right:10px;vertical-align:middle;"><img src="${B}sig-icon-phone.svg" width="28" height="28" alt="" style="display:block;border:0;"></td>
+          ${icoTd('sig-icon-phone.svg')}
           <td style="color:${txtMain};font-size:14px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;white-space:nowrap;">${escHtml(d.phone)}</td>
         </tr></table>
         <table cellpadding="0" cellspacing="0" border="0"><tr>
-          <td style="padding-right:10px;vertical-align:middle;"><img src="${B}sig-icon-email.svg" width="28" height="28" alt="" style="display:block;border:0;"></td>
+          ${icoTd('sig-icon-email.svg')}
           <td style="color:${txtMain};font-size:14px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;white-space:nowrap;">${escHtml(d.email)}</td>
         </tr></table>
       </td>
       <td style="padding:24px;vertical-align:top;">
         <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:18px;"><tr>
-          <td style="padding-right:10px;vertical-align:middle;"><img src="${B}sig-icon-address.svg" width="28" height="28" alt="" style="display:block;border:0;"></td>
+          ${icoTd('sig-icon-address.svg')}
           <td style="color:${txtMain};font-size:14px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;white-space:nowrap;">${escHtml(d.address)}</td>
         </tr></table>
         <table cellpadding="0" cellspacing="0" border="0"><tr>
-          <td style="padding-right:10px;vertical-align:middle;"><img src="${B}sig-icon-globe.svg" width="28" height="28" alt="" style="display:block;border:0;"></td>
+          ${icoTd('sig-icon-globe.svg')}
           <td style="color:${txtMain};font-size:14px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;white-space:nowrap;"><a href="https://${escHtml(website)}" target="_blank" style="color:${txtMain};text-decoration:none;">${escHtml(website)}</a></td>
         </tr></table>
       </td>
@@ -1352,17 +1360,25 @@
     const B = ASSET_BASE;
     const light = d.theme === 'light';
 
+    const isJB         = d.company === 'jumbobee';
     const txtMain      = light ? '#121212' : '#ffffff';
     const txtSub       = light ? '#4F4F4F' : '#E8E8E8';
-    const sideBorder   = light ? '#DFDFF3' : '#4A4FCF';
+    const sideBorder   = light ? '#DFDFF3' : (isJB ? 'rgba(255,255,255,0.10)' : '#4A4FCF');
     const bgImg2       = light ? `${ASSET_BASE}sig-bg2-light.svg` : `${ASSET_BASE}sig-bg2-dark.svg`;
+    const lightGrad2   = isJB ? 'linear-gradient(270deg,#E0E6E0 0%,#FFFFFF 100%)' : 'linear-gradient(270deg,#DFDFF3 0%,#FAFAFA 100%)';
+    const darkGrad2    = isJB ? 'linear-gradient(90deg,#102A15 0%,#2E5630 100%)' : 'linear-gradient(90deg,#282AAB 0%,#5052D3 100%)';
     const contentBg    = light
-      ? `background:url('${bgImg2}') no-repeat right top, linear-gradient(270deg,#DFDFF3 0%,#FAFAFA 100%)`
-      : `background:url('${bgImg2}') no-repeat left top, linear-gradient(90deg,#282AAB 0%,#5052D3 100%)`;
-    const contentBgCol = light ? '#FAFAFA' : '#282AAB';
-    const ftBg         = light ? '#282AAB' : '#FAFAFA';
+      ? `background:url('${bgImg2}') no-repeat right top, ${lightGrad2}`
+      : `background:url('${bgImg2}') no-repeat left top, ${darkGrad2}`;
+    const contentBgCol = light ? (isJB ? '#FFFFFF' : '#FAFAFA') : (isJB ? '#102A15' : '#282AAB');
+    const ftBg         = light ? (isJB ? '#102A15' : '#282AAB') : '#FAFAFA';
     const ftTxt        = light ? '#ffffff' : '#4F4F4F';
     const socSfx       = light ? 'white'   : 'gray';
+    const iconBadge    = isJB ? '#E9EEE9' : null;
+    const iconSz       = isJB ? 16 : 28;
+    const icoTd        = (f, pb) => iconBadge
+      ? `<td style="padding-right:10px;padding-bottom:${pb};vertical-align:middle;"><table cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="${iconBadge}" style="padding:6px;background:${iconBadge};border-radius:6px;line-height:0;"><img src="${B}${f}" width="${iconSz}" height="${iconSz}" alt="" style="display:block;border:0;width:${iconSz}px;height:${iconSz}px;"></td></tr></table></td>`
+      : `<td style="padding-right:10px;padding-bottom:${pb};vertical-align:middle;"><img src="${B}${f}" width="${iconSz}" height="${iconSz}" alt="" style="display:block;border:0;width:${iconSz}px;height:${iconSz}px;"></td>`;
 
     const logoMap = {
       aec:      light ? 'sig-logo-aec-light.svg' : 'sig-logo-aec-dark.svg',
@@ -1387,7 +1403,7 @@
     const contactRows = contactItems.map((c, i) => {
       const pb = i < contactItems.length - 1 ? '12px' : '0';
       return `<tr>
-          <td style="padding-right:10px;padding-bottom:${pb};vertical-align:middle;"><img src="${B}${c.icon}" width="28" height="28" alt="" style="display:block;border:0;"></td>
+          ${icoTd(c.icon, pb)}
           <td style="padding-bottom:${pb};vertical-align:middle;font-size:14px;font-family:Helvetica,Arial,sans-serif;color:${txtMain};white-space:nowrap;">${c.text}</td>
         </tr>`;
     }).join('');
