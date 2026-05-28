@@ -1264,33 +1264,35 @@
     const B = ASSET_BASE;
     const light = d.theme === 'light';
     const isJB      = d.company === 'jumbobee';
+    const isAPC     = d.company === 'apc';
     const bgImg     = light ? `${ASSET_BASE}sig-bg-light.svg` : `${ASSET_BASE}sig-bg-dark.svg`;
     const bgPos     = light ? 'right top' : 'left top';
-    const lightGrad = isJB ? 'linear-gradient(270deg,#E0E6E0 0%,#FFFFFF 100%)' : 'linear-gradient(270deg,#DFDFF3 0%,#FAFAFA 100%)';
-    const darkGrad  = isJB ? 'linear-gradient(180deg,#102A15 0%,#2E5630 100%)' : 'linear-gradient(180deg,#282AAB 0%,#5052D3 100%)';
+    const lightGrad = isJB ? 'linear-gradient(270deg,#E0E6E0 0%,#FFFFFF 100%)' : (isAPC ? 'linear-gradient(270deg,#EFF0FA 0%,#FAFAFA 100%)' : 'linear-gradient(270deg,#DFDFF3 0%,#FAFAFA 100%)');
+    const darkGrad  = isJB ? 'linear-gradient(180deg,#102A15 0%,#2E5630 100%)' : (isAPC ? 'linear-gradient(180deg,#222572 0%,#7678C4 100%)' : 'linear-gradient(180deg,#282AAB 0%,#5052D3 100%)');
     const gradBg    = light
       ? `background:url('${bgImg}') no-repeat ${bgPos}, ${lightGrad}`
       : `background:url('${bgImg}') no-repeat ${bgPos}, ${darkGrad}`;
-    const bgColor   = light ? (isJB ? '#F0F5F0' : '#F0F0FA') : (isJB ? '#102A15' : '#282AAB');
+    const bgColor   = light ? (isJB ? '#F0F5F0' : (isAPC ? '#EFF0FA' : '#F0F0FA')) : (isJB ? '#102A15' : (isAPC ? '#222572' : '#282AAB'));
     const txtMain   = light ? '#121212' : '#ffffff';
     const txtSub    = light ? '#4F4F4F' : '#E8E8E8';
     const divider   = light ? '#DFDFF3' : 'rgba(255,255,255,0.10)';
-    const ftBg      = light ? (isJB ? '#102A15' : '#282AAB') : '#FAFAFA';
+    const ftBg      = light ? (isJB ? '#102A15' : (isAPC ? '#222572' : '#282AAB')) : '#FAFAFA';
     const ftTxt     = light ? '#ffffff' : '#4F4F4F';
     const socSfx    = light ? 'white'  : 'gray';
     const iconMap = {
-      phone:   isJB ? (light ? 'sig-icon-jb-phone-light.svg'   : 'sig-icon-jb-phone-dark.svg')   : 'sig-icon-phone.svg',
-      email:   isJB ? (light ? 'sig-icon-jb-email-light.svg'   : 'sig-icon-jb-email-dark.svg')   : 'sig-icon-email.svg',
-      address: isJB ? (light ? 'sig-icon-jb-address-light.svg' : 'sig-icon-jb-address-dark.svg') : 'sig-icon-address.svg',
-      globe:   isJB ? (light ? 'sig-icon-jb-globe-light.svg'   : 'sig-icon-jb-globe-dark.svg')   : 'sig-icon-globe.svg',
+      phone:   isJB ? (light ? 'sig-icon-jb-phone-light.svg'   : 'sig-icon-jb-phone-dark.svg')   : (isAPC ? (light ? 'sig-icon-apc-phone-light.svg'   : 'sig-icon-apc-phone-dark.svg')   : 'sig-icon-phone.svg'),
+      email:   isJB ? (light ? 'sig-icon-jb-email-light.svg'   : 'sig-icon-jb-email-dark.svg')   : (isAPC ? (light ? 'sig-icon-apc-email-light.svg'   : 'sig-icon-apc-email-dark.svg')   : 'sig-icon-email.svg'),
+      address: isJB ? (light ? 'sig-icon-jb-address-light.svg' : 'sig-icon-jb-address-dark.svg') : (isAPC ? (light ? 'sig-icon-apc-address-light.svg' : 'sig-icon-apc-address-dark.svg') : 'sig-icon-address.svg'),
+      globe:   isJB ? (light ? 'sig-icon-jb-globe-light.svg'   : 'sig-icon-jb-globe-dark.svg')   : (isAPC ? (light ? 'sig-icon-apc-globe-light.svg'   : 'sig-icon-apc-globe-dark.svg')   : 'sig-icon-globe.svg'),
     };
     const icoTd = (type) => `<td style="padding-right:10px;vertical-align:middle;"><img src="${B}${iconMap[type]}" width="28" height="28" alt="" style="display:block;border:0;width:28px;height:28px;"></td>`;
     const logoMap   = {
       aec:      light ? 'sig-logo-aec-light.svg' : 'sig-logo-aec-dark.svg',
       jumbobee: light ? 'sig-logo-jb-dark.svg' : 'sig-logo-jb-white.svg',
-      apc:      'Atlantic_Project_Cargo_logo.png'
+      apc:      light ? 'sig-logo-apc-dark.svg' : 'sig-logo-apc-white.svg',
     };
-    const logoH = isJB ? 32 : 36;
+    const logoH = isAPC ? 26 : (isJB ? 32 : 36);
+    const logoW = isAPC ? 186 : 130;
     const company = COMPANIES[d.company];
     const logo    = logoMap[d.company] || logoMap.aec;
     const website = (d.website || company.website).replace(/^https?:\/\//, '');
@@ -1312,7 +1314,7 @@
         <div style="color:${txtSub};font-size:14px;line-height:1;font-family:Helvetica,Arial,sans-serif;font-weight:400;">${escHtml(d.title)}</div>
       </td>
       <td style="padding:16px 0;vertical-align:middle;white-space:nowrap;text-align:right;">
-        <img src="${B}${logo}" width="130" height="${logoH}" alt="${escHtml(company.name)}" style="display:block;margin-left:auto;border:0;width:130px;height:${logoH}px;">
+        <img src="${B}${logo}" width="${logoW}" height="${logoH}" alt="${escHtml(company.name)}" style="display:block;margin-left:auto;border:0;width:${logoW}px;height:${logoH}px;">
       </td>
     </tr></table>
   </td></tr>
@@ -1364,33 +1366,35 @@
     const light = d.theme === 'light';
 
     const isJB         = d.company === 'jumbobee';
+    const isAPC        = d.company === 'apc';
     const txtMain      = light ? '#121212' : '#ffffff';
     const txtSub       = light ? '#4F4F4F' : '#E8E8E8';
-    const sideBorder   = light ? '#DFDFF3' : (isJB ? 'rgba(255,255,255,0.10)' : '#4A4FCF');
+    const sideBorder   = light ? '#DFDFF3' : (isJB ? 'rgba(255,255,255,0.10)' : (isAPC ? 'rgba(255,255,255,0.20)' : '#4A4FCF'));
     const bgImg2       = light ? `${ASSET_BASE}sig-bg2-light.svg` : `${ASSET_BASE}sig-bg2-dark.svg`;
-    const lightGrad2   = isJB ? 'linear-gradient(270deg,#E0E6E0 0%,#FFFFFF 100%)' : 'linear-gradient(270deg,#DFDFF3 0%,#FAFAFA 100%)';
-    const darkGrad2    = isJB ? 'linear-gradient(90deg,#102A15 0%,#2E5630 100%)' : 'linear-gradient(90deg,#282AAB 0%,#5052D3 100%)';
+    const lightGrad2   = isJB ? 'linear-gradient(270deg,#E0E6E0 0%,#FFFFFF 100%)' : (isAPC ? 'linear-gradient(270deg,#EFF0FA 0%,#FAFAFA 100%)' : 'linear-gradient(270deg,#DFDFF3 0%,#FAFAFA 100%)');
+    const darkGrad2    = isJB ? 'linear-gradient(90deg,#102A15 0%,#2E5630 100%)' : (isAPC ? 'linear-gradient(90deg,#222572 0%,#7678C4 100%)' : 'linear-gradient(90deg,#282AAB 0%,#5052D3 100%)');
     const contentBg    = light
       ? `background:url('${bgImg2}') no-repeat right top, ${lightGrad2}`
       : `background:url('${bgImg2}') no-repeat left top, ${darkGrad2}`;
-    const contentBgCol = light ? (isJB ? '#FFFFFF' : '#FAFAFA') : (isJB ? '#102A15' : '#282AAB');
-    const ftBg         = light ? (isJB ? '#102A15' : '#282AAB') : '#FAFAFA';
+    const contentBgCol = light ? (isJB ? '#FFFFFF' : (isAPC ? '#FAFAFA' : '#FAFAFA')) : (isJB ? '#102A15' : (isAPC ? '#222572' : '#282AAB'));
+    const ftBg         = light ? (isJB ? '#102A15' : (isAPC ? '#222572' : '#282AAB')) : '#FAFAFA';
     const ftTxt        = light ? '#ffffff' : '#4F4F4F';
     const socSfx       = light ? 'white'   : 'gray';
     const iconMap = {
-      phone:   isJB ? (light ? 'sig-icon-jb-phone-light.svg'   : 'sig-icon-jb-phone-dark.svg')   : 'sig-icon-phone.svg',
-      email:   isJB ? (light ? 'sig-icon-jb-email-light.svg'   : 'sig-icon-jb-email-dark.svg')   : 'sig-icon-email.svg',
-      address: isJB ? (light ? 'sig-icon-jb-address-light.svg' : 'sig-icon-jb-address-dark.svg') : 'sig-icon-address.svg',
-      globe:   isJB ? (light ? 'sig-icon-jb-globe-light.svg'   : 'sig-icon-jb-globe-dark.svg')   : 'sig-icon-globe.svg',
+      phone:   isJB ? (light ? 'sig-icon-jb-phone-light.svg'   : 'sig-icon-jb-phone-dark.svg')   : (isAPC ? (light ? 'sig-icon-apc-phone-light.svg'   : 'sig-icon-apc-phone-dark.svg')   : 'sig-icon-phone.svg'),
+      email:   isJB ? (light ? 'sig-icon-jb-email-light.svg'   : 'sig-icon-jb-email-dark.svg')   : (isAPC ? (light ? 'sig-icon-apc-email-light.svg'   : 'sig-icon-apc-email-dark.svg')   : 'sig-icon-email.svg'),
+      address: isJB ? (light ? 'sig-icon-jb-address-light.svg' : 'sig-icon-jb-address-dark.svg') : (isAPC ? (light ? 'sig-icon-apc-address-light.svg' : 'sig-icon-apc-address-dark.svg') : 'sig-icon-address.svg'),
+      globe:   isJB ? (light ? 'sig-icon-jb-globe-light.svg'   : 'sig-icon-jb-globe-dark.svg')   : (isAPC ? (light ? 'sig-icon-apc-globe-light.svg'   : 'sig-icon-apc-globe-dark.svg')   : 'sig-icon-globe.svg'),
     };
     const icoTd = (type, pb) => `<td style="padding-right:10px;padding-bottom:${pb};vertical-align:middle;"><img src="${B}${iconMap[type]}" width="28" height="28" alt="" style="display:block;border:0;width:28px;height:28px;"></td>`;
 
     const logoMap = {
       aec:      light ? 'sig-logo-aec-light.svg' : 'sig-logo-aec-dark.svg',
       jumbobee: light ? 'sig-logo-jb-dark.svg' : 'sig-logo-jb-white.svg',
-      apc:      'Atlantic_Project_Cargo_logo.png'
+      apc:      light ? 'sig-logo-apc-dark.svg' : 'sig-logo-apc-white.svg',
     };
-    const logoH = isJB ? 32 : 36;
+    const logoH = isAPC ? 26 : (isJB ? 32 : 36);
+    const logoW = isAPC ? 186 : 130;
     const company = COMPANIES[d.company];
     const logo    = logoMap[d.company] || logoMap.aec;
     const website = (d.website || company.website).replace(/^https?:\/\//, '');
@@ -1435,7 +1439,7 @@
                 </table>
               </td>
               <td style="vertical-align:top;text-align:right;padding-left:20px;white-space:nowrap;">
-                <img src="${B}${logo}" width="130" height="${logoH}" alt="${escHtml(company.name)}" style="display:block;margin-left:auto;border:0;width:130px;height:${logoH}px;">
+                <img src="${B}${logo}" width="${logoW}" height="${logoH}" alt="${escHtml(company.name)}" style="display:block;margin-left:auto;border:0;width:${logoW}px;height:${logoH}px;">
               </td>
             </tr>
             ${extraRow}
