@@ -1290,6 +1290,7 @@
       jumbobee: light ? 'JumboBee_logo.png' : 'sig-logo-jb-white.svg',
       apc:      'Atlantic_Project_Cargo_logo.png'
     };
+    const logoH = isJB ? 32 : 36;
     const company = COMPANIES[d.company];
     const logo    = logoMap[d.company] || logoMap.aec;
     const website = (d.website || company.website).replace(/^https?:\/\//, '');
@@ -1311,7 +1312,7 @@
         <div style="color:${txtSub};font-size:14px;line-height:1;font-family:Helvetica,Arial,sans-serif;font-weight:400;">${escHtml(d.title)}</div>
       </td>
       <td style="padding:16px 0;vertical-align:middle;white-space:nowrap;text-align:right;">
-        <img src="${B}${logo}" width="130" height="36" alt="${escHtml(company.name)}" style="display:block;margin-left:auto;border:0;width:130px;height:36px;">
+        <img src="${B}${logo}" width="130" height="${logoH}" alt="${escHtml(company.name)}" style="display:block;margin-left:auto;border:0;width:130px;height:${logoH}px;">
       </td>
     </tr></table>
   </td></tr>
@@ -1389,6 +1390,7 @@
       jumbobee: light ? 'JumboBee_logo.png' : 'sig-logo-jb-white.svg',
       apc:      'Atlantic_Project_Cargo_logo.png'
     };
+    const logoH = isJB ? 32 : 36;
     const company = COMPANIES[d.company];
     const logo    = logoMap[d.company] || logoMap.aec;
     const website = (d.website || company.website).replace(/^https?:\/\//, '');
@@ -1433,7 +1435,7 @@
                 </table>
               </td>
               <td style="vertical-align:top;text-align:right;padding-left:20px;white-space:nowrap;">
-                <img src="${B}${logo}" width="130" height="36" alt="${escHtml(company.name)}" style="display:block;margin-left:auto;border:0;width:130px;height:36px;">
+                <img src="${B}${logo}" width="130" height="${logoH}" alt="${escHtml(company.name)}" style="display:block;margin-left:auto;border:0;width:130px;height:${logoH}px;">
               </td>
             </tr>
             ${extraRow}
