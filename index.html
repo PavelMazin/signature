@@ -220,7 +220,7 @@
     margin-bottom: 14px;
   }
   .field:last-child { margin-bottom: 0; }
-  .field label:not(.company-option):not(.avatar-toggle) {
+  .field label:not(.company-option):not(.avatar-toggle):not(.template-option) {
     display: block;
     font-size: 12px;
     font-weight: 600;
@@ -277,16 +277,17 @@
 
   .link-toolbar {
     display: flex;
+    align-items: center;
     gap: 6px;
     margin-top: 6px;
   }
   .link-toolbar input {
     flex: 1;
-    height: 32px;
+    height: 40px;
     border: 1px solid var(--border);
     border-radius: 6px;
-    padding: 0 8px;
-    font-size: 12px;
+    padding: 0 12px;
+    font-size: 14px;
     font-family: inherit;
     transition: border-color var(--transition);
   }
@@ -295,8 +296,8 @@
     border-color: var(--accent);
   }
   .link-toolbar button {
-    height: 32px;
-    padding: 0 12px;
+    height: 40px;
+    padding: 0 14px;
     border: 1px solid var(--border);
     border-radius: 6px;
     background: #f7f8fa;
@@ -468,7 +469,6 @@
     border: 1px solid var(--border);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    overflow: hidden;
     position: sticky;
     top: 24px;
   }
@@ -502,10 +502,11 @@
     padding: 24px;
   }
   .gmail-zone {
-    background: #f7f8fa;
+    background: #B9B9B9;
     border: 1px dashed #d0d4db;
     border-radius: var(--radius-sm);
     padding: 28px;
+    overflow-x: auto;
   }
   .signature-block {
     display: inline-block;
@@ -619,7 +620,7 @@
     .page { padding: 18px; }
     .layout { grid-template-columns: 1fr; }
     .preview-wrap { position: static; }
-    .gmail-zone { overflow-x: auto; }
+
     .steps-bar { gap: 8px; }
     .step-chip { padding: 6px 12px; font-size: 12px; }
   }
@@ -825,7 +826,7 @@
                 <img class="avatar-preview-thumb" id="avatarThumb" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect fill='%23e0e0e0' width='40' height='40' rx='20'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='11' fill='%23999'%3E?%3C/text%3E%3C/svg%3E" alt="avatar" />
                 <button type="button" class="avatar-upload-btn" id="avatarUploadBtn">Upload photo</button>
                 <input type="file" id="avatarFileInput" accept="image/*" style="display:none" />
-                <div id="avatarStatus" style="width:100%; margin-top:8px; display:none;"></div>
+                <div id="avatarStatus" style="display:none;"></div>
               </div>
             </div>
           </div>
@@ -841,6 +842,9 @@
               </label>
               <label class="template-option">
                 <input type="radio" name="template" value="template1" /> Template 1
+              </label>
+              <label class="template-option">
+                <input type="radio" name="template" value="template2" /> Template 2
               </label>
             </div>
           </div>
@@ -997,6 +1001,7 @@
               </table>
             </div>
             <div class="signature-block" id="copyTarget1" style="display:none;"></div>
+            <div class="signature-block" id="copyTarget2" style="display:none;"></div>
           </div>
         </div>
 
@@ -1069,6 +1074,7 @@
   const copyStatus    = document.getElementById('copyStatus');
   const copyTarget    = document.getElementById('copyTarget');
   const copyTarget1   = document.getElementById('copyTarget1');
+  const copyTarget2   = document.getElementById('copyTarget2');
 
   const companyOptions  = document.getElementById('companyOptions');
   const avatarToggle    = document.getElementById('avatarToggle');
@@ -1257,7 +1263,11 @@
   function buildT1HTML(d) {
     const B = ASSET_BASE;
     const light = d.theme === 'light';
-    const gradBg  = light ? 'background:linear-gradient(270deg,#DFDFF3 0%,#FAFAFA 100%)' : 'background:linear-gradient(180deg,#282AAB 0%,#5052D3 100%)';
+    const bgImg   = light ? `${ASSET_BASE}sig-bg-light.svg` : `${ASSET_BASE}sig-bg-dark.svg`;
+    const bgPos   = light ? 'right top' : 'left top';
+    const gradBg  = light
+      ? `background:url('${bgImg}') no-repeat ${bgPos}, linear-gradient(270deg,#DFDFF3 0%,#FAFAFA 100%)`
+      : `background:url('${bgImg}') no-repeat ${bgPos}, linear-gradient(180deg,#282AAB 0%,#5052D3 100%)`;
     const bgColor = light ? '#F0F0FA' : '#282AAB';
     const txtMain = light ? '#121212' : '#ffffff';
     const txtSub  = light ? '#4F4F4F' : '#E8E8E8';
@@ -1280,18 +1290,18 @@
          </td>` : '';
 
     const extraRow = d.hasExtra
-      ? `<tr><td style="padding:20px 24px;border-top:1px solid ${divider};font-size:14px;line-height:1.5;font-family:Helvetica,Arial,sans-serif;color:${txtMain};">${d.extraHTML}</td></tr>` : '';
+      ? `<tr><td style="padding:0 24px;height:56px;vertical-align:middle;border-top:1px solid ${divider};font-size:14px;line-height:1.5;font-family:Helvetica,Arial,sans-serif;color:${txtMain};">${d.extraHTML}</td></tr>` : '';
 
     return `<table cellpadding="0" cellspacing="0" border="0" bgcolor="${bgColor}" style="width:600px;max-width:600px;font-family:Helvetica,Arial,sans-serif;${gradBg};border-radius:8px;overflow:hidden;">
   <tr><td style="padding-right:24px;border-bottom:1px solid ${divider};">
     <table cellpadding="0" cellspacing="0" border="0" width="100%"><tr>
       ${avatarCell}
-      <td style="padding:16px 24px;vertical-align:middle;">
-        <div style="color:${txtMain};font-size:18px;font-family:Helvetica,Arial,sans-serif;font-weight:700;margin-bottom:8px;">${escHtml(d.name)}</div>
-        <div style="color:${txtSub};font-size:14px;font-family:Helvetica,Arial,sans-serif;font-weight:400;">${escHtml(d.title)}</div>
+      <td style="padding:16px 24px;vertical-align:middle;width:100%;">
+        <div style="color:${txtMain};font-size:18px;line-height:1;font-family:Helvetica,Arial,sans-serif;font-weight:700;margin-bottom:8px;">${escHtml(d.name)}</div>
+        <div style="color:${txtSub};font-size:14px;line-height:1;font-family:Helvetica,Arial,sans-serif;font-weight:400;">${escHtml(d.title)}</div>
       </td>
-      <td style="padding:16px 0;vertical-align:middle;white-space:nowrap;">
-        <img src="${B}${logo}" width="130" height="36" alt="${escHtml(company.name)}" style="display:block;border:0;width:130px;height:36px;">
+      <td style="padding:16px 0;vertical-align:middle;white-space:nowrap;text-align:right;">
+        <img src="${B}${logo}" width="130" height="36" alt="${escHtml(company.name)}" style="display:block;margin-left:auto;border:0;width:130px;height:36px;">
       </td>
     </tr></table>
   </td></tr>
@@ -1314,13 +1324,13 @@
         </tr></table>
         <table cellpadding="0" cellspacing="0" border="0"><tr>
           <td style="padding-right:10px;vertical-align:middle;"><img src="${B}sig-icon-globe.svg" width="28" height="28" alt="" style="display:block;border:0;"></td>
-          <td style="color:${txtMain};font-size:14px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;white-space:nowrap;">${escHtml(website)}</td>
+          <td style="color:${txtMain};font-size:14px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;white-space:nowrap;"><a href="https://${escHtml(website)}" target="_blank" style="color:${txtMain};text-decoration:none;">${escHtml(website)}</a></td>
         </tr></table>
       </td>
     </tr></table>
   </td></tr>
   ${extraRow}
-  <tr><td bgcolor="${ftBg}" style="background:${ftBg};padding:12px 24px;">
+  <tr><td bgcolor="${ftBg}" style="background:${ftBg};padding:0 24px;height:40px;">
     <table cellpadding="0" cellspacing="0" border="0" width="100%"><tr>
       <td style="color:${ftTxt};font-size:12px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;">${escHtml(company.name)}</td>
       <td style="text-align:right;vertical-align:middle;">
@@ -1334,6 +1344,100 @@
       </td>
     </tr></table>
   </td></tr>
+</table>`;
+  }
+
+  /* ---- Template 2 builder ---- */
+  function buildT2HTML(d) {
+    const B = ASSET_BASE;
+    const light = d.theme === 'light';
+
+    const txtMain      = light ? '#121212' : '#ffffff';
+    const txtSub       = light ? '#4F4F4F' : '#E8E8E8';
+    const sideBorder   = light ? '#DFDFF3' : '#4A4FCF';
+    const bgImg2       = light ? `${ASSET_BASE}sig-bg2-light.svg` : `${ASSET_BASE}sig-bg2-dark.svg`;
+    const contentBg    = light
+      ? `background:url('${bgImg2}') no-repeat right top, linear-gradient(270deg,#DFDFF3 0%,#FAFAFA 100%)`
+      : `background:url('${bgImg2}') no-repeat left top, linear-gradient(90deg,#282AAB 0%,#5052D3 100%)`;
+    const contentBgCol = light ? '#FAFAFA' : '#282AAB';
+    const ftBg         = light ? '#282AAB' : '#FAFAFA';
+    const ftTxt        = light ? '#ffffff' : '#4F4F4F';
+    const socSfx       = light ? 'white'   : 'gray';
+
+    const logoMap = {
+      aec:      light ? 'sig-logo-aec-light.svg' : 'sig-logo-aec-dark.svg',
+      jumbobee: 'JumboBee_logo.png',
+      apc:      'Atlantic_Project_Cargo_logo.png'
+    };
+    const company = COMPANIES[d.company];
+    const logo    = logoMap[d.company] || logoMap.aec;
+    const website = (d.website || company.website).replace(/^https?:\/\//, '');
+
+    const photoHtml = d.showAvatar && d.avatarSrc
+      ? `<img src="${d.avatarSrc}" width="80" height="80" alt="Photo" style="display:block;width:80px;height:80px;border-radius:6px;border:0;object-fit:cover;margin:0 auto 20px auto;">`
+      : '';
+
+    const contactItems = [
+      { icon: 'sig-icon-phone.svg',   text: escHtml(d.phone) },
+      { icon: 'sig-icon-email.svg',   text: escHtml(d.email) },
+      { icon: 'sig-icon-address.svg', text: escHtml(d.address) },
+      { icon: 'sig-icon-globe.svg',   text: `<a href="https://${escHtml(website)}" target="_blank" style="color:${txtMain};text-decoration:none;">${escHtml(website)}</a>` },
+    ];
+
+    const contactRows = contactItems.map((c, i) => {
+      const pb = i < contactItems.length - 1 ? '12px' : '0';
+      return `<tr>
+          <td style="padding-right:10px;padding-bottom:${pb};vertical-align:middle;"><img src="${B}${c.icon}" width="28" height="28" alt="" style="display:block;border:0;"></td>
+          <td style="padding-bottom:${pb};vertical-align:middle;font-size:14px;font-family:Helvetica,Arial,sans-serif;color:${txtMain};white-space:nowrap;">${c.text}</td>
+        </tr>`;
+    }).join('');
+
+    const extraRow = d.hasExtra
+      ? `<tr><td colspan="2" style="padding-top:20px;font-size:14px;line-height:1.5;font-family:Helvetica,Arial,sans-serif;color:${txtSub};">${d.extraHTML}</td></tr>`
+      : '';
+
+    return `<table cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;font-family:Helvetica,Arial,sans-serif;border-radius:8px;overflow:hidden;">
+  <tr>
+    <td bgcolor="${contentBgCol}" style="${contentBg};">
+      <table cellpadding="0" cellspacing="0" border="0" width="100%"><tr>
+        <td style="padding:24px 32px;border-right:1px solid ${sideBorder};vertical-align:middle;text-align:center;white-space:nowrap;">
+          ${photoHtml}<div style="color:${txtMain};font-size:18px;line-height:1;font-family:Helvetica,Arial,sans-serif;font-weight:700;margin-bottom:8px;">${escHtml(d.name)}</div>
+          <div style="color:${txtSub};font-size:14px;line-height:1;font-family:Helvetica,Arial,sans-serif;font-weight:400;">${escHtml(d.title)}</div>
+        </td>
+        <td style="padding:24px;vertical-align:top;width:100%;">
+          <table cellpadding="0" cellspacing="0" border="0" width="100%">
+            <tr>
+              <td style="vertical-align:top;">
+                <table cellpadding="0" cellspacing="0" border="0">
+                  ${contactRows}
+                </table>
+              </td>
+              <td style="vertical-align:top;text-align:right;padding-left:20px;white-space:nowrap;">
+                <img src="${B}${logo}" width="130" height="36" alt="${escHtml(company.name)}" style="display:block;margin-left:auto;border:0;width:130px;height:36px;">
+              </td>
+            </tr>
+            ${extraRow}
+          </table>
+        </td>
+      </tr></table>
+    </td>
+  </tr>
+  <tr>
+    <td bgcolor="${ftBg}" style="background:${ftBg};padding:0 24px;height:40px;">
+      <table cellpadding="0" cellspacing="0" border="0" width="100%"><tr>
+        <td style="color:${ftTxt};font-size:12px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;">${escHtml(company.name)}</td>
+        <td style="text-align:right;vertical-align:middle;">
+          <table cellpadding="0" cellspacing="0" border="0" style="display:inline-table;"><tr>
+            <td style="padding-left:10px;"><img src="${B}sig-social-instagram-${socSfx}.svg" width="16" height="16" alt="Instagram" style="display:block;border:0;"></td>
+            <td style="padding-left:10px;"><img src="${B}sig-social-facebook-${socSfx}.svg"  width="16" height="16" alt="Facebook"  style="display:block;border:0;"></td>
+            <td style="padding-left:10px;"><img src="${B}sig-social-linkedin-${socSfx}.svg"  width="16" height="16" alt="LinkedIn"  style="display:block;border:0;"></td>
+            <td style="padding-left:10px;"><img src="${B}sig-social-youtube-${socSfx}.svg"   width="16" height="16" alt="YouTube"   style="display:block;border:0;"></td>
+            <td style="padding-left:10px;"><img src="${B}sig-social-x-${socSfx}.svg"         width="16" height="16" alt="X"         style="display:block;border:0;"></td>
+          </tr></table>
+        </td>
+      </tr></table>
+    </td>
+  </tr>
 </table>`;
   }
 
@@ -1370,10 +1474,13 @@
 
   function switchTemplate() {
     const isT1 = currentTemplate === 'template1';
-    copyTarget.style.display  = isT1 ? 'none' : '';
-    copyTarget1.style.display = isT1 ? ''     : 'none';
-    document.getElementById('themeSection').classList.toggle('visible', isT1);
+    const isT2 = currentTemplate === 'template2';
+    copyTarget.style.display  = (!isT1 && !isT2) ? '' : 'none';
+    copyTarget1.style.display = isT1 ? '' : 'none';
+    copyTarget2.style.display = isT2 ? '' : 'none';
+    document.getElementById('themeSection').classList.toggle('visible', isT1 || isT2);
     if (isT1) copyTarget1.innerHTML = buildT1HTML(getT1Data());
+    if (isT2) copyTarget2.innerHTML = buildT2HTML(getT1Data());
   }
 
   document.getElementById('templateOptions').addEventListener('change', e => {
@@ -1387,14 +1494,16 @@
   document.getElementById('themeLight').addEventListener('click', () => {
     currentTheme = 'light';
     updateThemeBtns();
-    copyTarget1.innerHTML = buildT1HTML(getT1Data());
+    if (currentTemplate === 'template1') copyTarget1.innerHTML = buildT1HTML(getT1Data());
+    if (currentTemplate === 'template2') copyTarget2.innerHTML = buildT2HTML(getT1Data());
     saveValues();
   });
 
   document.getElementById('themeDark').addEventListener('click', () => {
     currentTheme = 'dark';
     updateThemeBtns();
-    copyTarget1.innerHTML = buildT1HTML(getT1Data());
+    if (currentTemplate === 'template1') copyTarget1.innerHTML = buildT1HTML(getT1Data());
+    if (currentTemplate === 'template2') copyTarget2.innerHTML = buildT2HTML(getT1Data());
     saveValues();
   });
 
@@ -1428,8 +1537,9 @@
     });
 
     const websiteVal = (fields.website.value || company.website).trim();
-    const cleanWebsite = websiteVal.replace(/^https?:\/\//, '');
-    sigWebsite.textContent = cleanWebsite || company.website;
+    const cleanWebsite = websiteVal.replace(/^https?:\/\//, '') || company.website;
+    const fullUrl = 'https://' + cleanWebsite;
+    sigWebsite.innerHTML = `<a href="${fullUrl}" target="_blank" style="color:#2A2590;text-decoration:none;">${cleanWebsite}</a>`;
 
     sigLogo.src = ASSET_BASE + company.logo;
     sigLogo.alt = company.name;
@@ -1455,6 +1565,7 @@
     sigExtra.innerHTML = hasExtra ? extraHTML : '';
 
     if (currentTemplate === 'template1') copyTarget1.innerHTML = buildT1HTML(getT1Data());
+    if (currentTemplate === 'template2') copyTarget2.innerHTML = buildT2HTML(getT1Data());
 
     saveValues();
   }
@@ -1652,26 +1763,29 @@
   async function copySignature() {
     copyStatus.textContent = '';
     const isT1 = currentTemplate === 'template1';
+    const isT2 = currentTemplate === 'template2';
+    const isCustom = isT1 || isT2;
+    const customTarget = isT1 ? copyTarget1 : isT2 ? copyTarget2 : null;
 
-    // For T1: temporarily rebuild with GitHub avatar URL (not base64 data URL)
-    let prevT1Html = '';
-    if (isT1) {
-      prevT1Html = copyTarget1.innerHTML;
+    // For custom templates: temporarily rebuild with GitHub avatar URL
+    let prevCustomHtml = '';
+    if (isCustom) {
+      prevCustomHtml = customTarget.innerHTML;
       const d = getT1Data();
       if (avatarFileName) d.avatarSrc = ASSET_BASE + avatarFileName;
-      copyTarget1.innerHTML = buildT1HTML(d);
+      customTarget.innerHTML = isT1 ? buildT1HTML(d) : buildT2HTML(d);
     }
 
-    const activeTarget = isT1 ? copyTarget1 : copyTarget;
+    const activeTarget = isCustom ? customTarget : copyTarget;
 
     // For classic: swap avatar src to GitHub URL, then restore
     const prevSrc = sigAvatarImg.src;
-    if (!isT1 && avatarFileName && sigAvatarCell.style.display !== 'none') {
+    if (!isCustom && avatarFileName && sigAvatarCell.style.display !== 'none') {
       sigAvatarImg.src = ASSET_BASE + avatarFileName;
     }
 
     const restore = () => {
-      if (isT1) copyTarget1.innerHTML = prevT1Html;
+      if (isCustom) customTarget.innerHTML = prevCustomHtml;
       else sigAvatarImg.src = prevSrc;
     };
 
