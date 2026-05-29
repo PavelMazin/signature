@@ -1048,6 +1048,38 @@
     apc:      { name: 'Atlantic Project Cargo',  website: 'atlanticprojectcargo.com', logo: 'Atlantic_Project_Cargo_logo.png', logoW: 210, logoH: 30 }
   };
 
+  /* Per-company social links (order = display order). icon = sig-social-<icon>-<sfx>.svg */
+  const SOCIALS = {
+    aec: [
+      { icon: 'facebook',  label: 'Facebook',  url: 'https://www.facebook.com/atlanticexpresscorporation/' },
+    ],
+    jumbobee: [
+      { icon: 'linkedin',  label: 'LinkedIn',  url: 'https://www.linkedin.com/company/jumbo-bee/about/' },
+      { icon: 'facebook',  label: 'Facebook',  url: 'https://www.facebook.com/jumbobee/' },
+      { icon: 'instagram', label: 'Instagram', url: 'https://www.instagram.com/jumbobee_com/' },
+      { icon: 'tiktok',    label: 'TikTok',    url: 'https://www.tiktok.com/@jumbo_bee' },
+      { icon: 'youtube',   label: 'YouTube',   url: 'https://www.youtube.com/@jumbo-bee' },
+    ],
+    apc: [
+      { icon: 'instagram', label: 'Instagram', url: 'https://www.instagram.com/atlanticprojectcargo/' },
+      { icon: 'facebook',  label: 'Facebook',  url: 'https://www.facebook.com/atlanticexpressprojectcargo' },
+      { icon: 'linkedin',  label: 'LinkedIn',  url: 'https://www.linkedin.com/company/atlanticprojectcargo/' },
+      { icon: 'youtube',   label: 'YouTube',   url: 'https://www.youtube.com/@AtlanticProjectCargo' },
+      { icon: 'tiktok',    label: 'TikTok',    url: 'https://www.tiktok.com/@atlanticprojectcargo' },
+      { icon: 'x',         label: 'X',         url: 'https://x.com/AEPC_team' },
+      { icon: 'medium',    label: 'Medium',    url: 'https://medium.com/@atlanticprojectcargo' },
+      { icon: 'threads',   label: 'Threads',   url: 'https://www.threads.com/@atlanticprojectcargo' },
+    ],
+  };
+
+  /* Build footer social icon cells for a company */
+  function socialCells(companyKey, sfx, base) {
+    const list = SOCIALS[companyKey] || [];
+    return list.map(s =>
+      `<td style="padding-left:10px;"><a href="${s.url}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${base}sig-social-${s.icon}-${sfx}.svg" width="16" height="16" alt="${s.label}" style="display:block;border:0;"></a></td>`
+    ).join('');
+  }
+
   const fields = {
     fullName: document.getElementById('fullName'),
     jobTitle: document.getElementById('jobTitle'),
@@ -1355,11 +1387,7 @@
       <td style="color:${ftTxt};font-size:12px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;">${escHtml(company.name)}</td>
       <td style="text-align:right;vertical-align:middle;">
         <table cellpadding="0" cellspacing="0" border="0" style="opacity:0.2;margin-left:auto;"><tr>
-          <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-instagram-${socSfx}.svg" width="16" height="16" alt="Instagram" style="display:block;border:0;"></a></td>
-          <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-facebook-${socSfx}.svg"  width="16" height="16" alt="Facebook"  style="display:block;border:0;"></a></td>
-          <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-linkedin-${socSfx}.svg"  width="16" height="16" alt="LinkedIn"  style="display:block;border:0;"></a></td>
-          <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-youtube-${socSfx}.svg"   width="16" height="16" alt="YouTube"   style="display:block;border:0;"></a></td>
-          <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-x-${socSfx}.svg"         width="16" height="16" alt="X"         style="display:block;border:0;"></a></td>
+          ${socialCells(d.company, socSfx, A_SOCIAL)}
         </tr></table>
       </td>
     </tr></table>
@@ -1457,11 +1485,7 @@
         <td style="color:${ftTxt};font-size:12px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;">${escHtml(company.name)}</td>
         <td style="text-align:right;vertical-align:middle;">
           <table cellpadding="0" cellspacing="0" border="0" style="opacity:0.2;margin-left:auto;"><tr>
-            <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-instagram-${socSfx}.svg" width="16" height="16" alt="Instagram" style="display:block;border:0;"></a></td>
-            <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-facebook-${socSfx}.svg"  width="16" height="16" alt="Facebook"  style="display:block;border:0;"></a></td>
-            <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-linkedin-${socSfx}.svg"  width="16" height="16" alt="LinkedIn"  style="display:block;border:0;"></a></td>
-            <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-youtube-${socSfx}.svg"   width="16" height="16" alt="YouTube"   style="display:block;border:0;"></a></td>
-            <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-x-${socSfx}.svg"         width="16" height="16" alt="X"         style="display:block;border:0;"></a></td>
+            ${socialCells(d.company, socSfx, A_SOCIAL)}
           </tr></table>
         </td>
       </tr></table>
