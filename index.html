@@ -1273,13 +1273,8 @@
     const light = d.theme === 'light';
     const isJB      = d.company === 'jumbobee';
     const isAPC     = d.company === 'apc';
-    const bgImg     = light ? `${A_BG}sig-bg-light.svg` : `${A_BG}sig-bg-dark.svg`;
-    const bgPos     = light ? 'right top' : 'left top';
-    const lightGrad = isJB ? 'linear-gradient(270deg,#E0E6E0 0%,#FFFFFF 100%)' : (isAPC ? 'linear-gradient(270deg,#EFF0FA 0%,#FAFAFA 100%)' : 'linear-gradient(270deg,#DFDFF3 0%,#FAFAFA 100%)');
-    const darkGrad  = isJB ? 'linear-gradient(180deg,#102A15 0%,#2E5630 100%)' : (isAPC ? 'linear-gradient(180deg,#222572 0%,#7678C4 100%)' : 'linear-gradient(180deg,#282AAB 0%,#5052D3 100%)');
-    const gradBg    = light
-      ? `background:url('${bgImg}') no-repeat ${bgPos}, ${lightGrad}`
-      : `background:url('${bgImg}') no-repeat ${bgPos}, ${darkGrad}`;
+    const cKey      = isJB ? 'jb' : (isAPC ? 'apc' : 'aec');
+    const bgPng     = `${A_BG}sig-bg-t1-${cKey}-${light ? 'light' : 'dark'}.png`;
     const bgColor   = light ? (isJB ? '#F0F5F0' : (isAPC ? '#EFF0FA' : '#F0F0FA')) : (isJB ? '#102A15' : (isAPC ? '#222572' : '#282AAB'));
     const txtMain   = light ? '#121212' : '#ffffff';
     const txtSub    = light ? '#4F4F4F' : '#E8E8E8';
@@ -1313,7 +1308,7 @@
     const extraRow = d.hasExtra
       ? `<tr><td style="padding:0 24px;height:56px;vertical-align:middle;border-top:1px solid ${divider};font-size:14px;line-height:1.5;font-family:Helvetica,Arial,sans-serif;color:${txtMain};">${d.extraHTML}</td></tr>` : '';
 
-    return `<table cellpadding="0" cellspacing="0" border="0" bgcolor="${bgColor}" style="width:600px;max-width:600px;font-family:Helvetica,Arial,sans-serif;${gradBg};border-radius:8px;overflow:hidden;">
+    return `<table cellpadding="0" cellspacing="0" border="0" bgcolor="${bgColor}" background="${bgPng}" style="width:600px;max-width:600px;font-family:Helvetica,Arial,sans-serif;background-image:url('${bgPng}');background-size:cover;background-repeat:no-repeat;border-radius:8px;overflow:hidden;">
   <tr><td style="padding-right:24px;border-bottom:1px solid ${divider};">
     <table cellpadding="0" cellspacing="0" border="0" width="100%"><tr>
       ${avatarCell}
@@ -1378,12 +1373,8 @@
     const txtMain      = light ? '#121212' : '#ffffff';
     const txtSub       = light ? '#4F4F4F' : '#E8E8E8';
     const sideBorder   = light ? '#DFDFF3' : (isJB ? 'rgba(255,255,255,0.10)' : (isAPC ? 'rgba(255,255,255,0.20)' : '#4A4FCF'));
-    const bgImg2       = light ? `${A_BG}sig-bg2-light.svg` : `${A_BG}sig-bg2-dark.svg`;
-    const lightGrad2   = isJB ? 'linear-gradient(270deg,#E0E6E0 0%,#FFFFFF 100%)' : (isAPC ? 'linear-gradient(270deg,#EFF0FA 0%,#FAFAFA 100%)' : 'linear-gradient(270deg,#DFDFF3 0%,#FAFAFA 100%)');
-    const darkGrad2    = isJB ? 'linear-gradient(90deg,#102A15 0%,#2E5630 100%)' : (isAPC ? 'linear-gradient(90deg,#222572 0%,#7678C4 100%)' : 'linear-gradient(90deg,#282AAB 0%,#5052D3 100%)');
-    const contentBg    = light
-      ? `background:url('${bgImg2}') no-repeat right top, ${lightGrad2}`
-      : `background:url('${bgImg2}') no-repeat left top, ${darkGrad2}`;
+    const cKey         = isJB ? 'jb' : (isAPC ? 'apc' : 'aec');
+    const bgPng2       = `${A_BG}sig-bg-t2-${cKey}-${light ? 'light' : 'dark'}.png`;
     const contentBgCol = light ? (isJB ? '#FFFFFF' : (isAPC ? '#FAFAFA' : '#FAFAFA')) : (isJB ? '#102A15' : (isAPC ? '#222572' : '#282AAB'));
     const ftBg         = light ? (isJB ? '#102A15' : (isAPC ? '#222572' : '#282AAB')) : '#FAFAFA';
     const ftTxt        = light ? '#ffffff' : '#4F4F4F';
@@ -1432,7 +1423,7 @@
 
     return `<table cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;font-family:Helvetica,Arial,sans-serif;border-radius:8px;overflow:hidden;">
   <tr>
-    <td bgcolor="${contentBgCol}" style="${contentBg};">
+    <td bgcolor="${contentBgCol}" background="${bgPng2}" style="background-image:url('${bgPng2}');background-size:cover;background-repeat:no-repeat;">
       <table cellpadding="0" cellspacing="0" border="0" width="100%"><tr>
         <td style="padding:24px 32px;border-right:1px solid ${sideBorder};vertical-align:middle;text-align:center;white-space:nowrap;">
           ${photoHtml}<div style="color:${txtMain};font-size:18px;line-height:1;font-family:Helvetica,Arial,sans-serif;font-weight:700;margin-bottom:8px;">${escHtml(d.name)}</div>
