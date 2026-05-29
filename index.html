@@ -965,25 +965,25 @@
                     <table cellpadding="0" cellspacing="0" border="0" style="font-family: Helvetica, Arial, sans-serif; color:#121212;">
                       <tr>
                         <td style="padding:0 8px 8px 0; vertical-align:middle;">
-                          <img src="https://pavelmazin.github.io/signature/PhoneCall.png" alt="Phone" width="16" height="16" style="display:block; width:16px; height:16px; min-width:16px; max-width:16px; min-height:16px; max-height:16px; border:0; outline:none; text-decoration:none;">
+                          <img src="https://pavelmazin.github.io/signature/assets/icons/PhoneCall.png" alt="Phone" width="16" height="16" style="display:block; width:16px; height:16px; min-width:16px; max-width:16px; min-height:16px; max-height:16px; border:0; outline:none; text-decoration:none;">
                         </td>
                         <td id="sig-phone" style="padding:0 0 8px 0; vertical-align:middle; font-size:12px; line-height:16px; color:#121212;">[phone number]</td>
                       </tr>
                       <tr>
                         <td style="padding:0 8px 8px 0; vertical-align:middle;">
-                          <img src="https://pavelmazin.github.io/signature/EnvelopeSimple.png" alt="Email" width="16" height="16" style="display:block; width:16px; height:16px; min-width:16px; max-width:16px; min-height:16px; max-height:16px; border:0; outline:none; text-decoration:none;">
+                          <img src="https://pavelmazin.github.io/signature/assets/icons/EnvelopeSimple.png" alt="Email" width="16" height="16" style="display:block; width:16px; height:16px; min-width:16px; max-width:16px; min-height:16px; max-height:16px; border:0; outline:none; text-decoration:none;">
                         </td>
                         <td id="sig-email" style="padding:0 0 8px 0; vertical-align:middle; font-size:12px; line-height:16px; color:#121212;">[email]</td>
                       </tr>
                       <tr>
                         <td style="padding:0 8px 8px 0; vertical-align:middle;">
-                          <img src="https://pavelmazin.github.io/signature/MapPin.png" alt="Address" width="16" height="16" style="display:block; width:16px; height:16px; min-width:16px; max-width:16px; min-height:16px; max-height:16px; border:0; outline:none; text-decoration:none;">
+                          <img src="https://pavelmazin.github.io/signature/assets/icons/MapPin.png" alt="Address" width="16" height="16" style="display:block; width:16px; height:16px; min-width:16px; max-width:16px; min-height:16px; max-height:16px; border:0; outline:none; text-decoration:none;">
                         </td>
                         <td id="sig-address" style="padding:0 0 8px 0; vertical-align:middle; font-size:12px; line-height:16px; color:#121212;">[address]</td>
                       </tr>
                       <tr>
                         <td style="padding:0 8px 0 0; vertical-align:middle;">
-                          <img src="https://pavelmazin.github.io/signature/GlobeSimple.png" alt="Website" width="16" height="16" style="display:block; width:16px; height:16px; min-width:16px; max-width:16px; min-height:16px; max-height:16px; border:0; outline:none; text-decoration:none;">
+                          <img src="https://pavelmazin.github.io/signature/assets/icons/GlobeSimple.png" alt="Website" width="16" height="16" style="display:block; width:16px; height:16px; min-width:16px; max-width:16px; min-height:16px; max-height:16px; border:0; outline:none; text-decoration:none;">
                         </td>
                         <td style="padding:0; vertical-align:middle; font-size:12px; line-height:16px; color:#2A2590;" id="sig-website">atlanticexpresscorp.com</td>
                       </tr>
@@ -998,7 +998,7 @@
                 </tr>
                 <tr>
                   <td style="padding:16px 0 0 0;">
-                    <img id="sig-logo" src="https://pavelmazin.github.io/signature/old_logo.png" alt="Atlantic Express Corp." width="130" height="36" style="display:block; border:0; outline:none; text-decoration:none;">
+                    <img id="sig-logo" src="https://pavelmazin.github.io/signature/assets/logos/old_logo.png" alt="Atlantic Express Corp." width="130" height="36" style="display:block; border:0; outline:none; text-decoration:none;">
                   </td>
                 </tr>
               </table>
@@ -1036,11 +1036,16 @@
 <script>
   const STORAGE_KEY = 'aec-email-signature-builder-v1';
   const ASSET_BASE = 'https://pavelmazin.github.io/signature/';
+  const A_BG      = ASSET_BASE + 'assets/bg/';
+  const A_ICONS   = ASSET_BASE + 'assets/icons/';
+  const A_LOGOS   = ASSET_BASE + 'assets/logos/';
+  const A_SOCIAL  = ASSET_BASE + 'assets/social/';
+  const A_AVATARS = ASSET_BASE + 'assets/avatars/';
 
   const COMPANIES = {
-    aec:      { name: 'Atlantic Express Corp.',  website: 'atlanticexpresscorp.com',   logo: 'old_logo.png',                    logoW: 130, logoH: 36 },
-    jumbobee: { name: 'JumboBee',                website: 'jumbobee.com',              logo: 'JumboBee_logo.png',               logoW: 149, logoH: 22 },
-    apc:      { name: 'Atlantic Project Cargo',  website: 'atlanticprojectcargo.com',   logo: 'Atlantic_Project_Cargo_logo.png', logoW: 210, logoH: 30 }
+    aec:      { name: 'Atlantic Express Corp.',  website: 'atlanticexpresscorp.com',  logo: 'old_logo.png',                    logoW: 130, logoH: 36 },
+    jumbobee: { name: 'JumboBee',                website: 'jumbobee.com',             logo: 'JumboBee_logo.png',               logoW: 149, logoH: 22 },
+    apc:      { name: 'Atlantic Project Cargo',  website: 'atlanticprojectcargo.com', logo: 'Atlantic_Project_Cargo_logo.png', logoW: 210, logoH: 30 }
   };
 
   const fields = {
@@ -1268,7 +1273,7 @@
     const light = d.theme === 'light';
     const isJB      = d.company === 'jumbobee';
     const isAPC     = d.company === 'apc';
-    const bgImg     = light ? `${ASSET_BASE}sig-bg-light.svg` : `${ASSET_BASE}sig-bg-dark.svg`;
+    const bgImg     = light ? `${A_BG}sig-bg-light.svg` : `${A_BG}sig-bg-dark.svg`;
     const bgPos     = light ? 'right top' : 'left top';
     const lightGrad = isJB ? 'linear-gradient(270deg,#E0E6E0 0%,#FFFFFF 100%)' : (isAPC ? 'linear-gradient(270deg,#EFF0FA 0%,#FAFAFA 100%)' : 'linear-gradient(270deg,#DFDFF3 0%,#FAFAFA 100%)');
     const darkGrad  = isJB ? 'linear-gradient(180deg,#102A15 0%,#2E5630 100%)' : (isAPC ? 'linear-gradient(180deg,#222572 0%,#7678C4 100%)' : 'linear-gradient(180deg,#282AAB 0%,#5052D3 100%)');
@@ -1288,7 +1293,7 @@
       address: isJB ? (light ? 'sig-icon-jb-address-light.svg' : 'sig-icon-jb-address-dark.svg') : (isAPC ? (light ? 'sig-icon-apc-address-light.svg' : 'sig-icon-apc-address-dark.svg') : 'sig-icon-address.svg'),
       globe:   isJB ? (light ? 'sig-icon-jb-globe-light.svg'   : 'sig-icon-jb-globe-dark.svg')   : (isAPC ? (light ? 'sig-icon-apc-globe-light.svg'   : 'sig-icon-apc-globe-dark.svg')   : 'sig-icon-globe.svg'),
     };
-    const icoTd = (type) => `<td style="padding-right:10px;vertical-align:middle;"><img src="${B}${iconMap[type]}" width="28" height="28" alt="" style="display:block;border:0;width:28px;height:28px;"></td>`;
+    const icoTd = (type) => `<td style="padding-right:10px;vertical-align:middle;"><img src="${A_ICONS}${iconMap[type]}" width="28" height="28" alt="" style="display:block;border:0;width:28px;height:28px;"></td>`;
     const logoMap   = {
       aec:      light ? 'sig-logo-aec-light.svg' : 'sig-logo-aec-dark.svg',
       jumbobee: light ? 'sig-logo-jb-dark.svg' : 'sig-logo-jb-white.svg',
@@ -1317,7 +1322,7 @@
         <div style="color:${txtSub};font-size:14px;line-height:1;font-family:Helvetica,Arial,sans-serif;font-weight:400;">${escHtml(d.title)}</div>
       </td>
       <td style="padding:16px 0;vertical-align:middle;white-space:nowrap;text-align:right;">
-        <img src="${B}${logo}" width="${logoW}" height="${logoH}" alt="${escHtml(company.name)}" style="display:block;margin-left:auto;border:0;width:${logoW}px;height:${logoH}px;">
+        <img src="${A_LOGOS}${logo}" width="${logoW}" height="${logoH}" alt="${escHtml(company.name)}" style="display:block;margin-left:auto;border:0;width:${logoW}px;height:${logoH}px;">
       </td>
     </tr></table>
   </td></tr>
@@ -1351,11 +1356,11 @@
       <td style="color:${ftTxt};font-size:12px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;">${escHtml(company.name)}</td>
       <td style="text-align:right;vertical-align:middle;">
         <table cellpadding="0" cellspacing="0" border="0" style="opacity:0.2;margin-left:auto;"><tr>
-          <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${B}sig-social-instagram-${socSfx}.svg" width="16" height="16" alt="Instagram" style="display:block;border:0;"></a></td>
-          <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${B}sig-social-facebook-${socSfx}.svg"  width="16" height="16" alt="Facebook"  style="display:block;border:0;"></a></td>
-          <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${B}sig-social-linkedin-${socSfx}.svg"  width="16" height="16" alt="LinkedIn"  style="display:block;border:0;"></a></td>
-          <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${B}sig-social-youtube-${socSfx}.svg"   width="16" height="16" alt="YouTube"   style="display:block;border:0;"></a></td>
-          <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${B}sig-social-x-${socSfx}.svg"         width="16" height="16" alt="X"         style="display:block;border:0;"></a></td>
+          <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-instagram-${socSfx}.svg" width="16" height="16" alt="Instagram" style="display:block;border:0;"></a></td>
+          <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-facebook-${socSfx}.svg"  width="16" height="16" alt="Facebook"  style="display:block;border:0;"></a></td>
+          <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-linkedin-${socSfx}.svg"  width="16" height="16" alt="LinkedIn"  style="display:block;border:0;"></a></td>
+          <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-youtube-${socSfx}.svg"   width="16" height="16" alt="YouTube"   style="display:block;border:0;"></a></td>
+          <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-x-${socSfx}.svg"         width="16" height="16" alt="X"         style="display:block;border:0;"></a></td>
         </tr></table>
       </td>
     </tr></table>
@@ -1373,7 +1378,7 @@
     const txtMain      = light ? '#121212' : '#ffffff';
     const txtSub       = light ? '#4F4F4F' : '#E8E8E8';
     const sideBorder   = light ? '#DFDFF3' : (isJB ? 'rgba(255,255,255,0.10)' : (isAPC ? 'rgba(255,255,255,0.20)' : '#4A4FCF'));
-    const bgImg2       = light ? `${ASSET_BASE}sig-bg2-light.svg` : `${ASSET_BASE}sig-bg2-dark.svg`;
+    const bgImg2       = light ? `${A_BG}sig-bg2-light.svg` : `${A_BG}sig-bg2-dark.svg`;
     const lightGrad2   = isJB ? 'linear-gradient(270deg,#E0E6E0 0%,#FFFFFF 100%)' : (isAPC ? 'linear-gradient(270deg,#EFF0FA 0%,#FAFAFA 100%)' : 'linear-gradient(270deg,#DFDFF3 0%,#FAFAFA 100%)');
     const darkGrad2    = isJB ? 'linear-gradient(90deg,#102A15 0%,#2E5630 100%)' : (isAPC ? 'linear-gradient(90deg,#222572 0%,#7678C4 100%)' : 'linear-gradient(90deg,#282AAB 0%,#5052D3 100%)');
     const contentBg    = light
@@ -1389,7 +1394,7 @@
       address: isJB ? (light ? 'sig-icon-jb-address-light.svg' : 'sig-icon-jb-address-dark.svg') : (isAPC ? (light ? 'sig-icon-apc-address-light.svg' : 'sig-icon-apc-address-dark.svg') : 'sig-icon-address.svg'),
       globe:   isJB ? (light ? 'sig-icon-jb-globe-light.svg'   : 'sig-icon-jb-globe-dark.svg')   : (isAPC ? (light ? 'sig-icon-apc-globe-light.svg'   : 'sig-icon-apc-globe-dark.svg')   : 'sig-icon-globe.svg'),
     };
-    const icoTd = (type, pb) => `<td style="padding-right:10px;padding-bottom:${pb};vertical-align:middle;"><img src="${B}${iconMap[type]}" width="28" height="28" alt="" style="display:block;border:0;width:28px;height:28px;"></td>`;
+    const icoTd = (type, pb) => `<td style="padding-right:10px;padding-bottom:${pb};vertical-align:middle;"><img src="${A_ICONS}${iconMap[type]}" width="28" height="28" alt="" style="display:block;border:0;width:28px;height:28px;"></td>`;
 
     const logoMap = {
       aec:      light ? 'sig-logo-aec-light.svg' : 'sig-logo-aec-dark.svg',
@@ -1442,7 +1447,7 @@
                 </table>
               </td>
               <td style="vertical-align:top;text-align:right;padding-left:20px;white-space:nowrap;">
-                <img src="${B}${logo}" width="${logoW}" height="${logoH}" alt="${escHtml(company.name)}" style="display:block;margin-left:auto;border:0;width:${logoW}px;height:${logoH}px;">
+                <img src="${A_LOGOS}${logo}" width="${logoW}" height="${logoH}" alt="${escHtml(company.name)}" style="display:block;margin-left:auto;border:0;width:${logoW}px;height:${logoH}px;">
               </td>
             </tr>
             ${extraRow}
@@ -1457,11 +1462,11 @@
         <td style="color:${ftTxt};font-size:12px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;">${escHtml(company.name)}</td>
         <td style="text-align:right;vertical-align:middle;">
           <table cellpadding="0" cellspacing="0" border="0" style="opacity:0.2;margin-left:auto;"><tr>
-            <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${B}sig-social-instagram-${socSfx}.svg" width="16" height="16" alt="Instagram" style="display:block;border:0;"></a></td>
-            <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${B}sig-social-facebook-${socSfx}.svg"  width="16" height="16" alt="Facebook"  style="display:block;border:0;"></a></td>
-            <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${B}sig-social-linkedin-${socSfx}.svg"  width="16" height="16" alt="LinkedIn"  style="display:block;border:0;"></a></td>
-            <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${B}sig-social-youtube-${socSfx}.svg"   width="16" height="16" alt="YouTube"   style="display:block;border:0;"></a></td>
-            <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${B}sig-social-x-${socSfx}.svg"         width="16" height="16" alt="X"         style="display:block;border:0;"></a></td>
+            <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-instagram-${socSfx}.svg" width="16" height="16" alt="Instagram" style="display:block;border:0;"></a></td>
+            <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-facebook-${socSfx}.svg"  width="16" height="16" alt="Facebook"  style="display:block;border:0;"></a></td>
+            <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-linkedin-${socSfx}.svg"  width="16" height="16" alt="LinkedIn"  style="display:block;border:0;"></a></td>
+            <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-youtube-${socSfx}.svg"   width="16" height="16" alt="YouTube"   style="display:block;border:0;"></a></td>
+            <td style="padding-left:10px;"><a href="#" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-x-${socSfx}.svg"         width="16" height="16" alt="X"         style="display:block;border:0;"></a></td>
           </tr></table>
         </td>
       </tr></table>
@@ -1483,7 +1488,7 @@
       theme:      currentTheme,
       extraHTML:  sanitizeHTML(extraText.innerHTML),
       hasExtra:   extraText.textContent.trim().length > 0,
-      avatarSrc:  avatarDataURL || (avatarFileName ? ASSET_BASE + avatarFileName : ''),
+      avatarSrc:  avatarDataURL || (avatarFileName ? A_AVATARS + avatarFileName : ''),
       showAvatar: avatarToggle.checked && !!(avatarDataURL || avatarFileName)
     };
   }
@@ -1570,7 +1575,7 @@
     const fullUrl = 'https://' + cleanWebsite;
     sigWebsite.innerHTML = `<a href="${fullUrl}" target="_blank" style="color:#2A2590;text-decoration:none;">${cleanWebsite}</a>`;
 
-    sigLogo.src = ASSET_BASE + company.logo;
+    sigLogo.src = A_LOGOS + company.logo;
     sigLogo.alt = company.name;
     sigLogo.width = company.logoW;
     sigLogo.height = company.logoH;
@@ -1585,7 +1590,7 @@
     sigAvatarCell.style.display = showAvatar ? 'table-cell' : 'none';
     if (showAvatar) {
       // preview always uses base64 for instant display
-      sigAvatarImg.src = avatarDataURL || (ASSET_BASE + avatarFileName);
+      sigAvatarImg.src = avatarDataURL || (A_AVATARS + avatarFileName);
     }
 
     const extraHTML = sanitizeHTML(extraText.innerHTML);
@@ -1801,7 +1806,7 @@
     if (isCustom) {
       prevCustomHtml = customTarget.innerHTML;
       const d = getT1Data();
-      if (avatarFileName) d.avatarSrc = ASSET_BASE + avatarFileName;
+      if (avatarFileName) d.avatarSrc = A_AVATARS + avatarFileName;
       customTarget.innerHTML = isT1 ? buildT1HTML(d) : buildT2HTML(d);
     }
 
@@ -1810,7 +1815,7 @@
     // For classic: swap avatar src to GitHub URL, then restore
     const prevSrc = sigAvatarImg.src;
     if (!isCustom && avatarFileName && sigAvatarCell.style.display !== 'none') {
-      sigAvatarImg.src = ASSET_BASE + avatarFileName;
+      sigAvatarImg.src = A_AVATARS + avatarFileName;
     }
 
     const restore = () => {
