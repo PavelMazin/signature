@@ -1361,11 +1361,11 @@
           <td style="padding:24px;vertical-align:top;">
             <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:18px;"><tr>
               ${icoTd('phone')}
-              <td style="color:${txtMain};font-size:14px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;white-space:nowrap;">${escHtml(d.phone)}</td>
+              <td style="color:${txtMain};font-size:14px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;white-space:nowrap;"><a href="tel:${escHtml((d.phone||'').replace(/[^0-9+]/g,''))}" style="color:${txtMain};text-decoration:none;">${escHtml(d.phone)}</a></td>
             </tr></table>
             <table cellpadding="0" cellspacing="0" border="0"><tr>
               ${icoTd('email')}
-              <td style="color:${txtMain};font-size:14px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;white-space:nowrap;">${escHtml(d.email)}</td>
+              <td style="color:${txtMain};font-size:14px;font-family:Helvetica,Arial,sans-serif;vertical-align:middle;white-space:nowrap;"><a href="mailto:${escHtml(d.email)}" style="color:${txtMain};text-decoration:none;">${escHtml(d.email)}</a></td>
             </tr></table>
           </td>
           <td style="padding:24px;vertical-align:top;">
@@ -1436,8 +1436,8 @@
       : '';
 
     const contactItems = [
-      { type: 'phone',   text: escHtml(d.phone) },
-      { type: 'email',   text: escHtml(d.email) },
+      { type: 'phone',   text: `<a href="tel:${escHtml((d.phone||'').replace(/[^0-9+]/g,''))}" style="color:${txtMain};text-decoration:none;">${escHtml(d.phone)}</a>` },
+      { type: 'email',   text: `<a href="mailto:${escHtml(d.email)}" style="color:${txtMain};text-decoration:none;">${escHtml(d.email)}</a>` },
       { type: 'address', text: escHtml(d.address) },
       { type: 'globe',   text: `<a href="https://${escHtml(website)}" target="_blank" style="color:${txtMain};text-decoration:none;">${escHtml(website)}</a>` },
     ];
