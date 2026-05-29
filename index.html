@@ -1212,7 +1212,7 @@
             Array.from(child.attributes).forEach((a) => child.removeAttribute(a.name));
             if (href) child.setAttribute('href', href);
             child.setAttribute('target', '_blank');
-            child.style.color = '#2A2590';
+            child.style.color = 'inherit';
             child.style.textDecoration = 'underline';
             walk(child);
             return;
