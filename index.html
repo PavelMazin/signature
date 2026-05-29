@@ -998,7 +998,7 @@
                 </tr>
                 <tr>
                   <td style="padding:16px 0 0 0;">
-                    <img id="sig-logo" src="https://pavelmazin.github.io/signature/assets/logos/old_logo.png" alt="Atlantic Express Corp." width="130" height="36" style="display:block; border:0; outline:none; text-decoration:none;">
+                    <a id="sig-logo-link" href="https://www.atlanticexpresscorp.com/" target="_blank" style="display:inline-block; border:0; text-decoration:none;"><img id="sig-logo" src="https://pavelmazin.github.io/signature/assets/logos/old_logo.png" alt="Atlantic Express Corp." width="130" height="36" style="display:block; border:0; outline:none; text-decoration:none;"></a>
                   </td>
                 </tr>
               </table>
@@ -1043,9 +1043,9 @@
   const A_AVATARS = ASSET_BASE + 'assets/avatars/';
 
   const COMPANIES = {
-    aec:      { name: 'Atlantic Express Corp.',  website: 'atlanticexpresscorp.com',  logo: 'old_logo.png',                    logoW: 130, logoH: 36 },
-    jumbobee: { name: 'JumboBee',                website: 'jumbobee.com',             logo: 'JumboBee_logo.png',               logoW: 149, logoH: 22 },
-    apc:      { name: 'Atlantic Project Cargo',  website: 'atlanticprojectcargo.com', logo: 'Atlantic_Project_Cargo_logo.png', logoW: 210, logoH: 30 }
+    aec:      { name: 'Atlantic Express Corp.',  website: 'atlanticexpresscorp.com',  site: 'https://www.atlanticexpresscorp.com/', logo: 'old_logo.png',                    logoW: 130, logoH: 36 },
+    jumbobee: { name: 'JumboBee',                website: 'jumbobee.com',             site: 'https://jumbobee.com/',                logo: 'JumboBee_logo.png',               logoW: 149, logoH: 22 },
+    apc:      { name: 'Atlantic Project Cargo',  website: 'atlanticprojectcargo.com', site: 'https://atlanticprojectcargo.com/',     logo: 'Atlantic_Project_Cargo_logo.png', logoW: 210, logoH: 30 }
   };
 
   /* Per-company social links (order = display order). icon = sig-social-<icon>-<sfx>.svg */
@@ -1351,7 +1351,7 @@
             <div style="color:${txtSub};font-size:14px;line-height:1;font-family:Helvetica,Arial,sans-serif;font-weight:400;">${escHtml(d.title)}</div>
           </td>
           <td style="padding:16px 0;vertical-align:middle;white-space:nowrap;text-align:right;">
-            <img src="${A_LOGOS}${logo}" width="${logoW}" height="${logoH}" alt="${escHtml(company.name)}" style="display:block;margin-left:auto;border:0;width:${logoW}px;height:${logoH}px;">
+            <a href="${company.site}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}${logo}" width="${logoW}" height="${logoH}" alt="${escHtml(company.name)}" style="display:block;margin-left:auto;border:0;width:${logoW}px;height:${logoH}px;"></a>
           </td>
         </tr></table>
       </td></tr>
@@ -1470,7 +1470,7 @@
                 </table>
               </td>
               <td style="vertical-align:top;text-align:right;padding-left:20px;white-space:nowrap;">
-                <img src="${A_LOGOS}${logo}" width="${logoW}" height="${logoH}" alt="${escHtml(company.name)}" style="display:block;margin-left:auto;border:0;width:${logoW}px;height:${logoH}px;">
+                <a href="${company.site}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}${logo}" width="${logoW}" height="${logoH}" alt="${escHtml(company.name)}" style="display:block;margin-left:auto;border:0;width:${logoW}px;height:${logoH}px;"></a>
               </td>
             </tr>
             ${extraRow}
@@ -1596,6 +1596,8 @@
 
     sigLogo.src = A_LOGOS + company.logo;
     sigLogo.alt = company.name;
+    const sigLogoLink = document.getElementById('sig-logo-link');
+    if (sigLogoLink) sigLogoLink.href = company.site;
     sigLogo.width = company.logoW;
     sigLogo.height = company.logoH;
     sigLogo.style.width = company.logoW + 'px';
