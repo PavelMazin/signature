@@ -818,6 +818,9 @@
               <label class="company-option">
                 <input type="radio" name="company" value="apc" /> Atlantic Project Cargo
               </label>
+              <label class="company-option">
+                <input type="radio" name="company" value="paec" /> Pacific Atlantic Express Corp.
+              </label>
             </div>
           </div>
 
@@ -1046,12 +1049,16 @@
   const COMPANIES = {
     aec:      { name: 'Atlantic Express Corp.',  website: 'atlanticexpresscorp.com',  site: 'https://www.atlanticexpresscorp.com/', logo: 'old_logo.png',                    logoW: 130, logoH: 36 },
     jumbobee: { name: 'JumboBee',                website: 'jumbobee.com',             site: 'https://jumbobee.com/',                logo: 'JumboBee_logo.png',               logoW: 149, logoH: 22 },
-    apc:      { name: 'Atlantic Project Cargo',  website: 'atlanticprojectcargo.com', site: 'https://atlanticprojectcargo.com/',     logo: 'Atlantic_Project_Cargo_logo.png', logoW: 210, logoH: 30 }
+    apc:      { name: 'Atlantic Project Cargo',  website: 'atlanticprojectcargo.com', site: 'https://atlanticprojectcargo.com/',     logo: 'Atlantic_Project_Cargo_logo.png', logoW: 210, logoH: 30 },
+    paec:     { name: 'Pacific Atlantic Express Corp.', website: 'atlanticexpresscorp.com', site: 'https://www.atlanticexpresscorp.com/', logo: 'sig-logo-paec-light.svg', logoW: 128, logoH: 44 }
   };
 
   /* Per-company social links (order = display order). icon = sig-social-<icon>-<sfx>.svg */
   const SOCIALS = {
     aec: [
+      { icon: 'facebook',  label: 'Facebook',  url: 'https://www.facebook.com/atlanticexpresscorporation/' },
+    ],
+    paec: [
       { icon: 'facebook',  label: 'Facebook',  url: 'https://www.facebook.com/atlanticexpresscorporation/' },
     ],
     jumbobee: [
@@ -1322,13 +1329,15 @@
       globe:   isJB ? (light ? 'sig-icon-jb-globe-light.svg'   : 'sig-icon-jb-globe-dark.svg')   : (isAPC ? (light ? 'sig-icon-apc-globe-light.svg'   : 'sig-icon-apc-globe-dark.svg')   : 'sig-icon-globe.svg'),
     };
     const icoTd = (type) => `<td style="padding-right:10px;vertical-align:middle;"><img src="${A_ICONS}${iconMap[type]}" width="28" height="28" alt="" style="display:block;border:0;width:28px;height:28px;"></td>`;
+    const isPAEC    = d.company === 'paec';
     const logoMap   = {
       aec:      light ? 'sig-logo-aec-light.svg' : 'sig-logo-aec-dark.svg',
       jumbobee: light ? 'sig-logo-jb-dark.svg' : 'sig-logo-jb-white.svg',
       apc:      light ? 'sig-logo-apc-dark.svg' : 'sig-logo-apc-white.svg',
+      paec:     light ? 'sig-logo-paec-light.svg' : 'sig-logo-paec-dark.svg',
     };
-    const logoH = isAPC ? 26 : (isJB ? 32 : 36);
-    const logoW = isAPC ? 186 : 130;
+    const logoH = isPAEC ? 44 : (isAPC ? 26 : (isJB ? 32 : 36));
+    const logoW = isPAEC ? 128 : (isAPC ? 186 : 130);
     const company = COMPANIES[d.company];
     const logo    = logoMap[d.company] || logoMap.aec;
     const website = (d.website || company.website).replace(/^https?:\/\//, '');
@@ -1420,13 +1429,15 @@
     };
     const icoTd = (type, pb) => `<td style="padding-right:10px;padding-bottom:${pb};vertical-align:middle;"><img src="${A_ICONS}${iconMap[type]}" width="28" height="28" alt="" style="display:block;border:0;width:28px;height:28px;"></td>`;
 
+    const isPAEC       = d.company === 'paec';
     const logoMap = {
       aec:      light ? 'sig-logo-aec-light.svg' : 'sig-logo-aec-dark.svg',
       jumbobee: light ? 'sig-logo-jb-dark.svg' : 'sig-logo-jb-white.svg',
       apc:      light ? 'sig-logo-apc-dark.svg' : 'sig-logo-apc-white.svg',
+      paec:     light ? 'sig-logo-paec-light.svg' : 'sig-logo-paec-dark.svg',
     };
-    const logoH = isAPC ? 26 : (isJB ? 32 : 36);
-    const logoW = isAPC ? 186 : 130;
+    const logoH = isPAEC ? 44 : (isAPC ? 26 : (isJB ? 32 : 36));
+    const logoW = isPAEC ? 128 : (isAPC ? 186 : 130);
     const company = COMPANIES[d.company];
     const logo    = logoMap[d.company] || logoMap.aec;
     const website = (d.website || company.website).replace(/^https?:\/\//, '');
