@@ -1050,10 +1050,10 @@
     aec:      { name: 'Atlantic Express Corp.',  website: 'atlanticexpresscorp.com',  site: 'https://www.atlanticexpresscorp.com/', logo: 'old_logo.png',                    logoW: 130, logoH: 36 },
     jumbobee: { name: 'JumboBee',                website: 'jumbobee.com',             site: 'https://jumbobee.com/',                logo: 'JumboBee_logo.png',               logoW: 149, logoH: 22 },
     apc:      { name: 'Atlantic Project Cargo',  website: 'atlanticprojectcargo.com', site: 'https://atlanticprojectcargo.com/',     logo: 'Atlantic_Project_Cargo_logo.png', logoW: 210, logoH: 30 },
-    paec:     { name: 'Pacific Atlantic Express Corp.', website: 'atlanticexpresscorp.com', site: 'https://www.atlanticexpresscorp.com/', logo: 'sig-logo-paec-light.svg', logoW: 128, logoH: 44 }
+    paec:     { name: 'Pacific Atlantic Express Corp.', website: 'atlanticexpresscorp.com', site: 'https://www.atlanticexpresscorp.com/', logo: 'sig-logo-paec-light.png', logoW: 128, logoH: 44 }
   };
 
-  /* Per-company social links (order = display order). icon = sig-social-<icon>-<sfx>.svg */
+  /* Per-company social links (order = display order). icon = sig-social-<icon>-<sfx>.png */
   const SOCIALS = {
     aec: [
       { icon: 'facebook',  label: 'Facebook',  url: 'https://www.facebook.com/atlanticexpresscorporation/' },
@@ -1084,7 +1084,7 @@
   function socialCells(companyKey, sfx, base) {
     const list = SOCIALS[companyKey] || [];
     return list.map(s =>
-      `<td style="padding-left:10px;"><a href="${s.url}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${base}sig-social-${s.icon}-${sfx}.svg" width="16" height="16" alt="${s.label}" style="display:block;border:0;"></a></td>`
+      `<td style="padding-left:10px;"><a href="${s.url}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${base}sig-social-${s.icon}-${sfx}.png" width="16" height="16" alt="${s.label}" style="display:block;border:0;"></a></td>`
     ).join('');
   }
 
@@ -1323,18 +1323,18 @@
     const ftTxt     = light ? '#ffffff' : '#4F4F4F';
     const socSfx    = light ? 'white'  : 'gray';
     const iconMap = {
-      phone:   isJB ? (light ? 'sig-icon-jb-phone-light.svg'   : 'sig-icon-jb-phone-dark.svg')   : (isAPC ? (light ? 'sig-icon-apc-phone-light.svg'   : 'sig-icon-apc-phone-dark.svg')   : 'sig-icon-phone.svg'),
-      email:   isJB ? (light ? 'sig-icon-jb-email-light.svg'   : 'sig-icon-jb-email-dark.svg')   : (isAPC ? (light ? 'sig-icon-apc-email-light.svg'   : 'sig-icon-apc-email-dark.svg')   : 'sig-icon-email.svg'),
-      address: isJB ? (light ? 'sig-icon-jb-address-light.svg' : 'sig-icon-jb-address-dark.svg') : (isAPC ? (light ? 'sig-icon-apc-address-light.svg' : 'sig-icon-apc-address-dark.svg') : 'sig-icon-address.svg'),
-      globe:   isJB ? (light ? 'sig-icon-jb-globe-light.svg'   : 'sig-icon-jb-globe-dark.svg')   : (isAPC ? (light ? 'sig-icon-apc-globe-light.svg'   : 'sig-icon-apc-globe-dark.svg')   : 'sig-icon-globe.svg'),
+      phone:   isJB ? (light ? 'sig-icon-jb-phone-light.png'   : 'sig-icon-jb-phone-dark.png')   : (isAPC ? (light ? 'sig-icon-apc-phone-light.png'   : 'sig-icon-apc-phone-dark.png')   : 'sig-icon-phone.png'),
+      email:   isJB ? (light ? 'sig-icon-jb-email-light.png'   : 'sig-icon-jb-email-dark.png')   : (isAPC ? (light ? 'sig-icon-apc-email-light.png'   : 'sig-icon-apc-email-dark.png')   : 'sig-icon-email.png'),
+      address: isJB ? (light ? 'sig-icon-jb-address-light.png' : 'sig-icon-jb-address-dark.png') : (isAPC ? (light ? 'sig-icon-apc-address-light.png' : 'sig-icon-apc-address-dark.png') : 'sig-icon-address.png'),
+      globe:   isJB ? (light ? 'sig-icon-jb-globe-light.png'   : 'sig-icon-jb-globe-dark.png')   : (isAPC ? (light ? 'sig-icon-apc-globe-light.png'   : 'sig-icon-apc-globe-dark.png')   : 'sig-icon-globe.png'),
     };
     const icoTd = (type) => `<td style="padding-right:10px;vertical-align:middle;"><img src="${A_ICONS}${iconMap[type]}" width="28" height="28" alt="" style="display:block;border:0;width:28px;height:28px;"></td>`;
     const isPAEC    = d.company === 'paec';
     const logoMap   = {
-      aec:      light ? 'sig-logo-aec-light.svg' : 'sig-logo-aec-dark.svg',
-      jumbobee: light ? 'sig-logo-jb-dark.svg' : 'sig-logo-jb-white.svg',
-      apc:      light ? 'sig-logo-apc-dark.svg' : 'sig-logo-apc-white.svg',
-      paec:     light ? 'sig-logo-paec-light.svg' : 'sig-logo-paec-dark.svg',
+      aec:      light ? 'sig-logo-aec-light.png' : 'sig-logo-aec-dark.png',
+      jumbobee: light ? 'sig-logo-jb-dark.png' : 'sig-logo-jb-white.png',
+      apc:      light ? 'sig-logo-apc-dark.png' : 'sig-logo-apc-white.png',
+      paec:     light ? 'sig-logo-paec-light.png' : 'sig-logo-paec-dark.png',
     };
     const logoH = isPAEC ? 44 : (isAPC ? 26 : (isJB ? 32 : 36));
     const logoW = isPAEC ? 128 : (isAPC ? 186 : 130);
@@ -1422,19 +1422,19 @@
     const ftTxt        = light ? '#ffffff' : '#4F4F4F';
     const socSfx       = light ? 'white'   : 'gray';
     const iconMap = {
-      phone:   isJB ? (light ? 'sig-icon-jb-phone-light.svg'   : 'sig-icon-jb-phone-dark.svg')   : (isAPC ? (light ? 'sig-icon-apc-phone-light.svg'   : 'sig-icon-apc-phone-dark.svg')   : 'sig-icon-phone.svg'),
-      email:   isJB ? (light ? 'sig-icon-jb-email-light.svg'   : 'sig-icon-jb-email-dark.svg')   : (isAPC ? (light ? 'sig-icon-apc-email-light.svg'   : 'sig-icon-apc-email-dark.svg')   : 'sig-icon-email.svg'),
-      address: isJB ? (light ? 'sig-icon-jb-address-light.svg' : 'sig-icon-jb-address-dark.svg') : (isAPC ? (light ? 'sig-icon-apc-address-light.svg' : 'sig-icon-apc-address-dark.svg') : 'sig-icon-address.svg'),
-      globe:   isJB ? (light ? 'sig-icon-jb-globe-light.svg'   : 'sig-icon-jb-globe-dark.svg')   : (isAPC ? (light ? 'sig-icon-apc-globe-light.svg'   : 'sig-icon-apc-globe-dark.svg')   : 'sig-icon-globe.svg'),
+      phone:   isJB ? (light ? 'sig-icon-jb-phone-light.png'   : 'sig-icon-jb-phone-dark.png')   : (isAPC ? (light ? 'sig-icon-apc-phone-light.png'   : 'sig-icon-apc-phone-dark.png')   : 'sig-icon-phone.png'),
+      email:   isJB ? (light ? 'sig-icon-jb-email-light.png'   : 'sig-icon-jb-email-dark.png')   : (isAPC ? (light ? 'sig-icon-apc-email-light.png'   : 'sig-icon-apc-email-dark.png')   : 'sig-icon-email.png'),
+      address: isJB ? (light ? 'sig-icon-jb-address-light.png' : 'sig-icon-jb-address-dark.png') : (isAPC ? (light ? 'sig-icon-apc-address-light.png' : 'sig-icon-apc-address-dark.png') : 'sig-icon-address.png'),
+      globe:   isJB ? (light ? 'sig-icon-jb-globe-light.png'   : 'sig-icon-jb-globe-dark.png')   : (isAPC ? (light ? 'sig-icon-apc-globe-light.png'   : 'sig-icon-apc-globe-dark.png')   : 'sig-icon-globe.png'),
     };
     const icoTd = (type, pb) => `<td style="padding-right:10px;padding-bottom:${pb};vertical-align:middle;"><img src="${A_ICONS}${iconMap[type]}" width="28" height="28" alt="" style="display:block;border:0;width:28px;height:28px;"></td>`;
 
     const isPAEC       = d.company === 'paec';
     const logoMap = {
-      aec:      light ? 'sig-logo-aec-light.svg' : 'sig-logo-aec-dark.svg',
-      jumbobee: light ? 'sig-logo-jb-dark.svg' : 'sig-logo-jb-white.svg',
-      apc:      light ? 'sig-logo-apc-dark.svg' : 'sig-logo-apc-white.svg',
-      paec:     light ? 'sig-logo-paec-light.svg' : 'sig-logo-paec-dark.svg',
+      aec:      light ? 'sig-logo-aec-light.png' : 'sig-logo-aec-dark.png',
+      jumbobee: light ? 'sig-logo-jb-dark.png' : 'sig-logo-jb-white.png',
+      apc:      light ? 'sig-logo-apc-dark.png' : 'sig-logo-apc-white.png',
+      paec:     light ? 'sig-logo-paec-light.png' : 'sig-logo-paec-dark.png',
     };
     const logoH = isPAEC ? 44 : (isAPC ? 26 : (isJB ? 32 : 36));
     const logoW = isPAEC ? 128 : (isAPC ? 186 : 130);
