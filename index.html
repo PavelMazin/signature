@@ -656,6 +656,7 @@
   .template-option.t3-opt.visible { display: flex; }
   .field.t3-only { display: none; }
   .field.t3-only.visible { display: block; }
+  .field.field-hidden { display: none; }
 
   .theme-section { display: none; margin-top: 14px; }
   .theme-section.visible { display: block; }
@@ -680,7 +681,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-09-21 20:30</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-09-21 21:05</div>
 
   <!-- Header -->
   <div class="header">
@@ -832,7 +833,7 @@
             </div>
           </div>
 
-          <div class="field">
+          <div class="field" id="avatarField">
             <div class="avatar-section">
               <label class="avatar-toggle">
                 <input type="checkbox" id="avatarToggle" /> Show avatar in signature
@@ -909,7 +910,7 @@
             <input id="mobile" type="text" placeholder="+(1) 248-826-7233" />
           </div>
 
-          <div class="field">
+          <div class="field" id="emailField">
             <label for="email">Work email</label>
             <input id="email" type="text" value="[email]" />
           </div>
@@ -1725,6 +1726,9 @@
     copyTarget3.style.display = isT3 ? '' : 'none';
     document.getElementById('themeSection').classList.toggle('visible', isT1 || isT2);
     document.querySelectorAll('.field.t3-only').forEach(el => el.classList.toggle('visible', isT3 && currentCompany === 'jumbobee'));
+    // Template 3 shows no email at all, and its APC layout has no photo
+    document.getElementById('emailField').classList.toggle('field-hidden', isT3);
+    document.getElementById('avatarField').classList.toggle('field-hidden', isT3 && currentCompany === 'apc');
     if (isT1) copyTarget1.innerHTML = buildT1HTML(getT1Data());
     if (isT2) copyTarget2.innerHTML = buildT2HTML(getT1Data());
     if (isT3) copyTarget3.innerHTML = buildTemplate3(getT1Data());
