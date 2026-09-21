@@ -652,8 +652,8 @@
   }
   .template-option input[type="radio"] { margin: 0; accent-color: var(--accent); width: 15px; height: 15px; }
 
-  .template-option.jb-only { display: none; }
-  .template-option.jb-only.visible { display: flex; }
+  .template-option.t3-opt { display: none; }
+  .template-option.t3-opt.visible { display: flex; }
   .field.t3-only { display: none; }
   .field.t3-only.visible { display: block; }
 
@@ -680,7 +680,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-09-21 19:45</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-09-21 20:30</div>
 
   <!-- Header -->
   <div class="header">
@@ -861,8 +861,8 @@
               <label class="template-option">
                 <input type="radio" name="template" value="template2" /> Template 2
               </label>
-              <label class="template-option jb-only">
-                <input type="radio" name="template" value="template3" /> Template 3 &middot; JumboBee
+              <label class="template-option t3-opt">
+                <input type="radio" name="template" value="template3" /> Template 3
               </label>
             </div>
           </div>
@@ -1597,6 +1597,91 @@
 </table>`;
   }
 
+  /* ---- Template 3 — Atlantic Project Cargo variant ---- */
+  function buildT3ApcHTML(d) {
+    const NAVY  = '#222572';
+    const MUTED = '#989898';
+    const LINE  = '#DAD9D9';
+    const FF    = "'Montserrat',Helvetica,Arial,sans-serif";
+    const company = COMPANIES.apc;
+    const website = (d.website || company.website).replace(/^https?:\/\//, '');
+
+    const certs = [
+      { file: 'sig-cert-opca.png', label: 'OPCA' },
+      { file: 'sig-cert-iata.png', label: 'IATA' },
+      { file: 'sig-cert-fmc.png',  label: 'FMC'  }
+    ];
+    const certCells = certs.map((c, i) =>
+      `<td style="padding-left:${i ? 7 : 0}px;"><img src="${A_ICONS}${c.file}" width="30" height="30" alt="${c.label}" style="display:block;width:30px;height:30px;border:0;outline:none;"></td>`
+    ).join('');
+
+    const order = ['instagram', 'facebook', 'linkedin', 'youtube', 'x'];
+    const urls = {};
+    (SOCIALS.apc || []).forEach(x => { urls[x.icon] = x.url; });
+    const socialCellsT3 = order.filter(k => urls[k]).map((k, i) =>
+      `<td style="padding-left:${i ? 12 : 0}px;"><a href="${urls[k]}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-t3-${k}.png" width="24" height="24" alt="${k}" style="display:block;width:24px;height:24px;border:0;outline:none;"></a></td>`
+    ).join('');
+
+    const extraBlock = d.hasExtra
+      ? `<div style="padding-top:8px;font-family:${FF};font-size:12px;line-height:18px;color:${NAVY};">${d.extraHTML}</div>`
+      : '';
+
+    return `<table cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:600px;border-collapse:collapse;background:#ffffff;font-family:${FF};border-radius:6px;">
+  <tr>
+    <td width="213" bgcolor="#ffffff" style="width:213px;padding:24px 18px;background:#ffffff;vertical-align:top;">
+      <table cellpadding="0" cellspacing="0" border="0" width="173" style="width:173px;border-collapse:collapse;">
+        <tr>
+          <td style="padding:0 0 24px 0;font-family:${FF};font-size:14px;line-height:26px;color:#000000;letter-spacing:0.28px;white-space:nowrap;">Thank you for your time,</td>
+        </tr>
+        <tr>
+          <td style="padding:0 0 12px 0;line-height:0;font-size:0;">
+            <a href="${company.site}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}sig-logo-apc-t3.png" width="173" height="24" alt="${escHtml(company.name)}" style="display:block;width:173px;height:24px;border:0;outline:none;"></a>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 0 12px 0;font-family:${FF};font-size:10px;line-height:17px;color:${MUTED};letter-spacing:0.2px;white-space:nowrap;">An Affiliate Atlantic Express Corp.</td>
+        </tr>
+        <tr>
+          <td style="padding:0 0 24px 0;">
+            <table cellpadding="0" cellspacing="0" border="0" width="173" style="width:173px;border-collapse:collapse;">
+              <tr>
+                <td style="font-family:${FF};font-size:10px;line-height:17px;color:${MUTED};letter-spacing:0.2px;vertical-align:middle;white-space:nowrap;">Member of</td>
+                <td align="right" style="vertical-align:middle;">
+                  <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-left:auto;"><tr>${certCells}</tr></table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr>${socialCellsT3}</tr></table>
+          </td>
+        </tr>
+      </table>
+    </td>
+    <td bgcolor="#ffffff" style="padding:74px 18px 0 0;background:#ffffff;vertical-align:top;">
+      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;">
+        <tr>
+          <td style="border-left:1px solid ${LINE};padding:0 0 8px 18px;font-family:${FF};color:${NAVY};letter-spacing:0.26px;">
+            <div style="font-family:${FF};font-size:13px;line-height:17px;font-weight:500;color:${NAVY};padding:0 0 4px 0;">${escHtml(d.name)}, ${escHtml(d.title)}</div>
+            <div style="font-family:${FF};font-size:13px;line-height:20px;color:${NAVY};padding:0 0 4px 0;">${escHtml(d.address)}</div>
+            <div style="font-family:${FF};font-size:13px;line-height:20px;color:${NAVY};padding:0 0 4px 0;">Mobile line: <a href="tel:${escHtml((d.phone||'').replace(/[^0-9+]/g,''))}" style="color:${NAVY};text-decoration:none;">${escHtml(d.phone)}</a></div>
+            <div style="font-family:${FF};font-size:13px;line-height:20px;color:${NAVY};"><a href="https://${escHtml(website)}" target="_blank" style="color:${NAVY};text-decoration:underline;">${escHtml(website)}</a></div>
+            ${extraBlock}
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>`;
+  }
+
+  /* Template 3 renders a different layout per company */
+  function buildTemplate3(d) {
+    return d.company === 'apc' ? buildT3ApcHTML(d) : buildT3HTML(d);
+  }
+
   function getT1Data() {
     const company = COMPANIES[currentCompany];
     return {
@@ -1639,17 +1724,17 @@
     copyTarget2.style.display = isT2 ? '' : 'none';
     copyTarget3.style.display = isT3 ? '' : 'none';
     document.getElementById('themeSection').classList.toggle('visible', isT1 || isT2);
-    document.querySelectorAll('.field.t3-only').forEach(el => el.classList.toggle('visible', isT3));
+    document.querySelectorAll('.field.t3-only').forEach(el => el.classList.toggle('visible', isT3 && currentCompany === 'jumbobee'));
     if (isT1) copyTarget1.innerHTML = buildT1HTML(getT1Data());
     if (isT2) copyTarget2.innerHTML = buildT2HTML(getT1Data());
-    if (isT3) copyTarget3.innerHTML = buildT3HTML(getT1Data());
+    if (isT3) copyTarget3.innerHTML = buildTemplate3(getT1Data());
   }
 
-  /* ---- Template 3 exists for JumboBee only ---- */
+  /* ---- Template 3 exists for JumboBee and Atlantic Project Cargo ---- */
   function updateTemplateAvailability() {
-    const isJB = currentCompany === 'jumbobee';
-    document.querySelectorAll('.template-option.jb-only').forEach(el => el.classList.toggle('visible', isJB));
-    if (!isJB && currentTemplate === 'template3') {
+    const hasT3 = currentCompany === 'jumbobee' || currentCompany === 'apc';
+    document.querySelectorAll('.template-option.t3-opt').forEach(el => el.classList.toggle('visible', hasT3));
+    if (!hasT3 && currentTemplate === 'template3') {
       currentTemplate = 'classic';
       const r = document.querySelector('input[name="template"][value="classic"]');
       if (r) r.checked = true;
@@ -1743,7 +1828,7 @@
 
     if (currentTemplate === 'template1') copyTarget1.innerHTML = buildT1HTML(getT1Data());
     if (currentTemplate === 'template2') copyTarget2.innerHTML = buildT2HTML(getT1Data());
-    if (currentTemplate === 'template3') copyTarget3.innerHTML = buildT3HTML(getT1Data());
+    if (currentTemplate === 'template3') copyTarget3.innerHTML = buildTemplate3(getT1Data());
 
     saveValues();
   }
@@ -1756,6 +1841,7 @@
     updateTemplateAvailability();
     const company = COMPANIES[currentCompany];
     fields.website.value = company.website;
+    switchTemplate();
     updateSignature();
   });
 
@@ -1953,7 +2039,7 @@
       prevCustomHtml = customTarget.innerHTML;
       const d = getT1Data();
       if (avatarFileName) d.avatarSrc = A_AVATARS + avatarFileName;
-      customTarget.innerHTML = isT1 ? buildT1HTML(d) : isT2 ? buildT2HTML(d) : buildT3HTML(d);
+      customTarget.innerHTML = isT1 ? buildT1HTML(d) : isT2 ? buildT2HTML(d) : buildTemplate3(d);
     }
 
     const activeTarget = isCustom ? customTarget : copyTarget;
