@@ -652,6 +652,11 @@
   }
   .template-option input[type="radio"] { margin: 0; accent-color: var(--accent); width: 15px; height: 15px; }
 
+  .template-option.jb-only { display: none; }
+  .template-option.jb-only.visible { display: flex; }
+  .field.t3-only { display: none; }
+  .field.t3-only.visible { display: block; }
+
   .theme-section { display: none; margin-top: 14px; }
   .theme-section.visible { display: block; }
   .theme-toggle { display: flex; gap: 6px; }
@@ -675,7 +680,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-07-21 19:41</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-09-21 19:45</div>
 
   <!-- Header -->
   <div class="header">
@@ -856,6 +861,9 @@
               <label class="template-option">
                 <input type="radio" name="template" value="template2" /> Template 2
               </label>
+              <label class="template-option jb-only">
+                <input type="radio" name="template" value="template3" /> Template 3 &middot; JumboBee
+              </label>
             </div>
           </div>
           <div class="theme-section" id="themeSection">
@@ -889,6 +897,16 @@
           <div class="field">
             <label for="phone">Phone number</label>
             <input id="phone" type="text" value="[phone number]" />
+          </div>
+
+          <div class="field t3-only">
+            <label for="phoneExt">Extension <span style="font-weight:400;color:var(--text-muted);">— optional</span></label>
+            <input id="phoneExt" type="text" placeholder="313" />
+          </div>
+
+          <div class="field t3-only">
+            <label for="mobile">Mobile phone <span style="font-weight:400;color:var(--text-muted);">— optional</span></label>
+            <input id="mobile" type="text" placeholder="+(1) 248-826-7233" />
           </div>
 
           <div class="field">
@@ -1012,6 +1030,7 @@
             </div>
             <div class="signature-block" id="copyTarget1" style="display:none;"></div>
             <div class="signature-block" id="copyTarget2" style="display:none;"></div>
+            <div class="signature-block" id="copyTarget3" style="display:none;"></div>
           </div>
         </div>
 
@@ -1097,7 +1116,9 @@
     phone:    document.getElementById('phone'),
     email:    document.getElementById('email'),
     website:  document.getElementById('website'),
-    address:  document.getElementById('address')
+    address:  document.getElementById('address'),
+    phoneExt: document.getElementById('phoneExt'),
+    mobile:   document.getElementById('mobile')
   };
 
   const sigName       = document.getElementById('sig-name');
@@ -1126,6 +1147,7 @@
   const copyTarget    = document.getElementById('copyTarget');
   const copyTarget1   = document.getElementById('copyTarget1');
   const copyTarget2   = document.getElementById('copyTarget2');
+  const copyTarget3   = document.getElementById('copyTarget3');
 
   const companyOptions  = document.getElementById('companyOptions');
   const avatarToggle    = document.getElementById('avatarToggle');
@@ -1509,6 +1531,72 @@
 </table>`;
   }
 
+  /* ---- Template 3 builder (JumboBee only, light) ---- */
+  function buildT3HTML(d) {
+    const TXT     = '#1A1A1A';
+    const GREEN   = '#2E5630';
+    const CARD    = '#FBFBFB';
+    const BORDER  = '#E9E9E9';
+    const SUB     = '#4F4F4F';
+    const FF      = 'Helvetica,Arial,sans-serif';
+    const company = COMPANIES.jumbobee;
+    const website = (d.website || company.website).replace(/^https?:\/\//, '');
+    const telHref = (v) => 'tel:' + String(v).replace(/[^0-9+]/g, '');
+
+    const row = (icon, html, pb) => `<tr>
+              <td width="16" style="width:16px;padding:0 6px ${pb} 0;vertical-align:middle;"><img src="${A_ICONS}sig-icon-t3-${icon}.png" width="16" height="16" alt="" style="display:block;width:16px;height:16px;border:0;outline:none;"></td>
+              <td style="padding:0 0 ${pb} 0;vertical-align:middle;font-family:${FF};font-size:14px;line-height:20px;color:${TXT};white-space:nowrap;">${html}</td>
+            </tr>`;
+
+    const items = [];
+    items.push({ icon: 'address', html: escHtml(d.address) });
+    items.push({ icon: 'phone', html:
+      `<a href="${telHref(d.phone)}" style="color:${TXT};text-decoration:none;">${escHtml(d.phone)}${d.ext ? ',' : ''}</a>` +
+      (d.ext ? `&nbsp;&nbsp;Ext.&nbsp;${escHtml(d.ext)}` : '') });
+    if (d.mobile) items.push({ icon: 'mobile', html:
+      `<a href="${telHref(d.mobile)}" style="color:${TXT};text-decoration:none;">${escHtml(d.mobile)}</a>` });
+    items.push({ icon: 'globe', html:
+      `<a href="https://${escHtml(website)}" target="_blank" style="color:${TXT};text-decoration:underline;">${escHtml(website)}</a>` });
+
+    const contactRows = items
+      .map((c, i) => row(c.icon, c.html, i < items.length - 1 ? '6px' : '0'))
+      .join('\n            ');
+
+    const photoHtml = d.showAvatar && d.avatarSrc
+      ? `<img src="${d.avatarSrc}" width="80" height="80" alt="Photo" style="display:block;width:80px;height:80px;border-radius:50%;border:0;outline:none;object-fit:cover;margin:0 auto 12px auto;">`
+      : '';
+
+    const extraRow = d.hasExtra
+      ? `<tr><td style="padding:16px 0 0 0;font-family:${FF};font-size:12px;line-height:18px;color:${SUB};">${d.extraHTML}</td></tr>`
+      : '';
+
+    return `<table cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:600px;border-collapse:collapse;background:${CARD};font-family:${FF};border-radius:4px;">
+  <tr>
+    <td width="204" bgcolor="${CARD}" style="width:204px;padding:22px 20px;border-right:1px solid ${BORDER};background:${CARD};vertical-align:middle;text-align:center;">
+      ${photoHtml}<div style="font-family:${FF};font-size:14px;line-height:20px;font-weight:700;color:${TXT};">${escHtml(d.name)}</div>
+      <div style="font-family:${FF};font-size:12px;line-height:20px;font-weight:600;color:${GREEN};">${escHtml(d.title)}</div>
+    </td>
+    <td bgcolor="${CARD}" style="padding:22px 32px 24px 32px;background:${CARD};vertical-align:middle;">
+      <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+        <tr>
+          <td style="padding:0 0 40px 0;line-height:0;font-size:0;">
+            <a href="${company.site}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}sig-logo-jb-t3.png" width="108" height="16" alt="${escHtml(company.name)}" style="display:block;width:108px;height:16px;border:0;outline:none;"></a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+            ${contactRows}
+            </table>
+          </td>
+        </tr>
+        ${extraRow}
+      </table>
+    </td>
+  </tr>
+</table>`;
+  }
+
   function getT1Data() {
     const company = COMPANIES[currentCompany];
     return {
@@ -1518,6 +1606,8 @@
       email:      fields.email.value    || '[email]',
       address:    fields.address.value  || '[address]',
       website:    fields.website.value  || company.website,
+      ext:        fields.phoneExt.value.trim(),
+      mobile:     fields.mobile.value.trim(),
       company:    currentCompany,
       theme:      currentTheme,
       extraHTML:  sanitizeHTML(extraText.innerHTML),
@@ -1543,12 +1633,29 @@
   function switchTemplate() {
     const isT1 = currentTemplate === 'template1';
     const isT2 = currentTemplate === 'template2';
-    copyTarget.style.display  = (!isT1 && !isT2) ? '' : 'none';
+    const isT3 = currentTemplate === 'template3';
+    copyTarget.style.display  = (!isT1 && !isT2 && !isT3) ? '' : 'none';
     copyTarget1.style.display = isT1 ? '' : 'none';
     copyTarget2.style.display = isT2 ? '' : 'none';
+    copyTarget3.style.display = isT3 ? '' : 'none';
     document.getElementById('themeSection').classList.toggle('visible', isT1 || isT2);
+    document.querySelectorAll('.field.t3-only').forEach(el => el.classList.toggle('visible', isT3));
     if (isT1) copyTarget1.innerHTML = buildT1HTML(getT1Data());
     if (isT2) copyTarget2.innerHTML = buildT2HTML(getT1Data());
+    if (isT3) copyTarget3.innerHTML = buildT3HTML(getT1Data());
+  }
+
+  /* ---- Template 3 exists for JumboBee only ---- */
+  function updateTemplateAvailability() {
+    const isJB = currentCompany === 'jumbobee';
+    document.querySelectorAll('.template-option.jb-only').forEach(el => el.classList.toggle('visible', isJB));
+    if (!isJB && currentTemplate === 'template3') {
+      currentTemplate = 'classic';
+      const r = document.querySelector('input[name="template"][value="classic"]');
+      if (r) r.checked = true;
+      highlightTemplateOption();
+      switchTemplate();
+    }
   }
 
   document.getElementById('templateOptions').addEventListener('change', e => {
@@ -1636,6 +1743,7 @@
 
     if (currentTemplate === 'template1') copyTarget1.innerHTML = buildT1HTML(getT1Data());
     if (currentTemplate === 'template2') copyTarget2.innerHTML = buildT2HTML(getT1Data());
+    if (currentTemplate === 'template3') copyTarget3.innerHTML = buildT3HTML(getT1Data());
 
     saveValues();
   }
@@ -1645,6 +1753,7 @@
     if (e.target.type !== 'radio') return;
     currentCompany = e.target.value;
     highlightCompanyOption();
+    updateTemplateAvailability();
     const company = COMPANIES[currentCompany];
     fields.website.value = company.website;
     updateSignature();
@@ -1834,8 +1943,9 @@
     copyStatus.textContent = '';
     const isT1 = currentTemplate === 'template1';
     const isT2 = currentTemplate === 'template2';
-    const isCustom = isT1 || isT2;
-    const customTarget = isT1 ? copyTarget1 : isT2 ? copyTarget2 : null;
+    const isT3 = currentTemplate === 'template3';
+    const isCustom = isT1 || isT2 || isT3;
+    const customTarget = isT1 ? copyTarget1 : isT2 ? copyTarget2 : isT3 ? copyTarget3 : null;
 
     // For custom templates: temporarily rebuild with GitHub avatar URL
     let prevCustomHtml = '';
@@ -1843,7 +1953,7 @@
       prevCustomHtml = customTarget.innerHTML;
       const d = getT1Data();
       if (avatarFileName) d.avatarSrc = A_AVATARS + avatarFileName;
-      customTarget.innerHTML = isT1 ? buildT1HTML(d) : buildT2HTML(d);
+      customTarget.innerHTML = isT1 ? buildT1HTML(d) : isT2 ? buildT2HTML(d) : buildT3HTML(d);
     }
 
     const activeTarget = isCustom ? customTarget : copyTarget;
@@ -1917,6 +2027,7 @@
 
   loadSavedValues();
   highlightCompanyOption();
+  updateTemplateAvailability();
   updateSignature();
   switchTemplate();
   updateThemeBtns();
