@@ -681,7 +681,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-09-22 12:10</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-09-22 13:15</div>
 
   <!-- Header -->
   <div class="header">
@@ -1067,7 +1067,7 @@
   const A_ICONS   = ASSET_BASE + 'assets/icons/';
   const A_LOGOS   = ASSET_BASE + 'assets/logos/';
   const A_SOCIAL  = ASSET_BASE + 'assets/social/';
-  const A_AVATARS = ASSET_BASE; // Cloudflare Worker uploads avatars to repo root
+  const A_AVATARS = ASSET_BASE + 'assets/avatars/'; // where the Cloudflare Worker commits uploads
 
   const COMPANIES = {
     aec:      { name: 'Atlantic Express Corp.',  website: 'atlanticexpresscorp.com',  site: 'https://www.atlanticexpresscorp.com/', logo: 'old_logo.png',                    logoW: 130, logoH: 36 },
@@ -1977,7 +1977,7 @@
 
     uploadAvatarToGitHub(avatarDataURL).then((name) => {
       avatarFileName = name;
-      showAvatarStatus('success', 'Photo uploaded successfully!');
+      showAvatarStatus('success', 'Photo uploaded. It goes live on the site within a minute or two.');
       updateSignature();
     }).catch((err) => {
       console.error(err);
@@ -2028,6 +2028,17 @@
     }
   });
 
+  /* Pages publishes an upload with a delay; a photo that 404s must not be copied. */
+  function photoIsLive(url) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const timer = setTimeout(() => { img.onload = img.onerror = null; resolve(false); }, 6000);
+      img.onload  = () => { clearTimeout(timer); resolve(true); };
+      img.onerror = () => { clearTimeout(timer); resolve(false); };
+      img.src = url + '?t=' + Date.now();
+    });
+  }
+
   /* ---- copy signature ---- */
   const COPY_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
   const CHECK_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
@@ -2040,6 +2051,7 @@
     // so the photo lands in the signature at full size and square. Make sure
     // the photo lives on GitHub before anything reaches the clipboard.
     let skipPhoto = false;
+    let skipReason = '';
     if (avatarToggle.checked && avatarDataURL && !avatarFileName) {
       copyLabel.textContent = 'Uploading photo...';
       showAvatarStatus('loading', 'Uploading photo...');
@@ -2051,8 +2063,19 @@
         console.error(e);
         showAvatarStatus('error', 'Upload failed: ' + e.message);
         skipPhoto = true;
+        skipReason = 'Copied without the photo — the upload failed. Fix the uploader, then copy again.';
       }
       copyLabel.textContent = 'Copy Signature';
+    }
+
+    if (!skipPhoto && avatarToggle.checked && avatarFileName) {
+      copyLabel.textContent = 'Checking photo...';
+      const live = await photoIsLive(A_AVATARS + avatarFileName);
+      copyLabel.textContent = 'Copy Signature';
+      if (!live) {
+        skipPhoto = true;
+        skipReason = 'Copied without the photo — it is still publishing. Copy again in a minute to include it.';
+      }
     }
 
     const isT1 = currentTemplate === 'template1';
@@ -2101,7 +2124,7 @@
         const item = new ClipboardItem({ 'text/html': blobHtml, 'text/plain': blobText });
         await navigator.clipboard.write([item]);
         restore();
-        showCopied(skipPhoto);
+        showCopied(skipReason);
         return;
       }
     } catch (e) {}
@@ -2115,20 +2138,18 @@
       const ok = document.execCommand('copy');
       selection.removeAllRanges();
       restore();
-      if (ok) { showCopied(skipPhoto); return; }
+      if (ok) { showCopied(skipReason); return; }
     } catch (e) {}
 
     restore();
     copyStatus.textContent = 'Copy did not work. Please select the signature manually.';
   }
 
-  function showCopied(withoutPhoto) {
+  function showCopied(warning) {
     copyBtn.classList.add('copied');
     copyIcon.innerHTML = CHECK_SVG;
     copyLabel.textContent = 'Copied!';
-    copyStatus.textContent = withoutPhoto
-      ? 'Copied without the photo — it could not be uploaded. Paste it, then copy again once the upload works.'
-      : 'Now paste it into your email client.';
+    copyStatus.textContent = warning || 'Now paste it into your email client.';
 
     setTimeout(() => {
       copyBtn.classList.remove('copied');
