@@ -681,7 +681,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-09-21 21:40</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-09-22 09:30</div>
 
   <!-- Header -->
   <div class="header">
@@ -2034,6 +2034,28 @@
 
   async function copySignature() {
     copyStatus.textContent = '';
+
+    // A signature must never carry the photo as base64: editors such as Front
+    // re-host an inline image and drop its width, height and rounding with it,
+    // so the photo lands in the signature at full size and square. Make sure
+    // the photo lives on GitHub before anything reaches the clipboard.
+    if (avatarToggle.checked && avatarDataURL && !avatarFileName) {
+      copyLabel.textContent = 'Uploading photo...';
+      showAvatarStatus('loading', 'Uploading photo...');
+      try {
+        avatarFileName = await uploadAvatarToGitHub(avatarDataURL);
+        showAvatarStatus('success', 'Photo uploaded successfully!');
+        updateSignature();
+      } catch (e) {
+        console.error(e);
+        showAvatarStatus('error', 'Upload failed: ' + e.message);
+        copyStatus.textContent = 'The photo could not be uploaded, so the signature was not copied. Try uploading it again.';
+        copyLabel.textContent = 'Copy Signature';
+        return;
+      }
+      copyLabel.textContent = 'Copy Signature';
+    }
+
     const isT1 = currentTemplate === 'template1';
     const isT2 = currentTemplate === 'template2';
     const isT3 = currentTemplate === 'template3';
