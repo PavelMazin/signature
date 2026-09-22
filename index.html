@@ -681,7 +681,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-09-22 09:30</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-09-22 12:10</div>
 
   <!-- Header -->
   <div class="header">
@@ -2039,6 +2039,7 @@
     // re-host an inline image and drop its width, height and rounding with it,
     // so the photo lands in the signature at full size and square. Make sure
     // the photo lives on GitHub before anything reaches the clipboard.
+    let skipPhoto = false;
     if (avatarToggle.checked && avatarDataURL && !avatarFileName) {
       copyLabel.textContent = 'Uploading photo...';
       showAvatarStatus('loading', 'Uploading photo...');
@@ -2049,9 +2050,7 @@
       } catch (e) {
         console.error(e);
         showAvatarStatus('error', 'Upload failed: ' + e.message);
-        copyStatus.textContent = 'The photo could not be uploaded, so the signature was not copied. Try uploading it again.';
-        copyLabel.textContent = 'Copy Signature';
-        return;
+        skipPhoto = true;
       }
       copyLabel.textContent = 'Copy Signature';
     }
@@ -2067,7 +2066,8 @@
     if (isCustom) {
       prevCustomHtml = customTarget.innerHTML;
       const d = getT1Data();
-      if (avatarFileName) d.avatarSrc = A_AVATARS + avatarFileName;
+      if (skipPhoto) { d.showAvatar = false; d.avatarSrc = ''; }
+      else if (avatarFileName) d.avatarSrc = A_AVATARS + avatarFileName;
       customTarget.innerHTML = isT1 ? buildT1HTML(d) : isT2 ? buildT2HTML(d) : buildTemplate3(d);
     }
 
@@ -2075,13 +2075,23 @@
 
     // For classic: swap avatar src to GitHub URL, then restore
     const prevSrc = sigAvatarImg.src;
-    if (!isCustom && avatarFileName && sigAvatarCell.style.display !== 'none') {
-      sigAvatarImg.src = A_AVATARS + avatarFileName;
+    let cellParent = null, cellNext = null;
+    if (!isCustom) {
+      if (skipPhoto) {
+        cellParent = sigAvatarCell.parentNode;
+        cellNext = sigAvatarCell.nextSibling;
+        cellParent.removeChild(sigAvatarCell);
+      } else if (avatarFileName && sigAvatarCell.style.display !== 'none') {
+        sigAvatarImg.src = A_AVATARS + avatarFileName;
+      }
     }
 
     const restore = () => {
       if (isCustom) customTarget.innerHTML = prevCustomHtml;
-      else sigAvatarImg.src = prevSrc;
+      else {
+        sigAvatarImg.src = prevSrc;
+        if (cellParent) cellParent.insertBefore(sigAvatarCell, cellNext);
+      }
     };
 
     try {
@@ -2091,7 +2101,7 @@
         const item = new ClipboardItem({ 'text/html': blobHtml, 'text/plain': blobText });
         await navigator.clipboard.write([item]);
         restore();
-        showCopied();
+        showCopied(skipPhoto);
         return;
       }
     } catch (e) {}
@@ -2105,18 +2115,20 @@
       const ok = document.execCommand('copy');
       selection.removeAllRanges();
       restore();
-      if (ok) { showCopied(); return; }
+      if (ok) { showCopied(skipPhoto); return; }
     } catch (e) {}
 
     restore();
     copyStatus.textContent = 'Copy did not work. Please select the signature manually.';
   }
 
-  function showCopied() {
+  function showCopied(withoutPhoto) {
     copyBtn.classList.add('copied');
     copyIcon.innerHTML = CHECK_SVG;
     copyLabel.textContent = 'Copied!';
-    copyStatus.textContent = 'Now paste it into your email client.';
+    copyStatus.textContent = withoutPhoto
+      ? 'Copied without the photo — it could not be uploaded. Paste it, then copy again once the upload works.'
+      : 'Now paste it into your email client.';
 
     setTimeout(() => {
       copyBtn.classList.remove('copied');
