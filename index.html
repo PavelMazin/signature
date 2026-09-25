@@ -421,6 +421,23 @@
     gap: 12px;
     flex-wrap: wrap;
   }
+  .download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    color: var(--accent);
+    border: 1.5px solid var(--accent);
+    padding: 11px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition);
+  }
+  .download-btn:hover { background: var(--accent-light); }
+
   .copy-btn {
     display: inline-flex;
     align-items: center;
@@ -652,8 +669,7 @@
   }
   .template-option input[type="radio"] { margin: 0; accent-color: var(--accent); width: 15px; height: 15px; }
 
-  .template-option.t3-opt { display: none; }
-  .template-option.t3-opt.visible { display: flex; }
+  .template-option.option-hidden { display: none; }
   .field.t3-only { display: none; }
   .field.t3-only.visible { display: block; }
   .field.field-hidden { display: none; }
@@ -681,7 +697,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-09-22 13:15</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-09-25 15:30</div>
 
   <!-- Header -->
   <div class="header">
@@ -830,6 +846,9 @@
               <label class="company-option">
                 <input type="radio" name="company" value="paec" /> Pacific Atlantic Express Corp.
               </label>
+              <label class="company-option">
+                <input type="radio" name="company" value="intertrade" /> Intertrade Inc.
+              </label>
             </div>
           </div>
 
@@ -862,8 +881,8 @@
               <label class="template-option">
                 <input type="radio" name="template" value="template2" /> Template 2
               </label>
-              <label class="template-option t3-opt">
-                <input type="radio" name="template" value="template3" /> Template 3
+              <label class="template-option">
+                <input type="radio" name="template" value="template3" /> Template 1
               </label>
             </div>
           </div>
@@ -948,6 +967,12 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             </span>
             <span id="copyLabel">Copy Signature</span>
+          </button>
+          <button class="download-btn" id="downloadBtn" type="button">
+            <span class="btn-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </span>
+            <span id="downloadLabel">Download</span>
           </button>
           <span class="copy-status" id="copyStatus"></span>
         </div>
@@ -1073,7 +1098,25 @@
     aec:      { name: 'Atlantic Express Corp.',  website: 'atlanticexpresscorp.com',  site: 'https://www.atlanticexpresscorp.com/', logo: 'old_logo.png',                    logoW: 130, logoH: 36 },
     jumbobee: { name: 'JumboBee',                website: 'jumbobee.com',             site: 'https://jumbobee.com/',                logo: 'JumboBee_logo.png',               logoW: 149, logoH: 22 },
     apc:      { name: 'Atlantic Project Cargo',  website: 'atlanticprojectcargo.com', site: 'https://atlanticprojectcargo.com/',     logo: 'Atlantic_Project_Cargo_logo.png', logoW: 210, logoH: 30 },
-    paec:     { name: 'Pacific Atlantic Express Corp.', website: 'atlanticexpresscorp.com', site: 'https://www.atlanticexpresscorp.com/', logo: 'sig-logo-paec-light.png', logoW: 128, logoH: 44 }
+    paec:     { name: 'Pacific Atlantic Express Corp.', website: 'atlanticexpresscorp.com', site: 'https://www.atlanticexpresscorp.com/', logo: 'sig-logo-paec-light.png', logoW: 128, logoH: 44 },
+    intertrade: { name: 'Intertrade Inc.', website: 'intertradecars.com', site: 'https://www.intertradecars.com/', logo: 'sig-logo-intertrade.png', logoW: 129, logoH: 26 }
+  };
+
+  /* Which styles each company offers. Classic, Template 1 and Template 2 stay in the
+     code and remain available to Atlantic Express Corp. and Pacific Atlantic Express
+     Corp.; the companies below have moved to the newer layout and show only that. */
+  const COMPANY_TEMPLATES = {
+    aec:        ['classic', 'template1', 'template2'],
+    paec:       ['classic', 'template1', 'template2'],
+    jumbobee:   ['template3'],
+    apc:        ['template3'],
+    intertrade: ['template3']
+  };
+
+  /* Brand of the newer card layout, per company. */
+  const T3_BRAND = {
+    jumbobee:   { accent: '#2E5630', logo: 'sig-logo-jb-t3.png',      logoW: 108, logoH: 16, iconPrefix: '' },
+    intertrade: { accent: '#12385D', logo: 'sig-logo-intertrade.png', logoW: 129, logoH: 26, iconPrefix: 'it-' }
   };
 
   /* Per-company social links (order = display order). icon = sig-social-<icon>-<sfx>.png */
@@ -1532,20 +1575,21 @@
 </table>`;
   }
 
-  /* ---- Template 3 builder (JumboBee only, light) ---- */
+  /* ---- Card layout: JumboBee and Intertrade ---- */
   function buildT3HTML(d) {
     const TXT     = '#1A1A1A';
-    const GREEN   = '#2E5630';
     const CARD    = '#FBFBFB';
     const BORDER  = '#E9E9E9';
     const SUB     = '#4F4F4F';
     const FF      = 'Helvetica,Arial,sans-serif';
-    const company = COMPANIES.jumbobee;
+    const brand   = T3_BRAND[d.company] || T3_BRAND.jumbobee;
+    const ACCENT  = brand.accent;
+    const company = COMPANIES[d.company] || COMPANIES.jumbobee;
     const website = (d.website || company.website).replace(/^https?:\/\//, '');
     const telHref = (v) => 'tel:' + String(v).replace(/[^0-9+]/g, '');
 
     const row = (icon, html, pb) => `<tr>
-              <td width="16" style="width:16px;padding:0 6px ${pb} 0;vertical-align:middle;"><img src="${A_ICONS}sig-icon-t3-${icon}.png" width="16" height="16" alt="" style="display:block;width:16px;height:16px;border:0;outline:none;"></td>
+              <td width="16" style="width:16px;padding:0 6px ${pb} 0;vertical-align:middle;"><img src="${A_ICONS}sig-icon-t3-${brand.iconPrefix}${icon}.png" width="16" height="16" alt=""" style="display:block;width:16px;height:16px;border:0;outline:none;"></td>
               <td style="padding:0 0 ${pb} 0;vertical-align:middle;font-family:${FF};font-size:14px;line-height:20px;color:${TXT};white-space:nowrap;">${html}</td>
             </tr>`;
 
@@ -1577,13 +1621,13 @@
   <tr>
     <td width="204" bgcolor="${CARD}" style="width:204px;padding:22px 20px;border-right:1px solid ${BORDER};background:${CARD};vertical-align:middle;text-align:center;">
       ${photoHtml}<div style="font-family:${FF};font-size:14px;line-height:20px;font-weight:700;color:${TXT};">${escHtml(d.name)}</div>
-      <div style="font-family:${FF};font-size:12px;line-height:20px;font-weight:600;color:${GREEN};">${escHtml(d.title)}</div>
+      <div style="font-family:${FF};font-size:12px;line-height:20px;font-weight:600;color:${ACCENT};">${escHtml(d.title)}</div>
     </td>
     <td bgcolor="${CARD}" style="padding:22px 32px 24px 32px;background:${CARD};vertical-align:middle;">
       <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
         <tr>
-          <td style="padding:0 0 40px 0;line-height:0;font-size:0;">
-            <a href="${company.site}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}sig-logo-jb-t3.png" width="108" height="16" alt="${escHtml(company.name)}" style="display:block;width:108px;height:16px;border:0;outline:none;"></a>
+          <td style="padding:0 0 ${Math.max(12, 40 - (brand.logoH - 16))}px 0;line-height:0;font-size:0;">
+            <a href="${company.site}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}${brand.logo}" width="${brand.logoW}" height="${brand.logoH}" alt="${escHtml(company.name)}" style="display:block;width:${brand.logoW}px;height:${brand.logoH}px;border:0;outline:none;"></a>
           </td>
         </tr>
         <tr>
@@ -1728,7 +1772,7 @@
     copyTarget2.style.display = isT2 ? '' : 'none';
     copyTarget3.style.display = isT3 ? '' : 'none';
     document.getElementById('themeSection').classList.toggle('visible', isT1 || isT2);
-    document.querySelectorAll('.field.t3-only').forEach(el => el.classList.toggle('visible', isT3 && currentCompany === 'jumbobee'));
+    document.querySelectorAll('.field.t3-only').forEach(el => el.classList.toggle('visible', isT3 && currentCompany !== 'apc'));
     // Template 3 shows no email at all, and its APC layout has no photo
     document.getElementById('emailField').classList.toggle('field-hidden', isT3 && currentCompany === 'apc');
     document.getElementById('avatarField').classList.toggle('field-hidden', isT3 && currentCompany === 'apc');
@@ -1737,13 +1781,16 @@
     if (isT3) copyTarget3.innerHTML = buildTemplate3(getT1Data());
   }
 
-  /* ---- Template 3 exists for JumboBee and Atlantic Project Cargo ---- */
+  /* ---- Show only the styles the selected company offers ---- */
   function updateTemplateAvailability() {
-    const hasT3 = currentCompany === 'jumbobee' || currentCompany === 'apc';
-    document.querySelectorAll('.template-option.t3-opt').forEach(el => el.classList.toggle('visible', hasT3));
-    if (!hasT3 && currentTemplate === 'template3') {
-      currentTemplate = 'classic';
-      const r = document.querySelector('input[name="template"][value="classic"]');
+    const allowed = COMPANY_TEMPLATES[currentCompany] || ['classic'];
+    document.querySelectorAll('.template-option').forEach(label => {
+      const radio = label.querySelector('input[type="radio"]');
+      label.classList.toggle('option-hidden', !allowed.includes(radio.value));
+    });
+    if (!allowed.includes(currentTemplate)) {
+      currentTemplate = allowed[0];
+      const r = document.querySelector(`input[name="template"][value="${currentTemplate}"]`);
       if (r) r.checked = true;
       highlightTemplateOption();
       switchTemplate();
@@ -2043,106 +2090,255 @@
   const COPY_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
   const CHECK_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 
-  async function copySignature() {
-    copyStatus.textContent = '';
-
-    // A signature must never carry the photo as base64: editors such as Front
-    // re-host an inline image and drop its width, height and rounding with it,
-    // so the photo lands in the signature at full size and square. Make sure
-    // the photo lives on GitHub before anything reaches the clipboard.
+  /* Markup that leaves this page: the photo must be hosted, or left out entirely. */
+  async function prepareSignatureMarkup() {
+    const restoreLabel = copyLabel.textContent;
     let skipPhoto = false;
-    let skipReason = '';
+    let reason = '';
+
+    // Never ship the photo as base64: editors such as Front re-host an inline
+    // image and drop its width, height and rounding with it.
     if (avatarToggle.checked && avatarDataURL && !avatarFileName) {
       copyLabel.textContent = 'Uploading photo...';
       showAvatarStatus('loading', 'Uploading photo...');
       try {
         avatarFileName = await uploadAvatarToGitHub(avatarDataURL);
-        showAvatarStatus('success', 'Photo uploaded successfully!');
+        showAvatarStatus('success', 'Photo uploaded. It goes live on the site within a minute or two.');
         updateSignature();
       } catch (e) {
         console.error(e);
         showAvatarStatus('error', 'Upload failed: ' + e.message);
         skipPhoto = true;
-        skipReason = 'Copied without the photo — the upload failed. Fix the uploader, then copy again.';
+        reason = 'the photo could not be uploaded';
       }
-      copyLabel.textContent = 'Copy Signature';
     }
 
+    // Pages publishes an upload with a delay; a photo that 404s must not ship.
     if (!skipPhoto && avatarToggle.checked && avatarFileName) {
       copyLabel.textContent = 'Checking photo...';
       const live = await photoIsLive(A_AVATARS + avatarFileName);
-      copyLabel.textContent = 'Copy Signature';
       if (!live) {
         skipPhoto = true;
-        skipReason = 'Copied without the photo — it is still publishing. Copy again in a minute to include it.';
+        reason = 'it is still publishing';
       }
     }
+    copyLabel.textContent = restoreLabel;
 
     const isT1 = currentTemplate === 'template1';
     const isT2 = currentTemplate === 'template2';
     const isT3 = currentTemplate === 'template3';
-    const isCustom = isT1 || isT2 || isT3;
-    const customTarget = isT1 ? copyTarget1 : isT2 ? copyTarget2 : isT3 ? copyTarget3 : null;
 
-    // For custom templates: temporarily rebuild with GitHub avatar URL
-    let prevCustomHtml = '';
-    if (isCustom) {
-      prevCustomHtml = customTarget.innerHTML;
+    if (isT1 || isT2 || isT3) {
       const d = getT1Data();
       if (skipPhoto) { d.showAvatar = false; d.avatarSrc = ''; }
       else if (avatarFileName) d.avatarSrc = A_AVATARS + avatarFileName;
-      customTarget.innerHTML = isT1 ? buildT1HTML(d) : isT2 ? buildT2HTML(d) : buildTemplate3(d);
+      const target = isT1 ? copyTarget1 : isT2 ? copyTarget2 : copyTarget3;
+      return {
+        html: isT1 ? buildT1HTML(d) : isT2 ? buildT2HTML(d) : buildTemplate3(d),
+        text: target.innerText,
+        skipPhoto: skipPhoto,
+        reason: reason
+      };
     }
 
-    const activeTarget = isCustom ? customTarget : copyTarget;
-
-    // For classic: swap avatar src to GitHub URL, then restore
+    // Classic lives in the DOM: swap the photo, read the markup, put it back.
     const prevSrc = sigAvatarImg.src;
     let cellParent = null, cellNext = null;
-    if (!isCustom) {
-      if (skipPhoto) {
-        cellParent = sigAvatarCell.parentNode;
-        cellNext = sigAvatarCell.nextSibling;
-        cellParent.removeChild(sigAvatarCell);
-      } else if (avatarFileName && sigAvatarCell.style.display !== 'none') {
-        sigAvatarImg.src = A_AVATARS + avatarFileName;
-      }
+    if (skipPhoto) {
+      cellParent = sigAvatarCell.parentNode;
+      cellNext = sigAvatarCell.nextSibling;
+      cellParent.removeChild(sigAvatarCell);
+    } else if (avatarFileName && sigAvatarCell.style.display !== 'none') {
+      sigAvatarImg.src = A_AVATARS + avatarFileName;
     }
+    const html = copyTarget.outerHTML;
+    const text = copyTarget.innerText;
+    sigAvatarImg.src = prevSrc;
+    if (cellParent) cellParent.insertBefore(sigAvatarCell, cellNext);
+    return { html: html, text: text, skipPhoto: skipPhoto, reason: reason };
+  }
 
-    const restore = () => {
-      if (isCustom) customTarget.innerHTML = prevCustomHtml;
-      else {
-        sigAvatarImg.src = prevSrc;
-        if (cellParent) cellParent.insertBefore(sigAvatarCell, cellNext);
-      }
-    };
+  async function copySignature() {
+    copyStatus.textContent = '';
+    const sig = await prepareSignatureMarkup();
+    const warning = sig.skipPhoto
+      ? 'Copied without the photo — ' + sig.reason + '. Copy again once it is ready.'
+      : '';
 
     try {
       if (navigator.clipboard && window.ClipboardItem) {
-        const blobHtml = new Blob([activeTarget.outerHTML], { type: 'text/html' });
-        const blobText = new Blob([activeTarget.innerText], { type: 'text/plain' });
-        const item = new ClipboardItem({ 'text/html': blobHtml, 'text/plain': blobText });
+        const item = new ClipboardItem({
+          'text/html':  new Blob([sig.html], { type: 'text/html' }),
+          'text/plain': new Blob([sig.text], { type: 'text/plain' })
+        });
         await navigator.clipboard.write([item]);
-        restore();
-        showCopied(skipReason);
+        showCopied(warning);
         return;
       }
     } catch (e) {}
 
+    const holder = document.createElement('div');
+    holder.setAttribute('style', 'position:fixed;left:-9999px;top:0;');
+    holder.innerHTML = sig.html;
+    document.body.appendChild(holder);
     try {
       const range = document.createRange();
-      range.selectNode(activeTarget);
+      range.selectNodeContents(holder);
       const selection = window.getSelection();
       selection.removeAllRanges();
       selection.addRange(range);
       const ok = document.execCommand('copy');
       selection.removeAllRanges();
-      restore();
-      if (ok) { showCopied(skipReason); return; }
-    } catch (e) {}
+      if (ok) { showCopied(warning); return; }
+    } catch (e) {
+    } finally {
+      document.body.removeChild(holder);
+    }
 
-    restore();
     copyStatus.textContent = 'Copy did not work. Please select the signature manually.';
+  }
+
+  /* ---- download a shareable copy ---- */
+  function signatureFileName(name) {
+    const slug = String(name || '')
+      .trim().toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+    return 'email-signature' + (slug && slug !== 'full-name' ? '-' + slug : '') + '.html';
+  }
+
+  /* A standalone page a colleague can open and install the signature from. */
+  function buildShareFile(signatureHTML, d, note) {
+    const company = COMPANIES[d.company] || COMPANIES.aec;
+    const who = [d.name, d.title].filter(v => v && !/^\[.*\]$/.test(v)).join(' — ');
+    const noteHtml = note
+      ? `<p class="warn">This copy was saved without the photo — ${escHtml(note)}. Generate the file again once the photo is ready.</p>`
+      : '';
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Email signature${who ? ' — ' + escHtml(who) : ''}</title>
+<style>
+  body { margin:0; padding:32px 16px; background:#f0f2f5; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; color:#1a1a2e; line-height:1.5; }
+  .wrap { max-width:720px; margin:0 auto; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  h2 { font-size:15px; margin:28px 0 8px; }
+  .sub { margin:0 0 20px; color:#5f6577; font-size:14px; }
+  .card { background:#fff; border:1px solid #e2e5ea; border-radius:12px; padding:24px; overflow-x:auto; }
+  .actions { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:16px 0 4px; }
+  button { font:inherit; font-weight:700; font-size:14px; padding:11px 18px; border-radius:8px; cursor:pointer; border:1.5px solid #353391; }
+  #copyBtn { background:#353391; color:#fff; }
+  #codeBtn { background:#fff; color:#353391; }
+  #status { font-size:13px; color:#166534; }
+  ol { padding-left:20px; margin:0; }
+  li { margin-bottom:8px; font-size:14px; }
+  .note, .warn { font-size:13px; color:#5f6577; }
+  .warn { color:#991b1b; }
+  details { margin-top:20px; }
+  summary { cursor:pointer; font-size:14px; font-weight:600; }
+  textarea { width:100%; height:180px; margin-top:10px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; padding:10px; border:1px solid #e2e5ea; border-radius:8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Email signature</h1>
+  <p class="sub">${who ? escHtml(who) + ' · ' : ''}${escHtml(company.name)}</p>
+  ${noteHtml}
+
+  <div class="card"><div id="sig">${signatureHTML}</div></div>
+
+  <div class="actions">
+    <button id="copyBtn" type="button">Copy signature</button>
+    <button id="codeBtn" type="button">Copy HTML code</button>
+    <span id="status"></span>
+  </div>
+
+  <h2>How to install it</h2>
+  <ol>
+    <li><b>Front</b> — Settings &rarr; Signatures &rarr; Create signature. Click inside the editor and paste with Cmd+V / Ctrl+V. If the layout comes out wrong, set <b>Edit using</b> to <b>HTML Mode</b>, clear the box and paste the HTML code instead.</li>
+    <li><b>Gmail</b> — Settings &rarr; See all settings &rarr; General &rarr; Signature &rarr; Create new, paste, then <b>Save Changes</b> at the bottom of the page.</li>
+    <li><b>Outlook on the web</b> — Settings &rarr; Mail &rarr; Compose and reply, paste into the signature box and save.</li>
+    <li><b>Apple Mail</b> — Mail &rarr; Settings &rarr; Signatures, add one, paste, and untick <b>Always match my default message font</b>.</li>
+  </ol>
+
+  <h2>Worth knowing</h2>
+  <p class="note">
+    Paste normally (Cmd+V). <b>Paste and Match Style</b> or <b>Keep Text Only</b> throws the layout away.<br>
+    The photo, logo and icons are loaded from the web, nothing is stored in this file, so it stays small and can be emailed on.<br>
+    Send this file to whoever needs the signature — they only have to open it and press <b>Copy signature</b>.
+  </p>
+
+  <details>
+    <summary>HTML code</summary>
+    <textarea id="code" readonly>${escHtml(signatureHTML)}</textarea>
+  </details>
+</div>
+<script>
+  var sig = document.getElementById('sig');
+  var statusEl = document.getElementById('status');
+  function flash(text) {
+    statusEl.textContent = text;
+    setTimeout(function () { statusEl.textContent = ''; }, 4000);
+  }
+  document.getElementById('copyBtn').addEventListener('click', async function () {
+    try {
+      if (navigator.clipboard && window.ClipboardItem) {
+        await navigator.clipboard.write([new ClipboardItem({
+          'text/html': new Blob([sig.innerHTML], { type: 'text/html' }),
+          'text/plain': new Blob([sig.innerText], { type: 'text/plain' })
+        })]);
+        flash('Copied. Paste it into your email client.');
+        return;
+      }
+    } catch (e) {}
+    var range = document.createRange();
+    range.selectNodeContents(sig);
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    var ok = document.execCommand('copy');
+    selection.removeAllRanges();
+    flash(ok ? 'Copied. Paste it into your email client.' : 'Copy failed - select the signature by hand.');
+  });
+  document.getElementById('codeBtn').addEventListener('click', async function () {
+    var code = document.getElementById('code');
+    try {
+      await navigator.clipboard.writeText(code.value);
+      flash('HTML code copied.');
+      return;
+    } catch (e) {}
+    code.focus();
+    code.select();
+    var ok = document.execCommand('copy');
+    flash(ok ? 'HTML code copied.' : 'Copy failed - select the code by hand.');
+  });
+<\/script>
+</body>
+</html>`;
+  }
+
+  async function downloadSignature() {
+    copyStatus.textContent = '';
+    const sig = await prepareSignatureMarkup();
+    const d = getT1Data();
+    const file = buildShareFile(sig.html, d, sig.skipPhoto ? sig.reason : '');
+
+    const blob = new Blob([file], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = signatureFileName(d.name);
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+
+    copyStatus.textContent = sig.skipPhoto
+      ? 'Downloaded without the photo — ' + sig.reason + '.'
+      : 'Downloaded. Send the file to whoever needs this signature.';
   }
 
   function showCopied(warning) {
@@ -2172,6 +2368,7 @@
   });
 
   copyBtn.addEventListener('click', copySignature);
+  document.getElementById('downloadBtn').addEventListener('click', downloadSignature);
 
   loadSavedValues();
   highlightCompanyOption();
