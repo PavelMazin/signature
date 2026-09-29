@@ -697,7 +697,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-09-25 15:30</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-09-29 13:10</div>
 
   <!-- Header -->
   <div class="header">
@@ -849,6 +849,9 @@
               <label class="company-option">
                 <input type="radio" name="company" value="intertrade" /> Intertrade Inc.
               </label>
+              <label class="company-option">
+                <input type="radio" name="company" value="autotrade" /> Autotrade
+              </label>
             </div>
           </div>
 
@@ -936,7 +939,7 @@
 
           <div class="field">
             <label for="website">Website</label>
-            <input id="website" type="text" value="atlanticexpresscorp.com" />
+            <input id="website" type="text" value="atlanticexpresscorp.com" placeholder="yourcompany.com" />
           </div>
 
           <div class="field">
@@ -1099,7 +1102,8 @@
     jumbobee: { name: 'JumboBee',                website: 'jumbobee.com',             site: 'https://jumbobee.com/',                logo: 'JumboBee_logo.png',               logoW: 149, logoH: 22 },
     apc:      { name: 'Atlantic Project Cargo',  website: 'atlanticprojectcargo.com', site: 'https://atlanticprojectcargo.com/',     logo: 'Atlantic_Project_Cargo_logo.png', logoW: 210, logoH: 30 },
     paec:     { name: 'Pacific Atlantic Express Corp.', website: 'atlanticexpresscorp.com', site: 'https://www.atlanticexpresscorp.com/', logo: 'sig-logo-paec-light.png', logoW: 128, logoH: 44 },
-    intertrade: { name: 'Intertrade Inc.', website: 'intertradecars.com', site: 'https://www.intertradecars.com/', logo: 'sig-logo-intertrade.png', logoW: 129, logoH: 26 }
+    intertrade: { name: 'Intertrade Inc.', website: 'intertradecars.com', site: 'https://www.intertradecars.com/', logo: 'sig-logo-intertrade.png', logoW: 129, logoH: 26 },
+    autotrade:  { name: 'Autotrade', website: '', site: '', logo: 'sig-logo-autotrade.png', logoW: 120, logoH: 32 }
   };
 
   /* Which styles each company offers. Classic, Template 1 and Template 2 stay in the
@@ -1110,13 +1114,15 @@
     paec:       ['classic', 'template1', 'template2'],
     jumbobee:   ['template3'],
     apc:        ['template3'],
-    intertrade: ['template3']
+    intertrade: ['template3'],
+    autotrade:  ['template3']
   };
 
   /* Brand of the newer card layout, per company. */
   const T3_BRAND = {
     jumbobee:   { accent: '#2E5630', logo: 'sig-logo-jb-t3.png',      logoW: 108, logoH: 16, iconPrefix: '' },
-    intertrade: { accent: '#12385D', logo: 'sig-logo-intertrade.png', logoW: 129, logoH: 26, iconPrefix: 'it-' }
+    intertrade: { accent: '#12385D', logo: 'sig-logo-intertrade.png', logoW: 129, logoH: 26, iconPrefix: 'it-' },
+    autotrade:  { accent: '#022C5B', logo: 'sig-logo-autotrade.png',  logoW: 120, logoH: 32, iconPrefix: 'at-' }
   };
 
   /* Per-company social links (order = display order). icon = sig-social-<icon>-<sfx>.png */
@@ -1602,7 +1608,7 @@
       `<a href="${telHref(d.mobile)}" style="color:${TXT};text-decoration:none;">${escHtml(d.mobile)}</a>` });
     if (d.hasEmail) items.push({ icon: 'email', html:
       `<a href="mailto:${escHtml(d.email)}" style="color:${TXT};text-decoration:none;">${escHtml(d.email)}</a>` });
-    items.push({ icon: 'globe', html:
+    if (website) items.push({ icon: 'globe', html:
       `<a href="https://${escHtml(website)}" target="_blank" style="color:${TXT};text-decoration:underline;">${escHtml(website)}</a>` });
 
     const contactRows = items
@@ -1612,6 +1618,13 @@
     const photoHtml = d.showAvatar && d.avatarSrc
       ? `<img src="${d.avatarSrc}" width="80" height="80" alt="Photo" style="display:block;width:80px;height:80px;border-radius:50%;border:0;outline:none;object-fit:cover;margin:0 auto 12px auto;">`
       : '';
+
+    const logoImg = `<img src="${A_LOGOS}${brand.logo}" width="${brand.logoW}" height="${brand.logoH}" alt="${escHtml(company.name)}" style="display:block;width:${brand.logoW}px;height:${brand.logoH}px;border:0;outline:none;">`;
+    // A company with no site of its own links its logo to whatever website was typed in.
+    const siteHref = company.site || (website ? 'https://' + website : '');
+    const logoHtml = siteHref
+      ? `<a href="${siteHref}" target="_blank" style="display:block;border:0;text-decoration:none;">${logoImg}</a>`
+      : logoImg;
 
     const extraRow = d.hasExtra
       ? `<tr><td style="padding:16px 0 0 0;font-family:${FF};font-size:12px;line-height:18px;color:${SUB};">${d.extraHTML}</td></tr>`
@@ -1627,7 +1640,7 @@
       <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
         <tr>
           <td style="padding:0 0 ${Math.max(12, 40 - (brand.logoH - 16))}px 0;line-height:0;font-size:0;">
-            <a href="${company.site}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}${brand.logo}" width="${brand.logoW}" height="${brand.logoH}" alt="${escHtml(company.name)}" style="display:block;width:${brand.logoW}px;height:${brand.logoH}px;border:0;outline:none;"></a>
+            ${logoHtml}
           </td>
         </tr>
         <tr>
