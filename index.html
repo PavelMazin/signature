@@ -673,6 +673,7 @@
   .field.t3-only { display: none; }
   .field.t3-only.visible { display: block; }
   .field.field-hidden { display: none; }
+  .card-section.field-hidden { display: none; }
 
   .theme-section { display: none; margin-top: 14px; }
   .theme-section.visible { display: block; }
@@ -697,7 +698,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-09-29 13:10</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-09-29 14:20</div>
 
   <!-- Header -->
   <div class="header">
@@ -871,7 +872,7 @@
         </div>
 
         <!-- Signature style -->
-        <div class="card-section">
+        <div class="card-section" id="styleSection">
           <div class="card-section-title">Signature style</div>
           <div class="field">
             <div class="template-options" id="templateOptions">
@@ -1106,21 +1107,26 @@
     autotrade:  { name: 'Autotrade', website: '', site: '', logo: 'sig-logo-autotrade.png', logoW: 120, logoH: 32 }
   };
 
-  /* Which styles each company offers. Classic, Template 1 and Template 2 stay in the
-     code and remain available to Atlantic Express Corp. and Pacific Atlantic Express
-     Corp.; the companies below have moved to the newer layout and show only that. */
+  /* Which styles each company offers. Every company is on the card layout now;
+     Classic, Template 1 and Template 2 stay in the code, and so does the older
+     Atlantic Project Cargo layout below, so any of them can be offered again by
+     listing it here. */
   const COMPANY_TEMPLATES = {
-    aec:        ['classic', 'template1', 'template2'],
-    paec:       ['classic', 'template1', 'template2'],
+    aec:        ['template3'],
+    paec:       ['template3'],
     jumbobee:   ['template3'],
     apc:        ['template3'],
     intertrade: ['template3'],
     autotrade:  ['template3']
   };
 
-  /* Brand of the newer card layout, per company. */
+  /* Brand of the card layout, per company. Colours are sampled from each logo, and
+     logoH is kept at 44 or below so the card stays 200px tall. */
   const T3_BRAND = {
     jumbobee:   { accent: '#2E5630', logo: 'sig-logo-jb-t3.png',      logoW: 108, logoH: 16, iconPrefix: '' },
+    aec:        { accent: '#353391', logo: 'sig-logo-aec-light.png',  logoW: 123, logoH: 34, iconPrefix: 'aec-' },
+    paec:       { accent: '#2527A4', logo: 'sig-logo-paec-light.png', logoW: 116, logoH: 40, iconPrefix: 'paec-' },
+    apc:        { accent: '#222572', logo: 'sig-logo-apc-dark.png',   logoW: 171, logoH: 24, iconPrefix: 'apc-' },
     intertrade: { accent: '#12385D', logo: 'sig-logo-intertrade.png', logoW: 129, logoH: 26, iconPrefix: 'it-' },
     autotrade:  { accent: '#022C5B', logo: 'sig-logo-autotrade.png',  logoW: 120, logoH: 32, iconPrefix: 'at-' }
   };
@@ -1737,9 +1743,14 @@
 </table>`;
   }
 
-  /* Template 3 renders a different layout per company */
+  /* Companies listed here render their own layout instead of the card one.
+     buildT3ApcHTML built the older Atlantic Project Cargo signature — add
+     apc: buildT3ApcHTML below to bring it back. */
+  const T3_LAYOUTS = {};
+
   function buildTemplate3(d) {
-    return d.company === 'apc' ? buildT3ApcHTML(d) : buildT3HTML(d);
+    const build = T3_LAYOUTS[d.company];
+    return build ? build(d) : buildT3HTML(d);
   }
 
   function getT1Data() {
@@ -1785,10 +1796,9 @@
     copyTarget2.style.display = isT2 ? '' : 'none';
     copyTarget3.style.display = isT3 ? '' : 'none';
     document.getElementById('themeSection').classList.toggle('visible', isT1 || isT2);
-    document.querySelectorAll('.field.t3-only').forEach(el => el.classList.toggle('visible', isT3 && currentCompany !== 'apc'));
-    // Template 3 shows no email at all, and its APC layout has no photo
-    document.getElementById('emailField').classList.toggle('field-hidden', isT3 && currentCompany === 'apc');
-    document.getElementById('avatarField').classList.toggle('field-hidden', isT3 && currentCompany === 'apc');
+    document.querySelectorAll('.field.t3-only').forEach(el => el.classList.toggle('visible', isT3));
+    document.getElementById('emailField').classList.remove('field-hidden');
+    document.getElementById('avatarField').classList.remove('field-hidden');
     if (isT1) copyTarget1.innerHTML = buildT1HTML(getT1Data());
     if (isT2) copyTarget2.innerHTML = buildT2HTML(getT1Data());
     if (isT3) copyTarget3.innerHTML = buildTemplate3(getT1Data());
@@ -1801,6 +1811,7 @@
       const radio = label.querySelector('input[type="radio"]');
       label.classList.toggle('option-hidden', !allowed.includes(radio.value));
     });
+    document.getElementById('styleSection').classList.toggle('field-hidden', allowed.length < 2);
     if (!allowed.includes(currentTemplate)) {
       currentTemplate = allowed[0];
       const r = document.querySelector(`input[name="template"][value="${currentTemplate}"]`);
