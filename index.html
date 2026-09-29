@@ -706,7 +706,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-09-29 17:30</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-09-29 18:15</div>
 
   <!-- Header -->
   <div class="header">
@@ -919,16 +919,19 @@
           <div class="field">
             <div class="template-options" id="templateOptions">
               <label class="template-option selected">
-                <input type="radio" name="template" value="classic" checked /> Classic
+                <input type="radio" name="template" value="template3" checked /> Template 1
               </label>
               <label class="template-option">
-                <input type="radio" name="template" value="template1" /> Template 1
+                <input type="radio" name="template" value="template3apc" /> Template 2 &mdash; certifications &amp; socials
               </label>
               <label class="template-option">
-                <input type="radio" name="template" value="template2" /> Template 2
+                <input type="radio" name="template" value="template1" /> Template 3
               </label>
               <label class="template-option">
-                <input type="radio" name="template" value="template3" /> Template 1
+                <input type="radio" name="template" value="template2" /> Template 4
+              </label>
+              <label class="template-option">
+                <input type="radio" name="template" value="classic" /> Classic
               </label>
             </div>
           </div>
@@ -1157,7 +1160,7 @@
     aec:        ['template3'],
     paec:       ['template3'],
     jumbobee:   ['template3'],
-    apc:        ['template3'],
+    apc:        ['template3', 'template3apc', 'template1', 'template2', 'classic'],
     intertrade: ['template3'],
     autotrade:  ['template3']
   };
@@ -1266,7 +1269,7 @@
   const instructionsToggle = document.getElementById('instructionsToggle');
 
   let currentCompany  = 'aec';
-  let currentTemplate = 'classic';
+  let currentTemplate = 'template3';
   let currentTheme    = 'light';
   let currentOffice   = 'aec';
   let avatarDataURL = '';
@@ -1874,21 +1877,38 @@
     document.getElementById('themeDark').classList.toggle('active', currentTheme === 'dark');
   }
 
+  /* Which builder draws a style, and which preview block it lives in.
+     Classic is not here: it sits in the page as markup. */
+  const TEMPLATE_BUILDERS = {
+    template1:    buildT1HTML,
+    template2:    buildT2HTML,
+    template3:    buildTemplate3,
+    template3apc: buildT3ApcHTML
+  };
+  function templateTarget(name) {
+    if (name === 'template1') return copyTarget1;
+    if (name === 'template2') return copyTarget2;
+    if (name === 'template3' || name === 'template3apc') return copyTarget3;
+    return copyTarget;
+  }
+  function renderCurrentTemplate() {
+    const build = TEMPLATE_BUILDERS[currentTemplate];
+    if (build) templateTarget(currentTemplate).innerHTML = build(getT1Data());
+  }
+
   function switchTemplate() {
-    const isT1 = currentTemplate === 'template1';
-    const isT2 = currentTemplate === 'template2';
-    const isT3 = currentTemplate === 'template3';
-    copyTarget.style.display  = (!isT1 && !isT2 && !isT3) ? '' : 'none';
-    copyTarget1.style.display = isT1 ? '' : 'none';
-    copyTarget2.style.display = isT2 ? '' : 'none';
-    copyTarget3.style.display = isT3 ? '' : 'none';
-    document.getElementById('themeSection').classList.toggle('visible', isT1 || isT2);
-    document.querySelectorAll('.field.t3-only').forEach(el => el.classList.toggle('visible', isT3));
-    document.getElementById('emailField').classList.remove('field-hidden');
-    document.getElementById('avatarField').classList.remove('field-hidden');
-    if (isT1) copyTarget1.innerHTML = buildT1HTML(getT1Data());
-    if (isT2) copyTarget2.innerHTML = buildT2HTML(getT1Data());
-    if (isT3) copyTarget3.innerHTML = buildTemplate3(getT1Data());
+    const active = templateTarget(currentTemplate);
+    [copyTarget, copyTarget1, copyTarget2, copyTarget3].forEach(el => {
+      el.style.display = el === active ? '' : 'none';
+    });
+    const themed = currentTemplate === 'template1' || currentTemplate === 'template2';
+    // The Atlantic Project Cargo layout prints no email, no photo and no extension.
+    const isApcLayout = currentTemplate === 'template3apc';
+    document.getElementById('themeSection').classList.toggle('visible', themed);
+    document.querySelectorAll('.field.t3-only').forEach(el => el.classList.toggle('visible', currentTemplate === 'template3'));
+    document.getElementById('emailField').classList.toggle('field-hidden', isApcLayout);
+    document.getElementById('avatarField').classList.toggle('field-hidden', isApcLayout);
+    renderCurrentTemplate();
   }
 
   /* ---- Show only the styles the selected company offers ---- */
@@ -1927,16 +1947,14 @@
   document.getElementById('themeLight').addEventListener('click', () => {
     currentTheme = 'light';
     updateThemeBtns();
-    if (currentTemplate === 'template1') copyTarget1.innerHTML = buildT1HTML(getT1Data());
-    if (currentTemplate === 'template2') copyTarget2.innerHTML = buildT2HTML(getT1Data());
+    renderCurrentTemplate();
     saveValues();
   });
 
   document.getElementById('themeDark').addEventListener('click', () => {
     currentTheme = 'dark';
     updateThemeBtns();
-    if (currentTemplate === 'template1') copyTarget1.innerHTML = buildT1HTML(getT1Data());
-    if (currentTemplate === 'template2') copyTarget2.innerHTML = buildT2HTML(getT1Data());
+    renderCurrentTemplate();
     saveValues();
   });
 
@@ -1999,9 +2017,7 @@
     sigExtraRow.style.display = hasExtra ? '' : 'none';
     sigExtra.innerHTML = hasExtra ? extraHTML : '';
 
-    if (currentTemplate === 'template1') copyTarget1.innerHTML = buildT1HTML(getT1Data());
-    if (currentTemplate === 'template2') copyTarget2.innerHTML = buildT2HTML(getT1Data());
-    if (currentTemplate === 'template3') copyTarget3.innerHTML = buildTemplate3(getT1Data());
+    renderCurrentTemplate();
 
     saveValues();
   }
@@ -2244,18 +2260,14 @@
     }
     copyLabel.textContent = restoreLabel;
 
-    const isT1 = currentTemplate === 'template1';
-    const isT2 = currentTemplate === 'template2';
-    const isT3 = currentTemplate === 'template3';
-
-    if (isT1 || isT2 || isT3) {
+    const build = TEMPLATE_BUILDERS[currentTemplate];
+    if (build) {
       const d = getT1Data();
       if (skipPhoto) { d.showAvatar = false; d.avatarSrc = ''; }
       else if (avatarFileName) d.avatarSrc = A_AVATARS + avatarFileName;
-      const target = isT1 ? copyTarget1 : isT2 ? copyTarget2 : copyTarget3;
       return {
-        html: isT1 ? buildT1HTML(d) : isT2 ? buildT2HTML(d) : buildTemplate3(d),
-        text: target.innerText,
+        html: build(d),
+        text: templateTarget(currentTemplate).innerText,
         skipPhoto: skipPhoto,
         reason: reason
       };
