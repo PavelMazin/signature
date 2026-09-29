@@ -674,6 +674,7 @@
   .field.t3-only.visible { display: block; }
   .field.field-hidden { display: none; }
   .card-section.field-hidden { display: none; }
+  .field-label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 8px; color: var(--text-secondary); letter-spacing: 0.01em; }
 
   .theme-section { display: none; margin-top: 14px; }
   .theme-section.visible { display: block; }
@@ -698,7 +699,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-09-29 14:20</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-09-29 16:00</div>
 
   <!-- Header -->
   <div class="header">
@@ -852,6 +853,27 @@
               </label>
               <label class="company-option">
                 <input type="radio" name="company" value="autotrade" /> Autotrade
+              </label>
+            </div>
+          </div>
+
+          <div class="field field-hidden" id="officeField">
+            <span class="field-label">Office &amp; logo</span>
+            <div class="template-options" id="officeOptions">
+              <label class="template-option selected">
+                <input type="radio" name="office" value="aec" checked /> AEC logo only
+              </label>
+              <label class="template-option">
+                <input type="radio" name="office" value="aec+aecargo" /> AEC + AECargoGroup &mdash; New Jersey
+              </label>
+              <label class="template-option">
+                <input type="radio" name="office" value="aecargo" /> AECargoGroup only &mdash; New Jersey
+              </label>
+              <label class="template-option">
+                <input type="radio" name="office" value="aec+hawaii" /> AEC + Hawaii Express Corp &mdash; Hawaii
+              </label>
+              <label class="template-option">
+                <input type="radio" name="office" value="hawaii" /> Hawaii Express Corp only &mdash; Hawaii
               </label>
             </div>
           </div>
@@ -1226,6 +1248,7 @@
   let currentCompany  = 'aec';
   let currentTemplate = 'classic';
   let currentTheme    = 'light';
+  let currentOffice   = 'aec';
   let avatarDataURL = '';
   let avatarFileName = '';
 
@@ -1356,6 +1379,12 @@
         highlightTemplateOption();
       }
       if (saved.theme) currentTheme = saved.theme;
+      if (saved.office && AEC_OFFICES[saved.office]) {
+        currentOffice = saved.office;
+        const oRadio = document.querySelector(`input[name="office"][value="${saved.office}"]`);
+        if (oRadio) oRadio.checked = true;
+        highlightOfficeOption();
+      }
     } catch (e) {}
   }
 
@@ -1368,6 +1397,7 @@
     payload.company = currentCompany;
     payload.template = currentTemplate;
     payload.theme = currentTheme;
+    payload.office = currentOffice;
     payload.avatarEnabled = avatarToggle.checked;
     payload.avatarDataURL = avatarDataURL;
     payload.avatarFileName = avatarFileName;
@@ -1625,12 +1655,26 @@
       ? `<img src="${d.avatarSrc}" width="80" height="80" alt="Photo" style="display:block;width:80px;height:80px;border-radius:50%;border:0;outline:none;object-fit:cover;margin:0 auto 12px auto;">`
       : '';
 
-    const logoImg = `<img src="${A_LOGOS}${brand.logo}" width="${brand.logoW}" height="${brand.logoH}" alt="${escHtml(company.name)}" style="display:block;width:${brand.logoW}px;height:${brand.logoH}px;border:0;outline:none;">`;
+    // Atlantic Express Corp. can show a branch logo beside or instead of its own.
+    const logos = (d.company === 'aec' && AEC_OFFICES[d.office])
+      ? AEC_OFFICES[d.office].map(k => AEC_LOGOS[k])
+      : [{ file: brand.logo, w: brand.logoW, h: brand.logoH, alt: company.name }];
+    const logoH = Math.max.apply(null, logos.map(l => l.h));
+
     // A company with no site of its own links its logo to whatever website was typed in.
     const siteHref = company.site || (website ? 'https://' + website : '');
-    const logoHtml = siteHref
-      ? `<a href="${siteHref}" target="_blank" style="display:block;border:0;text-decoration:none;">${logoImg}</a>`
-      : logoImg;
+    const linked = (inner) => siteHref
+      ? `<a href="${siteHref}" target="_blank" style="display:block;border:0;text-decoration:none;">${inner}</a>`
+      : inner;
+
+    const logoCells = logos.map((l, i) => {
+      const img = `<img src="${A_LOGOS}${l.file}" width="${l.w}" height="${l.h}" alt="${escHtml(l.alt)}" style="display:block;width:${l.w}px;height:${l.h}px;border:0;outline:none;">`;
+      const pad = logos.length === 1 ? ''
+        : (i === 0 ? 'padding-right:16px;' : `padding-left:16px;border-left:1px solid ${BORDER};`);
+      return `<td style="${pad}vertical-align:middle;font-size:0;line-height:0;">${linked(img)}</td>`;
+    }).join('');
+
+    const logoHtml = `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr>${logoCells}</tr></table>`;
 
     const extraRow = d.hasExtra
       ? `<tr><td style="padding:16px 0 0 0;font-family:${FF};font-size:12px;line-height:18px;color:${SUB};">${d.extraHTML}</td></tr>`
@@ -1645,7 +1689,7 @@
     <td bgcolor="${CARD}" style="padding:22px 32px 24px 32px;background:${CARD};vertical-align:middle;">
       <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
         <tr>
-          <td style="padding:0 0 ${Math.max(12, 40 - (brand.logoH - 16))}px 0;line-height:0;font-size:0;">
+          <td style="padding:0 0 ${Math.max(12, 40 - (logoH - 16))}px 0;line-height:0;font-size:0;">
             ${logoHtml}
           </td>
         </tr>
@@ -1743,6 +1787,20 @@
 </table>`;
   }
 
+  /* Atlantic Express Corp. has branch offices with logos of their own. */
+  const AEC_LOGOS = {
+    aec:     { file: 'sig-logo-aec-light.png', w: 123, h: 34, alt: 'Atlantic Express Corp.' },
+    aecargo: { file: 'sig-logo-aecargo.png',   w: 108, h: 34, alt: 'AECargoGroup' },
+    hawaii:  { file: 'sig-logo-hawaii.png',    w: 101, h: 34, alt: 'Hawaii Express Corp' }
+  };
+  const AEC_OFFICES = {
+    'aec':         ['aec'],
+    'aec+aecargo': ['aec', 'aecargo'],
+    'aecargo':     ['aecargo'],
+    'aec+hawaii':  ['aec', 'hawaii'],
+    'hawaii':      ['hawaii']
+  };
+
   /* Companies listed here render their own layout instead of the card one.
      buildT3ApcHTML built the older Atlantic Project Cargo signature — add
      apc: buildT3ApcHTML below to bring it back. */
@@ -1766,6 +1824,7 @@
       mobile:     fields.mobile.value.trim(),
       hasEmail:   !!fields.email.value.trim() && fields.email.value.trim() !== '[email]',
       company:    currentCompany,
+      office:     currentOffice,
       theme:      currentTheme,
       extraHTML:  sanitizeHTML(extraText.innerHTML),
       hasExtra:   extraText.textContent.trim().length > 0,
@@ -1775,6 +1834,13 @@
   }
 
   /* ---- template / theme selectors ---- */
+  function highlightOfficeOption() {
+    document.querySelectorAll('#officeOptions .template-option').forEach(label => {
+      const radio = label.querySelector('input[type="radio"]');
+      label.classList.toggle('selected', radio.checked);
+    });
+  }
+
   function highlightTemplateOption() {
     document.querySelectorAll('.template-option').forEach(label => {
       const radio = label.querySelector('input[type="radio"]');
@@ -1812,6 +1878,7 @@
       label.classList.toggle('option-hidden', !allowed.includes(radio.value));
     });
     document.getElementById('styleSection').classList.toggle('field-hidden', allowed.length < 2);
+    document.getElementById('officeField').classList.toggle('field-hidden', currentCompany !== 'aec');
     if (!allowed.includes(currentTemplate)) {
       currentTemplate = allowed[0];
       const r = document.querySelector(`input[name="template"][value="${currentTemplate}"]`);
@@ -1820,6 +1887,13 @@
       switchTemplate();
     }
   }
+
+  document.getElementById('officeOptions').addEventListener('change', e => {
+    if (e.target.type !== 'radio') return;
+    currentOffice = e.target.value;
+    highlightOfficeOption();
+    updateSignature();
+  });
 
   document.getElementById('templateOptions').addEventListener('change', e => {
     if (e.target.type !== 'radio') return;
@@ -2396,6 +2470,7 @@
 
   loadSavedValues();
   highlightCompanyOption();
+  highlightOfficeOption();
   updateTemplateAvailability();
   updateSignature();
   switchTemplate();
