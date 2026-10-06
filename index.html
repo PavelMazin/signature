@@ -706,7 +706,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-09-29 18:45</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-10-06 12:30</div>
 
   <!-- Header -->
   <div class="header">
@@ -861,6 +861,9 @@
               <label class="company-option">
                 <input type="radio" name="company" value="autotrade" /> Autotrade
               </label>
+              <label class="company-option">
+                <input type="radio" name="company" value="aet" /> Atlantic Express Trucking
+              </label>
             </div>
           </div>
 
@@ -888,7 +891,7 @@
         </div>
 
         <!-- Photo -->
-        <div class="card-section">
+        <div class="card-section" id="photoSection">
           <div class="card-section-title">Photo</div>
           <div class="field" id="avatarField">
             <label class="photo-toggle">
@@ -919,16 +922,19 @@
           <div class="field">
             <div class="template-options" id="templateOptions">
               <label class="template-option selected">
-                <input type="radio" name="template" value="template3" checked /> Template 1
+                <input type="radio" name="template" value="template3" checked /> Template 1 &mdash; with photo
               </label>
               <label class="template-option">
-                <input type="radio" name="template" value="template3apc" /> Template 2 &mdash; certifications &amp; socials
+                <input type="radio" name="template" value="nophoto" /> Template 2 &mdash; without photo
               </label>
               <label class="template-option">
-                <input type="radio" name="template" value="template1" /> Template 3
+                <input type="radio" name="template" value="template3apc" /> Template 3 &mdash; certifications &amp; socials
               </label>
               <label class="template-option">
-                <input type="radio" name="template" value="template2" /> Template 4
+                <input type="radio" name="template" value="template1" /> Legacy template 1
+              </label>
+              <label class="template-option">
+                <input type="radio" name="template" value="template2" /> Legacy template 2
               </label>
               <label class="template-option">
                 <input type="radio" name="template" value="classic" /> Classic
@@ -1149,7 +1155,8 @@
     apc:      { name: 'Atlantic Project Cargo',  website: 'atlanticprojectcargo.com', site: 'https://atlanticprojectcargo.com/',     logo: 'Atlantic_Project_Cargo_logo.png', logoW: 210, logoH: 30 },
     paec:     { name: 'Pacific Atlantic Express Corp.', website: 'atlanticexpresscorp.com', site: 'https://www.atlanticexpresscorp.com/', logo: 'sig-logo-paec-light.png', logoW: 128, logoH: 44 },
     intertrade: { name: 'Intertrade Inc.', website: 'intertradecars.com', site: 'https://www.intertradecars.com/', logo: 'sig-logo-intertrade.png', logoW: 129, logoH: 26 },
-    autotrade:  { name: 'Autotrade', website: '', site: '', logo: 'sig-logo-autotrade.png', logoW: 120, logoH: 32 }
+    autotrade:  { name: 'Autotrade', website: '', site: '', logo: 'sig-logo-autotrade.png', logoW: 120, logoH: 32 },
+    aet:        { name: 'Atlantic Express Trucking', website: '', site: '', logo: 'sig-logo-aet.png', logoW: 151, logoH: 32 }
   };
 
   /* Which styles each company offers. Every company is on the card layout now;
@@ -1157,12 +1164,13 @@
      Atlantic Project Cargo layout below, so any of them can be offered again by
      listing it here. */
   const COMPANY_TEMPLATES = {
-    aec:        ['template3'],
-    paec:       ['template3'],
-    jumbobee:   ['template3'],
-    apc:        ['template3', 'template3apc'],
-    intertrade: ['template3'],
-    autotrade:  ['template3']
+    aec:        ['template3', 'nophoto'],
+    paec:       ['template3', 'nophoto'],
+    jumbobee:   ['template3', 'nophoto'],
+    apc:        ['template3', 'nophoto', 'template3apc'],
+    intertrade: ['template3', 'nophoto'],
+    autotrade:  ['template3', 'nophoto'],
+    aet:        ['template3', 'nophoto']
   };
 
   /* Brand of the card layout, per company. Colours are sampled from each logo, and
@@ -1173,7 +1181,8 @@
     paec:       { accent: '#2527A4', logo: 'sig-logo-paec-light.png', logoW: 116, logoH: 40, iconPrefix: 'paec-' },
     apc:        { accent: '#222572', logo: 'sig-logo-apc-dark.png',   logoW: 171, logoH: 24, iconPrefix: 'apc-' },
     intertrade: { accent: '#12385D', logo: 'sig-logo-intertrade.png', logoW: 129, logoH: 26, iconPrefix: 'it-' },
-    autotrade:  { accent: '#022C5B', logo: 'sig-logo-autotrade.png',  logoW: 120, logoH: 32, iconPrefix: 'at-' }
+    autotrade:  { accent: '#022C5B', logo: 'sig-logo-autotrade.png',  logoW: 120, logoH: 32, iconPrefix: 'at-' },
+    aet:        { accent: '#022D6A', logo: 'sig-logo-aet.png',        logoW: 151, logoH: 32, iconPrefix: 'aet-' }
   };
 
   /* Per-company social links (order = display order). icon = sig-social-<icon>-<sfx>.png */
@@ -1641,23 +1650,15 @@
 </table>`;
   }
 
-  /* ---- Card layout: JumboBee and Intertrade ---- */
-  function buildT3HTML(d) {
+  /* ---- Pieces both brand layouts share: the contact rows and the logo block ---- */
+  function signatureParts(d) {
     const TXT     = '#1A1A1A';
-    const CARD    = '#FBFBFB';
     const BORDER  = '#E9E9E9';
-    const SUB     = '#4F4F4F';
     const FF      = 'Helvetica,Arial,sans-serif';
     const brand   = T3_BRAND[d.company] || T3_BRAND.jumbobee;
-    const ACCENT  = brand.accent;
     const company = COMPANIES[d.company] || COMPANIES.jumbobee;
     const website = (d.website || company.website).replace(/^https?:\/\//, '');
     const telHref = (v) => 'tel:' + String(v).replace(/[^0-9+]/g, '');
-
-    const row = (icon, html, pb) => `<tr>
-              <td width="16" style="width:16px;padding:0 6px ${pb} 0;vertical-align:middle;"><img src="${A_ICONS}sig-icon-t3-${brand.iconPrefix}${icon}.png" width="16" height="16" alt=""" style="display:block;width:16px;height:16px;border:0;outline:none;"></td>
-              <td style="padding:0 0 ${pb} 0;vertical-align:middle;font-family:${FF};font-size:14px;line-height:20px;color:${TXT};white-space:nowrap;">${html}</td>
-            </tr>`;
 
     const items = [];
     items.push({ icon: 'address', html: escHtml(d.address) });
@@ -1671,13 +1672,13 @@
     if (website) items.push({ icon: 'globe', html:
       `<a href="https://${escHtml(website)}" target="_blank" style="color:${TXT};text-decoration:underline;">${escHtml(website)}</a>` });
 
-    const contactRows = items
-      .map((c, i) => row(c.icon, c.html, i < items.length - 1 ? '6px' : '0'))
-      .join('\n            ');
-
-    const photoHtml = d.showAvatar && d.avatarSrc
-      ? `<img src="${d.avatarSrc}" width="80" height="80" alt="Photo" style="display:block;width:80px;height:80px;border-radius:50%;border:0;outline:none;object-fit:cover;margin:0 auto 12px auto;">`
-      : '';
+    const contactRows = items.map((c, i) => {
+      const pb = i < items.length - 1 ? '6px' : '0';
+      return `<tr>
+              <td width="16" style="width:16px;padding:0 6px ${pb} 0;vertical-align:middle;"><img src="${A_ICONS}sig-icon-t3-${brand.iconPrefix}${c.icon}.png" width="16" height="16" alt="" style="display:block;width:16px;height:16px;border:0;outline:none;"></td>
+              <td style="padding:0 0 ${pb} 0;vertical-align:middle;font-family:${FF};font-size:14px;line-height:20px;color:${TXT};white-space:nowrap;">${c.html}</td>
+            </tr>`;
+    }).join('\n            ');
 
     // Atlantic Express Corp. can show a branch logo beside or instead of its own.
     const logos = (d.company === 'aec' && AEC_OFFICES[d.office])
@@ -1698,29 +1699,93 @@
       return `<td style="${pad}vertical-align:middle;font-size:0;line-height:0;">${linked(img)}</td>`;
     }).join('');
 
-    const logoHtml = `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr>${logoCells}</tr></table>`;
+    const logoTable = (align) => `<table cellpadding="0" cellspacing="0" border="0"${align === 'right' ? ' align="right"' : ''} style="border-collapse:collapse;${align === 'right' ? 'margin-left:auto;' : ''}"><tr>${logoCells}</tr></table>`;
 
-    const extraRow = d.hasExtra
-      ? `<tr><td style="padding:16px 0 0 0;font-family:${FF};font-size:12px;line-height:18px;color:${SUB};">${d.extraHTML}</td></tr>`
+    return {
+      TXT: TXT, BORDER: BORDER, FF: FF, ACCENT: brand.accent,
+      contactRows: contactRows,
+      logoTable: logoTable,
+      logoH: logoH
+    };
+  }
+
+  /* ---- Card layout: name and photo beside the contacts ---- */
+  function buildT3HTML(d) {
+    const CARD = '#FBFBFB';
+    const SUB  = '#4F4F4F';
+    const P = signatureParts(d);
+
+    const photoHtml = d.showAvatar && d.avatarSrc
+      ? `<img src="${d.avatarSrc}" width="80" height="80" alt="Photo" style="display:block;width:80px;height:80px;border-radius:50%;border:0;outline:none;object-fit:cover;margin:0 auto 12px auto;">`
       : '';
 
-    return `<table cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:600px;border-collapse:collapse;background:${CARD};font-family:${FF};border-radius:4px;">
+    const extraRow = d.hasExtra
+      ? `<tr><td style="padding:16px 0 0 0;font-family:${P.FF};font-size:12px;line-height:18px;color:${SUB};">${d.extraHTML}</td></tr>`
+      : '';
+
+    return `<table cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:600px;border-collapse:collapse;background:${CARD};font-family:${P.FF};border-radius:4px;">
   <tr>
-    <td width="204" bgcolor="${CARD}" style="width:204px;padding:22px 20px;border-right:1px solid ${BORDER};background:${CARD};vertical-align:middle;text-align:center;">
-      ${photoHtml}<div style="font-family:${FF};font-size:14px;line-height:20px;font-weight:700;color:${TXT};">${escHtml(d.name)}</div>
-      <div style="font-family:${FF};font-size:12px;line-height:20px;font-weight:600;color:${ACCENT};">${escHtml(d.title)}</div>
+    <td width="204" bgcolor="${CARD}" style="width:204px;padding:22px 20px;border-right:1px solid ${P.BORDER};background:${CARD};vertical-align:middle;text-align:center;">
+      ${photoHtml}<div style="font-family:${P.FF};font-size:14px;line-height:20px;font-weight:700;color:${P.TXT};">${escHtml(d.name)}</div>
+      <div style="font-family:${P.FF};font-size:12px;line-height:20px;font-weight:600;color:${P.ACCENT};">${escHtml(d.title)}</div>
     </td>
     <td bgcolor="${CARD}" style="padding:22px 32px 24px 32px;background:${CARD};vertical-align:middle;">
       <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
         <tr>
-          <td style="padding:0 0 ${Math.max(12, 40 - (logoH - 16))}px 0;line-height:0;font-size:0;">
-            ${logoHtml}
+          <td style="padding:0 0 ${Math.max(12, 40 - (P.logoH - 16))}px 0;line-height:0;font-size:0;">
+            ${P.logoTable('left')}
           </td>
         </tr>
         <tr>
           <td>
             <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
-            ${contactRows}
+            ${P.contactRows}
+            </table>
+          </td>
+        </tr>
+        ${extraRow}
+      </table>
+    </td>
+  </tr>
+</table>`;
+  }
+
+  /* ---- No-photo layout: name and logo on one line, contacts under a rule ---- */
+  function buildNoPhotoHTML(d) {
+    const CARD = '#FBFBFB';
+    const SUB  = '#4F4F4F';
+    const P = signatureParts(d);
+
+    const extraRow = d.hasExtra
+      ? `<tr><td style="padding:16px 0 0 0;font-family:${P.FF};font-size:12px;line-height:18px;color:${SUB};">${d.extraHTML}</td></tr>`
+      : '';
+
+    return `<table cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:600px;border-collapse:collapse;background:${CARD};font-family:${P.FF};border-radius:4px;">
+  <tr>
+    <td bgcolor="${CARD}" style="padding:32px;background:${CARD};">
+      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">
+        <tr>
+          <td style="padding:0 0 16px 0;">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">
+              <tr>
+                <td style="vertical-align:top;">
+                  <div style="font-family:${P.FF};font-size:16px;line-height:23px;font-weight:700;color:${P.TXT};">${escHtml(d.name)}</div>
+                  <div style="font-family:${P.FF};font-size:14px;line-height:18px;font-weight:600;color:${P.ACCENT};padding-top:2px;">${escHtml(d.title)}</div>
+                </td>
+                <td align="right" style="vertical-align:top;text-align:right;font-size:0;line-height:0;padding-left:20px;">
+                  ${P.logoTable('right')}
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td bgcolor="${P.BORDER}" style="height:1px;line-height:1px;font-size:0;background:${P.BORDER};">&nbsp;</td>
+        </tr>
+        <tr>
+          <td style="padding:16px 0 0 0;">
+            <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+            ${P.contactRows}
             </table>
           </td>
         </tr>
@@ -1883,12 +1948,15 @@
     template1:    buildT1HTML,
     template2:    buildT2HTML,
     template3:    buildTemplate3,
+    nophoto:      buildNoPhotoHTML,
     template3apc: buildT3ApcHTML
   };
+  /* Styles that print no photo, so the Photo section is of no use to them. */
+  const PHOTOLESS = ['nophoto', 'template3apc'];
   function templateTarget(name) {
     if (name === 'template1') return copyTarget1;
     if (name === 'template2') return copyTarget2;
-    if (name === 'template3' || name === 'template3apc') return copyTarget3;
+    if (TEMPLATE_BUILDERS[name] && name !== 'template1' && name !== 'template2') return copyTarget3;
     return copyTarget;
   }
   function renderCurrentTemplate() {
@@ -1902,12 +1970,13 @@
       el.style.display = el === active ? '' : 'none';
     });
     const themed = currentTemplate === 'template1' || currentTemplate === 'template2';
-    // The Atlantic Project Cargo layout prints no email, no photo and no extension.
+    const brandLayout = currentTemplate === 'template3' || currentTemplate === 'nophoto';
+    // The Atlantic Project Cargo layout prints no email and no extension either.
     const isApcLayout = currentTemplate === 'template3apc';
     document.getElementById('themeSection').classList.toggle('visible', themed);
-    document.querySelectorAll('.field.t3-only').forEach(el => el.classList.toggle('visible', currentTemplate === 'template3'));
+    document.querySelectorAll('.field.t3-only').forEach(el => el.classList.toggle('visible', brandLayout));
     document.getElementById('emailField').classList.toggle('field-hidden', isApcLayout);
-    document.getElementById('avatarField').classList.toggle('field-hidden', isApcLayout);
+    document.getElementById('photoSection').classList.toggle('field-hidden', PHOTOLESS.indexOf(currentTemplate) !== -1);
     renderCurrentTemplate();
   }
 
