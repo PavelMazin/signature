@@ -706,7 +706,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-10-06 12:30</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-10-07 12:00</div>
 
   <!-- Header -->
   <div class="header">
@@ -1472,7 +1472,7 @@
       address: isJB ? (light ? 'sig-icon-jb-address-light.png' : 'sig-icon-jb-address-dark.png') : (isAPC ? (light ? 'sig-icon-apc-address-light.png' : 'sig-icon-apc-address-dark.png') : 'sig-icon-address.png'),
       globe:   isJB ? (light ? 'sig-icon-jb-globe-light.png'   : 'sig-icon-jb-globe-dark.png')   : (isAPC ? (light ? 'sig-icon-apc-globe-light.png'   : 'sig-icon-apc-globe-dark.png')   : 'sig-icon-globe.png'),
     };
-    const icoTd = (type) => `<td style="padding-right:10px;vertical-align:middle;"><img src="${A_ICONS}${iconMap[type]}" width="28" height="28" alt="" style="display:block;border:0;width:28px;height:28px;"></td>`;
+    const icoTd = (type) => `<td style="padding-right:10px;vertical-align:middle;"><img src="${A_ICONS}${iconMap[type]}" width="28" height="28" alt="" border="0" style="display:block;border:0;width:28px;height:28px;"></td>`;
     const isPAEC    = d.company === 'paec';
     const logoMap   = {
       aec:      light ? 'sig-logo-aec-light.png' : 'sig-logo-aec-dark.png',
@@ -1488,7 +1488,7 @@
 
     const avatarCell = d.showAvatar && d.avatarSrc
       ? `<td style="width:80px;height:80px;padding:0;vertical-align:middle;border-right:1px solid ${light ? '#E9E9E9' : 'rgba(255,255,255,0.10)'};">
-           <img src="${d.avatarSrc}" width="80" height="80" alt="Photo" style="display:block;width:80px;height:80px;border:0;object-fit:cover;">
+           <img src="${d.avatarSrc}" width="80" height="80" alt="Photo" border="0" style="display:block;width:80px;height:80px;border:0;object-fit:cover;">
          </td>` : '';
 
     const extraRow = d.hasExtra
@@ -1505,7 +1505,7 @@
             <div style="color:${txtSub};font-size:14px;line-height:1;font-family:Helvetica,Arial,sans-serif;font-weight:400;">${escHtml(d.title)}</div>
           </td>
           <td style="padding:16px 0;vertical-align:middle;white-space:nowrap;text-align:right;">
-            <a href="${company.site}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}${logo}" width="${logoW}" height="${logoH}" alt="${escHtml(company.name)}" style="display:block;margin-left:auto;border:0;width:${logoW}px;height:${logoH}px;"></a>
+            <a href="${company.site}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}${logo}" width="${logoW}" height="${logoH}" alt="${escHtml(company.name)}" border="0" style="display:block;margin-left:auto;border:0;width:${logoW}px;height:${logoH}px;"></a>
           </td>
         </tr></table>
       </td></tr>
@@ -1571,7 +1571,7 @@
       address: isJB ? (light ? 'sig-icon-jb-address-light.png' : 'sig-icon-jb-address-dark.png') : (isAPC ? (light ? 'sig-icon-apc-address-light.png' : 'sig-icon-apc-address-dark.png') : 'sig-icon-address.png'),
       globe:   isJB ? (light ? 'sig-icon-jb-globe-light.png'   : 'sig-icon-jb-globe-dark.png')   : (isAPC ? (light ? 'sig-icon-apc-globe-light.png'   : 'sig-icon-apc-globe-dark.png')   : 'sig-icon-globe.png'),
     };
-    const icoTd = (type, pb) => `<td style="padding-right:10px;padding-bottom:${pb};vertical-align:middle;"><img src="${A_ICONS}${iconMap[type]}" width="28" height="28" alt="" style="display:block;border:0;width:28px;height:28px;"></td>`;
+    const icoTd = (type, pb) => `<td style="padding-right:10px;padding-bottom:${pb};vertical-align:middle;"><img src="${A_ICONS}${iconMap[type]}" width="28" height="28" alt="" border="0" style="display:block;border:0;width:28px;height:28px;"></td>`;
 
     const isPAEC       = d.company === 'paec';
     const logoMap = {
@@ -1587,7 +1587,7 @@
     const website = (d.website || company.website).replace(/^https?:\/\//, '');
 
     const photoHtml = d.showAvatar && d.avatarSrc
-      ? `<img src="${d.avatarSrc}" width="80" height="80" alt="Photo" style="display:block;width:80px;height:80px;border-radius:6px;border:0;object-fit:cover;margin:0 auto 20px auto;">`
+      ? `<img src="${d.avatarSrc}" width="80" height="80" alt="Photo" border="0" style="display:block;width:80px;height:80px;border-radius:6px;border:0;object-fit:cover;margin:0 auto 20px auto;">`
       : '';
 
     const contactItems = [
@@ -1626,7 +1626,7 @@
                 </table>
               </td>
               <td style="vertical-align:top;text-align:right;padding-left:20px;white-space:nowrap;">
-                <a href="${company.site}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}${logo}" width="${logoW}" height="${logoH}" alt="${escHtml(company.name)}" style="display:block;margin-left:auto;border:0;width:${logoW}px;height:${logoH}px;"></a>
+                <a href="${company.site}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}${logo}" width="${logoW}" height="${logoH}" alt="${escHtml(company.name)}" border="0" style="display:block;margin-left:auto;border:0;width:${logoW}px;height:${logoH}px;"></a>
               </td>
             </tr>
             ${extraRow}
@@ -1675,7 +1675,7 @@
     const contactRows = items.map((c, i) => {
       const pb = i < items.length - 1 ? '6px' : '0';
       return `<tr>
-              <td width="16" style="width:16px;padding:0 6px ${pb} 0;vertical-align:middle;"><img src="${A_ICONS}sig-icon-t3-${brand.iconPrefix}${c.icon}.png" width="16" height="16" alt="" style="display:block;width:16px;height:16px;border:0;outline:none;"></td>
+              <td width="16" style="width:16px;padding:0 6px ${pb} 0;vertical-align:middle;"><img src="${A_ICONS}sig-icon-t3-${brand.iconPrefix}${c.icon}.png" width="16" height="16" alt="" border="0" style="display:block;width:16px;height:16px;border:0;outline:none;"></td>
               <td style="padding:0 0 ${pb} 0;vertical-align:middle;font-family:${FF};font-size:14px;line-height:20px;color:${TXT};white-space:nowrap;">${c.html}</td>
             </tr>`;
     }).join('\n            ');
@@ -1693,7 +1693,7 @@
       : inner;
 
     const logoCells = logos.map((l, i) => {
-      const img = `<img src="${A_LOGOS}${l.file}" width="${l.w}" height="${l.h}" alt="${escHtml(l.alt)}" style="display:block;width:${l.w}px;height:${l.h}px;border:0;outline:none;">`;
+      const img = `<img src="${A_LOGOS}${l.file}" width="${l.w}" height="${l.h}" alt="${escHtml(l.alt)}" border="0" style="display:block;width:${l.w}px;height:${l.h}px;border:0;outline:none;">`;
       const pad = logos.length === 1 ? ''
         : (i === 0 ? 'padding-right:16px;' : `padding-left:16px;border-left:1px solid ${BORDER};`);
       return `<td style="${pad}vertical-align:middle;font-size:0;line-height:0;">${linked(img)}</td>`;
@@ -1716,7 +1716,7 @@
     const P = signatureParts(d);
 
     const photoHtml = d.showAvatar && d.avatarSrc
-      ? `<img src="${d.avatarSrc}" width="80" height="80" alt="Photo" style="display:block;width:80px;height:80px;border-radius:50%;border:0;outline:none;object-fit:cover;margin:0 auto 12px auto;">`
+      ? `<img src="${d.avatarSrc}" width="80" height="80" alt="Photo" border="0" style="display:block;width:80px;height:80px;border-radius:50%;border:0;outline:none;object-fit:cover;margin:0 auto 12px auto;">`
       : '';
 
     const extraRow = d.hasExtra
@@ -1732,9 +1732,7 @@
     <td bgcolor="${CARD}" style="padding:22px 32px 24px 32px;background:${CARD};vertical-align:middle;">
       <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
         <tr>
-          <td style="padding:0 0 ${Math.max(12, 40 - (P.logoH - 16))}px 0;line-height:0;font-size:0;">
-            ${P.logoTable('left')}
-          </td>
+          <td style="padding:0 0 ${Math.max(12, 40 - (P.logoH - 16))}px 0;line-height:0;font-size:0;">${P.logoTable('left')}</td>
         </tr>
         <tr>
           <td>
@@ -1750,14 +1748,14 @@
 </table>`;
   }
 
-  /* ---- No-photo layout: name and logo on one line, contacts under a rule ---- */
+  /* ---- No-photo layout: name, contacts, then the logo underneath ---- */
   function buildNoPhotoHTML(d) {
     const CARD = '#FBFBFB';
     const SUB  = '#4F4F4F';
     const P = signatureParts(d);
 
     const extraRow = d.hasExtra
-      ? `<tr><td style="padding:16px 0 0 0;font-family:${P.FF};font-size:12px;line-height:18px;color:${SUB};">${d.extraHTML}</td></tr>`
+      ? `<tr><td style="padding:0 0 24px 0;font-family:${P.FF};font-size:12px;line-height:18px;color:${SUB};">${d.extraHTML}</td></tr>`
       : '';
 
     return `<table cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:600px;border-collapse:collapse;background:${CARD};font-family:${P.FF};border-radius:4px;">
@@ -1765,31 +1763,22 @@
     <td bgcolor="${CARD}" style="padding:32px;background:${CARD};">
       <table cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">
         <tr>
-          <td style="padding:0 0 16px 0;">
-            <table cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">
-              <tr>
-                <td style="vertical-align:top;">
-                  <div style="font-family:${P.FF};font-size:16px;line-height:23px;font-weight:700;color:${P.TXT};">${escHtml(d.name)}</div>
-                  <div style="font-family:${P.FF};font-size:14px;line-height:18px;font-weight:600;color:${P.ACCENT};padding-top:2px;">${escHtml(d.title)}</div>
-                </td>
-                <td align="right" style="vertical-align:top;text-align:right;font-size:0;line-height:0;padding-left:20px;">
-                  ${P.logoTable('right')}
-                </td>
-              </tr>
-            </table>
+          <td style="padding:0 0 24px 0;">
+            <div style="font-family:${P.FF};font-size:16px;line-height:23px;font-weight:700;color:${P.TXT};">${escHtml(d.name)}</div>
+            <div style="font-family:${P.FF};font-size:14px;line-height:18px;font-weight:600;color:${P.ACCENT};padding-top:2px;">${escHtml(d.title)}</div>
           </td>
         </tr>
         <tr>
-          <td bgcolor="${P.BORDER}" style="height:1px;line-height:1px;font-size:0;background:${P.BORDER};">&nbsp;</td>
-        </tr>
-        <tr>
-          <td style="padding:16px 0 0 0;">
+          <td style="padding:0 0 24px 0;">
             <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
             ${P.contactRows}
             </table>
           </td>
         </tr>
         ${extraRow}
+        <tr>
+          <td style="line-height:0;font-size:0;">${P.logoTable('left')}</td>
+        </tr>
       </table>
     </td>
   </tr>
@@ -1811,14 +1800,14 @@
       { file: 'sig-cert-fmc.png',  label: 'FMC'  }
     ];
     const certCells = certs.map((c, i) =>
-      `<td style="padding-left:${i ? 7 : 0}px;"><img src="${A_ICONS}${c.file}" width="30" height="30" alt="${c.label}" style="display:block;width:30px;height:30px;border:0;outline:none;"></td>`
+      `<td style="padding-left:${i ? 7 : 0}px;"><img src="${A_ICONS}${c.file}" width="30" height="30" alt="${c.label}" border="0" style="display:block;width:30px;height:30px;border:0;outline:none;"></td>`
     ).join('');
 
     const order = ['instagram', 'facebook', 'linkedin', 'youtube', 'x'];
     const urls = {};
     (SOCIALS.apc || []).forEach(x => { urls[x.icon] = x.url; });
     const socialCellsT3 = order.filter(k => urls[k]).map((k, i) =>
-      `<td style="padding-left:${i ? 12 : 0}px;"><a href="${urls[k]}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-t3-${k}.png" width="24" height="24" alt="${k}" style="display:block;width:24px;height:24px;border:0;outline:none;"></a></td>`
+      `<td style="padding-left:${i ? 12 : 0}px;"><a href="${urls[k]}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-t3-${k}.png" width="24" height="24" alt="${k}" border="0" style="display:block;width:24px;height:24px;border:0;outline:none;"></a></td>`
     ).join('');
 
     const extraBlock = d.hasExtra
@@ -1833,9 +1822,7 @@
           <td style="padding:0 0 24px 0;font-family:${FF};font-size:14px;line-height:26px;color:#000000;letter-spacing:0.28px;white-space:nowrap;">Thank you for your time,</td>
         </tr>
         <tr>
-          <td style="padding:0 0 12px 0;line-height:0;font-size:0;">
-            <a href="${company.site}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}sig-logo-apc-t3.png" width="173" height="24" alt="${escHtml(company.name)}" style="display:block;width:173px;height:24px;border:0;outline:none;"></a>
-          </td>
+          <td style="padding:0 0 12px 0;line-height:0;font-size:0;"><a href="${company.site}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}sig-logo-apc-t3.png" width="173" height="24" alt="${escHtml(company.name)}" border="0" border="0" style="display:block;width:173px;height:24px;border:0;outline:none;"></a></td>
         </tr>
         <tr>
           <td style="padding:0 0 12px 0;font-family:${FF};font-size:10px;line-height:17px;color:${MUTED};letter-spacing:0.2px;white-space:nowrap;">An Affiliate Atlantic Express Corp.</td>
