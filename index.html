@@ -706,7 +706,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-10-07 12:00</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-10-08 12:20</div>
 
   <!-- Header -->
   <div class="header">
@@ -863,6 +863,9 @@
               </label>
               <label class="company-option">
                 <input type="radio" name="company" value="aet" /> Atlantic Express Trucking
+              </label>
+              <label class="company-option">
+                <input type="radio" name="company" value="ahl" /> Atlantic Heavy Loaders
               </label>
             </div>
           </div>
@@ -1156,7 +1159,8 @@
     paec:     { name: 'Pacific Atlantic Express Corp.', website: 'atlanticexpresscorp.com', site: 'https://www.atlanticexpresscorp.com/', logo: 'sig-logo-paec-light.png', logoW: 128, logoH: 44 },
     intertrade: { name: 'Intertrade Inc.', website: 'intertradecars.com', site: 'https://www.intertradecars.com/', logo: 'sig-logo-intertrade.png', logoW: 129, logoH: 26 },
     autotrade:  { name: 'Autotrade', website: '', site: '', logo: 'sig-logo-autotrade.png', logoW: 120, logoH: 32 },
-    aet:        { name: 'Atlantic Express Trucking', website: '', site: '', logo: 'sig-logo-aet.png', logoW: 151, logoH: 32 }
+    aet:        { name: 'Atlantic Express Trucking', website: '', site: '', logo: 'sig-logo-aet.png', logoW: 151, logoH: 32 },
+    ahl:        { name: 'Atlantic Heavy Loaders', website: 'atlanticheavyloaders.com', site: 'https://atlanticheavyloaders.com/', logo: 'sig-logo-ahl.png', logoW: 169, logoH: 32 }
   };
 
   /* Which styles each company offers. Every company is on the card layout now;
@@ -1170,7 +1174,8 @@
     apc:        ['template3', 'nophoto', 'template3apc'],
     intertrade: ['template3', 'nophoto'],
     autotrade:  ['template3', 'nophoto'],
-    aet:        ['template3', 'nophoto']
+    aet:        ['template3', 'nophoto'],
+    ahl:        ['template3', 'nophoto']
   };
 
   /* Brand of the card layout, per company. Colours are sampled from each logo, and
@@ -1182,7 +1187,8 @@
     apc:        { accent: '#222572', logo: 'sig-logo-apc-dark.png',   logoW: 171, logoH: 24, iconPrefix: 'apc-' },
     intertrade: { accent: '#12385D', logo: 'sig-logo-intertrade.png', logoW: 129, logoH: 26, iconPrefix: 'it-' },
     autotrade:  { accent: '#022C5B', logo: 'sig-logo-autotrade.png',  logoW: 120, logoH: 32, iconPrefix: 'at-' },
-    aet:        { accent: '#022D6A', logo: 'sig-logo-aet.png',        logoW: 151, logoH: 32, iconPrefix: 'aet-' }
+    aet:        { accent: '#022D6A', logo: 'sig-logo-aet.png',        logoW: 151, logoH: 32, iconPrefix: 'aet-' },
+    ahl:        { accent: '#282AAB', logo: 'sig-logo-ahl.png',        logoW: 169, logoH: 32, iconPrefix: 'ahl-' }
   };
 
   /* Per-company social links (order = display order). icon = sig-social-<icon>-<sfx>.png */
