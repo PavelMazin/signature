@@ -709,7 +709,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-10-20 16:20</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-10-20 17:10</div>
 
   <!-- Header -->
   <div class="header">
@@ -1809,8 +1809,7 @@
 
   /* ---- Card layout: name and photo beside the contacts ---- */
   function buildT3HTML(d) {
-    const CARD = '#FBFBFB';
-    const SUB  = '#4F4F4F';
+    const SUB = '#4F4F4F';
     const P = signatureParts(d);
 
     const photoHtml = d.showAvatar && d.avatarSrc
@@ -1821,13 +1820,13 @@
       ? `<tr><td style="padding:16px 0 0 0;font-family:${P.FF};font-size:12px;line-height:18px;color:${SUB};">${d.extraHTML}</td></tr>`
       : '';
 
-    return `<table cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:600px;border-collapse:collapse;background:${CARD};font-family:${P.FF};border-radius:16px;overflow:hidden;">
+    return `<table cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:600px;border-collapse:collapse;font-family:${P.FF};">
   <tr>
-    <td width="204" bgcolor="${CARD}" style="width:204px;padding:22px 20px;border-right:1px solid ${P.BORDER};background:${CARD};vertical-align:middle;text-align:center;">
+    <td width="204" style="width:204px;padding:22px 20px;border-right:1px solid ${P.BORDER};vertical-align:middle;text-align:center;">
       ${photoHtml}<div style="font-family:${P.FF};font-size:14px;line-height:20px;font-weight:700;color:${P.TXT};">${escHtml(d.name)}</div>
       <div style="font-family:${P.FF};font-size:12px;line-height:20px;font-weight:600;color:${P.ACCENT};">${escHtml(d.title)}</div>
     </td>
-    <td bgcolor="${CARD}" style="padding:22px 32px 24px 32px;background:${CARD};vertical-align:middle;">
+    <td style="padding:22px 32px 24px 32px;vertical-align:middle;">
       <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
         <tr>
           <td style="padding:0 0 ${Math.max(12, 40 - (P.logoH - 16))}px 0;line-height:0;font-size:0;">${P.logoTable('left')}</td>
@@ -1848,17 +1847,16 @@
 
   /* ---- No-photo layout: name, contacts, then the logo underneath ---- */
   function buildNoPhotoHTML(d) {
-    const CARD = '#FBFBFB';
-    const SUB  = '#4F4F4F';
+    const SUB = '#4F4F4F';
     const P = signatureParts(d);
 
     const extraRow = d.hasExtra
       ? `<tr><td style="padding:0 0 24px 0;font-family:${P.FF};font-size:12px;line-height:18px;color:${SUB};">${d.extraHTML}</td></tr>`
       : '';
 
-    return `<table cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:600px;border-collapse:collapse;background:${CARD};font-family:${P.FF};border-radius:16px;overflow:hidden;">
+    return `<table cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:600px;border-collapse:collapse;font-family:${P.FF};">
   <tr>
-    <td bgcolor="${CARD}" style="padding:32px;background:${CARD};">
+    <td style="padding:32px;">
       <table cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">
         <tr>
           <td style="padding:0 0 24px 0;">
