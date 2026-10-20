@@ -373,6 +373,9 @@
   .photo-toggle-title { display: block; font-size: 13px; font-weight: 600; color: var(--text); }
   .photo-toggle-hint  { display: block; font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 
+  .cta-area { display: none; margin-top: 14px; }
+  .cta-area.visible { display: block; }
+
   .photo-area { display: none; margin-top: 14px; }
   .photo-area.visible { display: block; }
 
@@ -706,7 +709,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-10-08 12:20</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-10-20 12:40</div>
 
   <!-- Header -->
   <div class="header">
@@ -915,6 +918,38 @@
                 <input type="file" id="avatarFileInput" accept="image/*" style="display:none" />
               </div>
               <div id="avatarStatus" style="display:none;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA banner -->
+        <div class="card-section field-hidden" id="ctaSection">
+          <div class="card-section-title">CTA banner</div>
+          <div class="field">
+            <label class="photo-toggle">
+              <input type="checkbox" id="ctaToggle" />
+              <span>
+                <span class="photo-toggle-title">Add a banner under the signature</span>
+                <span class="photo-toggle-hint">A call to action with a button. Optional.</span>
+              </span>
+            </label>
+            <div class="cta-area" id="ctaArea">
+              <div class="field">
+                <label for="ctaHeading">Heading</label>
+                <input id="ctaHeading" type="text" value="Looking for equipment to buy?" />
+              </div>
+              <div class="field">
+                <label for="ctaSub">Subtitle</label>
+                <input id="ctaSub" type="text" value="Check out our inventory on JumboBee" />
+              </div>
+              <div class="field">
+                <label for="ctaLabel">Button text</label>
+                <input id="ctaLabel" type="text" value="Browse" />
+              </div>
+              <div class="field">
+                <label for="ctaUrl">Button link <span style="font-weight:400;color:var(--text-muted);">&mdash; paste a UTM link here if you track clicks</span></label>
+                <input id="ctaUrl" type="text" value="https://jumbobee.com/" />
+              </div>
             </div>
           </div>
         </div>
@@ -1267,6 +1302,12 @@
 
   const companyOptions  = document.getElementById('companyOptions');
   const avatarToggle    = document.getElementById('avatarToggle');
+  const ctaToggle   = document.getElementById('ctaToggle');
+  const ctaArea     = document.getElementById('ctaArea');
+  const ctaHeading  = document.getElementById('ctaHeading');
+  const ctaSub      = document.getElementById('ctaSub');
+  const ctaLabel    = document.getElementById('ctaLabel');
+  const ctaUrl      = document.getElementById('ctaUrl');
   const avatarUploadArea = document.getElementById('avatarUploadArea');
   const avatarUploadBtn = document.getElementById('avatarUploadBtn');
   const avatarFileInput = document.getElementById('avatarFileInput');
@@ -1418,6 +1459,13 @@
         highlightTemplateOption();
       }
       if (saved.theme) currentTheme = saved.theme;
+      if (saved.ctaOn) {
+        ctaToggle.checked = true;
+        ctaArea.classList.add('visible');
+      }
+      ['ctaHeading', 'ctaSub', 'ctaLabel', 'ctaUrl'].forEach((key) => {
+        if (typeof saved[key] === 'string' && saved[key] !== '') document.getElementById(key).value = saved[key];
+      });
       if (saved.office && AEC_OFFICES[saved.office]) {
         currentOffice = saved.office;
         const oRadio = document.querySelector(`input[name="office"][value="${saved.office}"]`);
@@ -1437,6 +1485,11 @@
     payload.template = currentTemplate;
     payload.theme = currentTheme;
     payload.office = currentOffice;
+    payload.ctaOn = ctaToggle.checked;
+    payload.ctaHeading = ctaHeading.value;
+    payload.ctaSub = ctaSub.value;
+    payload.ctaLabel = ctaLabel.value;
+    payload.ctaUrl = ctaUrl.value;
     payload.avatarEnabled = avatarToggle.checked;
     payload.avatarDataURL = avatarDataURL;
     payload.avatarFileName = avatarFileName;
@@ -1653,6 +1706,45 @@
       </tr></table>
     </td>
   </tr>
+</table>`;
+  }
+
+  /* ---- Banner under the signature, Atlantic Project Cargo only ---- */
+  const CTA_COMPANIES = ['apc'];
+
+  function buildCtaHTML(d) {
+    const NAVY   = '#222572';
+    const YELLOW = '#F2B824';
+    const SUB    = '#4F4F4F';
+    const FF     = 'Helvetica,Arial,sans-serif';
+    const url    = /^https?:\/\//i.test(d.ctaUrl) ? d.ctaUrl : 'https://' + d.ctaUrl;
+
+    return `<table cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:600px;border-collapse:collapse;background:#ffffff;font-family:${FF};border:1px solid ${NAVY};border-radius:8px;">
+  <tr>
+    <td bgcolor="#ffffff" style="padding:14px 16px;background:#ffffff;">
+      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">
+        <tr>
+          <td width="48" bgcolor="${YELLOW}" align="center" style="width:48px;height:48px;background:${YELLOW};border-radius:8px;text-align:center;vertical-align:middle;font-family:${FF};font-size:16px;line-height:48px;font-weight:700;color:${NAVY};">JB</td>
+          <td style="padding:0 16px;vertical-align:middle;">
+            <div style="font-family:${FF};font-size:16px;line-height:20px;font-weight:700;color:${NAVY};">${escHtml(d.ctaHeading)}</div>
+            <div style="font-family:${FF};font-size:13px;line-height:18px;color:${SUB};padding-top:2px;">${escHtml(d.ctaSub)}</div>
+          </td>
+          <td align="right" style="vertical-align:middle;text-align:right;white-space:nowrap;">
+            <a href="${escHtml(url)}" target="_blank" style="display:inline-block;background:${YELLOW};color:${NAVY};font-family:${FF};font-size:14px;line-height:18px;font-weight:700;text-decoration:none;padding:11px 20px;border-radius:22px;">${escHtml(d.ctaLabel)} &rsaquo;</a>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>`;
+  }
+
+  /* The banner rides under whichever layout the signature uses. */
+  function withCta(html, d) {
+    if (!d.ctaOn || CTA_COMPANIES.indexOf(d.company) === -1) return html;
+    return `<table cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:600px;border-collapse:collapse;">
+  <tr><td style="padding:0 0 16px 0;">${html}</td></tr>
+  <tr><td>${buildCtaHTML(d)}</td></tr>
 </table>`;
   }
 
@@ -1907,6 +1999,11 @@
       hasEmail:   !!fields.email.value.trim() && fields.email.value.trim() !== '[email]',
       company:    currentCompany,
       office:     currentOffice,
+      ctaOn:      ctaToggle.checked,
+      ctaHeading: ctaHeading.value,
+      ctaSub:     ctaSub.value,
+      ctaLabel:   ctaLabel.value,
+      ctaUrl:     ctaUrl.value.trim() || 'https://jumbobee.com/',
       theme:      currentTheme,
       extraHTML:  sanitizeHTML(extraText.innerHTML),
       hasExtra:   extraText.textContent.trim().length > 0,
@@ -1954,7 +2051,9 @@
   }
   function renderCurrentTemplate() {
     const build = TEMPLATE_BUILDERS[currentTemplate];
-    if (build) templateTarget(currentTemplate).innerHTML = build(getT1Data());
+    if (!build) return;
+    const d = getT1Data();
+    templateTarget(currentTemplate).innerHTML = withCta(build(d), d);
   }
 
   function switchTemplate() {
@@ -1982,6 +2081,7 @@
     });
     document.getElementById('styleSection').classList.toggle('field-hidden', allowed.length < 2);
     document.getElementById('officeField').classList.toggle('field-hidden', currentCompany !== 'aec');
+    document.getElementById('ctaSection').classList.toggle('field-hidden', CTA_COMPANIES.indexOf(currentCompany) === -1);
     if (!allowed.includes(currentTemplate)) {
       currentTemplate = allowed[0];
       const r = document.querySelector(`input[name="template"][value="${currentTemplate}"]`);
@@ -2097,6 +2197,14 @@
   });
 
   /* ---- avatar toggle ---- */
+  ctaToggle.addEventListener('change', () => {
+    ctaArea.classList.toggle('visible', ctaToggle.checked);
+    updateSignature();
+  });
+  [ctaHeading, ctaSub, ctaLabel, ctaUrl].forEach((input) => {
+    input.addEventListener('input', updateSignature);
+  });
+
   avatarToggle.addEventListener('change', () => {
     avatarUploadArea.classList.toggle('visible', avatarToggle.checked);
     updateSignature();
@@ -2328,7 +2436,7 @@
       if (skipPhoto) { d.showAvatar = false; d.avatarSrc = ''; }
       else if (avatarFileName) d.avatarSrc = A_AVATARS + avatarFileName;
       return {
-        html: build(d),
+        html: withCta(build(d), d),
         text: templateTarget(currentTemplate).innerText,
         skipPhoto: skipPhoto,
         reason: reason
