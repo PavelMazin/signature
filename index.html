@@ -709,7 +709,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-10-21 12:30</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-10-21 13:20</div>
 
   <!-- Header -->
   <div class="header">
@@ -934,6 +934,17 @@
               </span>
             </label>
             <div class="cta-area" id="ctaArea">
+              <div class="field">
+                <span class="field-label">Banner style</span>
+                <div class="template-options" id="ctaStyleOptions">
+                  <label class="template-option selected">
+                    <input type="radio" name="ctaStyle" value="tinted" checked /> Tinted card
+                  </label>
+                  <label class="template-option">
+                    <input type="radio" name="ctaStyle" value="plain" /> Plain &mdash; no background
+                  </label>
+                </div>
+              </div>
               <div class="field">
                 <label for="ctaHeading">Heading</label>
                 <input id="ctaHeading" type="text" value="Looking for equipment to buy?" />
@@ -1328,6 +1339,7 @@
   let currentTemplate = 'template3';
   let currentTheme    = 'light';
   let currentOffice   = 'aec';
+  let currentCtaStyle = 'tinted';
   let avatarDataURL = '';
   let avatarFileName = '';
 
@@ -1459,6 +1471,12 @@
         highlightTemplateOption();
       }
       if (saved.theme) currentTheme = saved.theme;
+      if (saved.ctaStyle === 'plain' || saved.ctaStyle === 'tinted') {
+        currentCtaStyle = saved.ctaStyle;
+        const cRadio = document.querySelector(`input[name="ctaStyle"][value="${saved.ctaStyle}"]`);
+        if (cRadio) cRadio.checked = true;
+        highlightCtaStyleOption();
+      }
       if (saved.ctaOn) {
         ctaToggle.checked = true;
         ctaArea.classList.add('visible');
@@ -1490,6 +1508,7 @@
     payload.ctaSub = ctaSub.value;
     payload.ctaLabel = ctaLabel.value;
     payload.ctaUrl = ctaUrl.value;
+    payload.ctaStyle = currentCtaStyle;
     payload.avatarEnabled = avatarToggle.checked;
     payload.avatarDataURL = avatarDataURL;
     payload.avatarFileName = avatarFileName;
@@ -1713,6 +1732,37 @@
   const CTA_COMPANIES = ['apc'];
 
   function buildCtaHTML(d) {
+    return d.ctaStyle === 'plain' ? buildCtaPlainHTML(d) : buildCtaTintedHTML(d);
+  }
+
+  /* The quieter one: no fill, no edge, the action as a plain link. */
+  function buildCtaPlainHTML(d) {
+    const GREEN = '#102A15';
+    const MUTED = '#6F7A6A';
+    const FF    = 'Helvetica,Arial,sans-serif';
+    const url   = /^https?:\/\//i.test(d.ctaUrl) ? d.ctaUrl : 'https://' + d.ctaUrl;
+
+    return `<table cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:600px;border-collapse:collapse;font-family:${FF};">
+  <tr>
+    <td style="padding:0;">
+      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">
+        <tr>
+          <td width="36" style="width:36px;line-height:0;font-size:0;vertical-align:middle;"><img src="${A_LOGOS}sig-cta-jb-mark.png" width="36" height="36" alt="JumboBee" border="0" style="display:block;width:36px;height:36px;border:0;outline:none;border-radius:7px;"></td>
+          <td style="padding:0 16px;vertical-align:middle;">
+            <div style="font-family:${FF};font-size:13px;line-height:18px;font-weight:700;color:${GREEN};">${escHtml(d.ctaHeading)}</div>
+            <div style="font-family:${FF};font-size:12px;line-height:17px;color:${MUTED};padding-top:1px;">${escHtml(d.ctaSub)}</div>
+          </td>
+          <td align="right" style="vertical-align:middle;text-align:right;white-space:nowrap;">
+            <a href="${escHtml(url)}" target="_blank" style="font-family:${FF};font-size:13px;line-height:18px;font-weight:700;color:${GREEN};text-decoration:underline;">${escHtml(d.ctaLabel)}</a>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>`;
+  }
+
+  function buildCtaTintedHTML(d) {
     const GREEN  = '#102A15';   // JumboBee's dark green, kept for the type and the mark
     const TINT   = '#F5F8EF';   // a whisper of that green, so the banner sits in the message
     const EDGE   = '#DEE8C8';
@@ -2004,6 +2054,7 @@
       ctaSub:     ctaSub.value,
       ctaLabel:   ctaLabel.value,
       ctaUrl:     ctaUrl.value.trim() || 'https://jumbobee.com/',
+      ctaStyle:   currentCtaStyle,
       theme:      currentTheme,
       extraHTML:  sanitizeHTML(extraText.innerHTML),
       hasExtra:   extraText.textContent.trim().length > 0,
@@ -2013,6 +2064,13 @@
   }
 
   /* ---- template / theme selectors ---- */
+  function highlightCtaStyleOption() {
+    document.querySelectorAll('#ctaStyleOptions .template-option').forEach(label => {
+      const radio = label.querySelector('input[type="radio"]');
+      label.classList.toggle('selected', radio.checked);
+    });
+  }
+
   function highlightOfficeOption() {
     document.querySelectorAll('#officeOptions .template-option').forEach(label => {
       const radio = label.querySelector('input[type="radio"]');
@@ -2197,6 +2255,13 @@
   });
 
   /* ---- avatar toggle ---- */
+  document.getElementById('ctaStyleOptions').addEventListener('change', (e) => {
+    if (e.target.type !== 'radio') return;
+    currentCtaStyle = e.target.value;
+    highlightCtaStyleOption();
+    updateSignature();
+  });
+
   ctaToggle.addEventListener('change', () => {
     ctaArea.classList.toggle('visible', ctaToggle.checked);
     updateSignature();
@@ -2675,6 +2740,7 @@
   loadSavedValues();
   highlightCompanyOption();
   highlightOfficeOption();
+  highlightCtaStyleOption();
   updateTemplateAvailability();
   updateSignature();
   switchTemplate();
