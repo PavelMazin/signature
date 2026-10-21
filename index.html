@@ -709,7 +709,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-10-21 13:20</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-10-21 14:30</div>
 
   <!-- Header -->
   <div class="header">
@@ -938,10 +938,10 @@
                 <span class="field-label">Banner style</span>
                 <div class="template-options" id="ctaStyleOptions">
                   <label class="template-option selected">
-                    <input type="radio" name="ctaStyle" value="tinted" checked /> Tinted card
+                    <input type="radio" name="ctaStyle" value="green" checked /> Light green
                   </label>
                   <label class="template-option">
-                    <input type="radio" name="ctaStyle" value="plain" /> Plain &mdash; no background
+                    <input type="radio" name="ctaStyle" value="white" /> White
                   </label>
                 </div>
               </div>
@@ -1339,7 +1339,7 @@
   let currentTemplate = 'template3';
   let currentTheme    = 'light';
   let currentOffice   = 'aec';
-  let currentCtaStyle = 'tinted';
+  let currentCtaStyle = 'green';
   let avatarDataURL = '';
   let avatarFileName = '';
 
@@ -1471,7 +1471,7 @@
         highlightTemplateOption();
       }
       if (saved.theme) currentTheme = saved.theme;
-      if (saved.ctaStyle === 'plain' || saved.ctaStyle === 'tinted') {
+      if (CTA_FILLS[saved.ctaStyle]) {
         currentCtaStyle = saved.ctaStyle;
         const cRadio = document.querySelector(`input[name="ctaStyle"][value="${saved.ctaStyle}"]`);
         if (cRadio) cRadio.checked = true;
@@ -1731,49 +1731,23 @@
   /* ---- Banner under the signature, Atlantic Project Cargo only ---- */
   const CTA_COMPANIES = ['apc'];
 
+  /* The banner is the bottom band of the signature, in one of two fills. */
+  const CTA_FILLS = {
+    green: { bg: '#F5F8EF', edge: '#DEE8C8' },
+    white: { bg: '#FFFFFF', edge: '#E9E9E9' }
+  };
+
   function buildCtaHTML(d) {
-    return d.ctaStyle === 'plain' ? buildCtaPlainHTML(d) : buildCtaTintedHTML(d);
-  }
-
-  /* The quieter one: no fill, no edge, the action as a plain link. */
-  function buildCtaPlainHTML(d) {
-    const GREEN = '#102A15';
-    const MUTED = '#6F7A6A';
-    const FF    = 'Helvetica,Arial,sans-serif';
-    const url   = /^https?:\/\//i.test(d.ctaUrl) ? d.ctaUrl : 'https://' + d.ctaUrl;
-
-    return `<table cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:600px;border-collapse:collapse;font-family:${FF};">
-  <tr>
-    <td style="padding:0;">
-      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">
-        <tr>
-          <td width="36" style="width:36px;line-height:0;font-size:0;vertical-align:middle;"><img src="${A_LOGOS}sig-cta-jb-mark.png" width="36" height="36" alt="JumboBee" border="0" style="display:block;width:36px;height:36px;border:0;outline:none;border-radius:7px;"></td>
-          <td style="padding:0 16px;vertical-align:middle;">
-            <div style="font-family:${FF};font-size:13px;line-height:18px;font-weight:700;color:${GREEN};">${escHtml(d.ctaHeading)}</div>
-            <div style="font-family:${FF};font-size:12px;line-height:17px;color:${MUTED};padding-top:1px;">${escHtml(d.ctaSub)}</div>
-          </td>
-          <td align="right" style="vertical-align:middle;text-align:right;white-space:nowrap;">
-            <a href="${escHtml(url)}" target="_blank" style="font-family:${FF};font-size:13px;line-height:18px;font-weight:700;color:${GREEN};text-decoration:underline;">${escHtml(d.ctaLabel)}</a>
-          </td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>`;
-  }
-
-  function buildCtaTintedHTML(d) {
-    const GREEN  = '#102A15';   // JumboBee's dark green, kept for the type and the mark
-    const TINT   = '#F5F8EF';   // a whisper of that green, so the banner sits in the message
-    const EDGE   = '#DEE8C8';
+    const GREEN  = '#102A15';
     const MUTED  = '#5F6B5A';
     const BUTTON = '#BDCE83';
     const FF     = 'Helvetica,Arial,sans-serif';
+    const fill   = CTA_FILLS[d.ctaStyle] || CTA_FILLS.green;
     const url    = /^https?:\/\//i.test(d.ctaUrl) ? d.ctaUrl : 'https://' + d.ctaUrl;
 
-    return `<table cellpadding="0" cellspacing="0" border="0" width="600" bgcolor="${TINT}" style="width:600px;max-width:600px;border-collapse:collapse;background:${TINT};font-family:${FF};border:1px solid ${EDGE};border-radius:16px;">
+    return `<table cellpadding="0" cellspacing="0" border="0" width="600" bgcolor="${fill.bg}" style="width:600px;max-width:600px;border-collapse:collapse;background:${fill.bg};font-family:${FF};border-top:1px solid ${fill.edge};border-radius:0 0 16px 16px;">
   <tr>
-    <td bgcolor="${TINT}" style="padding:18px 20px;background:${TINT};">
+    <td bgcolor="${fill.bg}" style="padding:16px 20px;background:${fill.bg};">
       <table cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">
         <tr>
           <td width="48" style="width:48px;line-height:0;font-size:0;vertical-align:middle;"><img src="${A_LOGOS}sig-cta-jb-mark.png" width="48" height="48" alt="JumboBee" border="0" style="display:block;width:48px;height:48px;border:0;outline:none;border-radius:9px;"></td>
@@ -1795,7 +1769,7 @@
   function withCta(html, d) {
     if (!d.ctaOn || CTA_COMPANIES.indexOf(d.company) === -1) return html;
     return `<table cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:600px;border-collapse:collapse;">
-  <tr><td style="padding:0 0 14px 0;">${html}</td></tr>
+  <tr><td>${html}</td></tr>
   <tr><td>${buildCtaHTML(d)}</td></tr>
 </table>`;
   }
