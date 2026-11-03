@@ -709,7 +709,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-10-21 14:30</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-11-03 12:30</div>
 
   <!-- Header -->
   <div class="header">
@@ -977,6 +977,9 @@
                 <input type="radio" name="template" value="nophoto" /> Template 2 &mdash; without photo
               </label>
               <label class="template-option">
+                <input type="radio" name="template" value="nophototest" /> Test &mdash; compact, flush left
+              </label>
+              <label class="template-option">
                 <input type="radio" name="template" value="template3apc" /> Template 3 &mdash; certifications &amp; socials
               </label>
               <label class="template-option">
@@ -1217,7 +1220,7 @@
     aec:        ['template3', 'nophoto'],
     paec:       ['template3', 'nophoto'],
     jumbobee:   ['template3', 'nophoto'],
-    apc:        ['template3', 'nophoto', 'template3apc'],
+    apc:        ['template3', 'nophoto', 'nophototest', 'template3apc'],
     intertrade: ['template3', 'nophoto'],
     autotrade:  ['template3', 'nophoto'],
     aet:        ['template3', 'nophoto'],
@@ -1796,13 +1799,15 @@
     if (website) items.push({ icon: 'globe', html:
       `<a href="https://${escHtml(website)}" target="_blank" style="color:${TXT};text-decoration:underline;">${escHtml(website)}</a>` });
 
-    const contactRows = items.map((c, i) => {
+    const rowsAt = (size, line) => items.map((c, i) => {
       const pb = i < items.length - 1 ? '6px' : '0';
       return `<tr>
               <td width="16" style="width:16px;padding:0 6px ${pb} 0;vertical-align:middle;"><img src="${A_ICONS}sig-icon-t3-${brand.iconPrefix}${c.icon}.png" width="16" height="16" alt="" border="0" style="display:block;width:16px;height:16px;border:0;outline:none;"></td>
-              <td style="padding:0 0 ${pb} 0;vertical-align:middle;font-family:${FF};font-size:14px;line-height:20px;color:${TXT};white-space:nowrap;">${c.html}</td>
+              <td style="padding:0 0 ${pb} 0;vertical-align:middle;font-family:${FF};font-size:${size}px;line-height:${line}px;color:${TXT};white-space:nowrap;">${c.html}</td>
             </tr>`;
     }).join('\n            ');
+    const contactRows = rowsAt(14, 20);
+    const contactRowsSmall = rowsAt(13, 18);
 
     // Atlantic Express Corp. can show a branch logo beside or instead of its own.
     const logos = (d.company === 'aec' && AEC_OFFICES[d.office])
@@ -1828,6 +1833,7 @@
     return {
       TXT: TXT, BORDER: BORDER, FF: FF, ACCENT: brand.accent,
       contactRows: contactRows,
+      contactRowsSmall: contactRowsSmall,
       logoTable: logoTable,
       logoH: logoH
     };
@@ -1894,6 +1900,43 @@
           <td style="padding:0 0 24px 0;">
             <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
             ${P.contactRows}
+            </table>
+          </td>
+        </tr>
+        ${extraRow}
+        <tr>
+          <td style="line-height:0;font-size:0;">${P.logoTable('left')}</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>`;
+  }
+
+  /* ---- No-photo, test cut: a point or two smaller, flush with the left edge,
+         and a rule above the contacts. Separate from the layout in use. ---- */
+  function buildNoPhotoTestHTML(d) {
+    const SUB = '#4F4F4F';
+    const P = signatureParts(d);
+
+    const extraRow = d.hasExtra
+      ? `<tr><td style="padding:0 0 20px 0;font-family:${P.FF};font-size:12px;line-height:18px;color:${SUB};">${d.extraHTML}</td></tr>`
+      : '';
+
+    return `<table cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:600px;border-collapse:collapse;font-family:${P.FF};">
+  <tr>
+    <td style="padding:20px 0;">
+      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">
+        <tr>
+          <td style="padding:0 0 16px 0;">
+            <div style="font-family:${P.FF};font-size:14px;line-height:20px;font-weight:700;color:${P.TXT};">${escHtml(d.name)}</div>
+            <div style="font-family:${P.FF};font-size:13px;line-height:17px;font-weight:600;color:${P.ACCENT};padding-top:2px;">${escHtml(d.title)}</div>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:16px 0 20px 0;border-top:1px solid ${P.BORDER};">
+            <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+            ${P.contactRowsSmall}
             </table>
           </td>
         </tr>
@@ -2071,10 +2114,11 @@
     template2:    buildT2HTML,
     template3:    buildTemplate3,
     nophoto:      buildNoPhotoHTML,
+    nophototest:  buildNoPhotoTestHTML,
     template3apc: buildT3ApcHTML
   };
   /* Styles that print no photo, so the Photo section is of no use to them. */
-  const PHOTOLESS = ['nophoto', 'template3apc'];
+  const PHOTOLESS = ['nophoto', 'nophototest', 'template3apc'];
   function templateTarget(name) {
     if (name === 'template1') return copyTarget1;
     if (name === 'template2') return copyTarget2;
@@ -2094,7 +2138,7 @@
       el.style.display = el === active ? '' : 'none';
     });
     const themed = currentTemplate === 'template1' || currentTemplate === 'template2';
-    const brandLayout = currentTemplate === 'template3' || currentTemplate === 'nophoto';
+    const brandLayout = currentTemplate === 'template3' || currentTemplate === 'nophoto' || currentTemplate === 'nophototest';
     // The Atlantic Project Cargo layout prints no email and no extension either.
     const isApcLayout = currentTemplate === 'template3apc';
     document.getElementById('themeSection').classList.toggle('visible', themed);
