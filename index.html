@@ -709,7 +709,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-11-03 14:00</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-11-05 12:20</div>
 
   <!-- Header -->
   <div class="header">
@@ -971,16 +971,16 @@
           <div class="field">
             <div class="template-options" id="templateOptions">
               <label class="template-option selected">
-                <input type="radio" name="template" value="template3" checked /> Template 1 &mdash; with photo
+                <input type="radio" name="template" value="nophototest" checked /> Template 1 &mdash; compact
               </label>
               <label class="template-option">
-                <input type="radio" name="template" value="nophoto" /> Template 2 &mdash; without photo
+                <input type="radio" name="template" value="template3" /> Template 2 &mdash; with photo
               </label>
               <label class="template-option">
-                <input type="radio" name="template" value="nophototest" /> Test &mdash; compact, flush left
+                <input type="radio" name="template" value="nophoto" /> Template 3 &mdash; without photo
               </label>
               <label class="template-option">
-                <input type="radio" name="template" value="template3apc" /> Template 3 &mdash; certifications &amp; socials
+                <input type="radio" name="template" value="template3apc" /> Template 4 &mdash; certifications &amp; socials
               </label>
               <label class="template-option">
                 <input type="radio" name="template" value="template1" /> Legacy template 1
@@ -1217,13 +1217,13 @@
      Atlantic Project Cargo layout below, so any of them can be offered again by
      listing it here. */
   const COMPANY_TEMPLATES = {
-    aec:        ['template3', 'nophoto', 'nophototest'],
-    paec:       ['template3', 'nophoto'],
+    aec:        ['nophototest'],
+    paec:       ['nophototest', 'template3', 'nophoto'],
     jumbobee:   ['template3', 'nophoto'],
     apc:        ['template3', 'nophoto', 'template3apc'],
-    intertrade: ['template3', 'nophoto'],
-    autotrade:  ['template3', 'nophoto'],
-    aet:        ['template3', 'nophoto'],
+    intertrade: ['nophototest', 'template3', 'nophoto'],
+    autotrade:  ['nophototest', 'template3', 'nophoto'],
+    aet:        ['nophototest', 'template3', 'nophoto'],
     ahl:        ['template3', 'nophoto']
   };
 
@@ -1913,8 +1913,8 @@
 </table>`;
   }
 
-  /* ---- No-photo, test cut: a point or two smaller, flush with the left edge,
-         and a rule above the contacts. Separate from the layout in use. ---- */
+  /* ---- Compact layout: smaller type, flush with the left edge of the message,
+         the contacts ruled off above and below. ---- */
   function buildNoPhotoTestHTML(d) {
     const SUB = '#4F4F4F';
     const P = signatureParts(d);
