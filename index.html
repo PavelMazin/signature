@@ -709,7 +709,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-11-05 12:20</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-11-06 10:05</div>
 
   <!-- Header -->
   <div class="header">
@@ -1218,12 +1218,15 @@
      listing it here. */
   const COMPANY_TEMPLATES = {
     aec:        ['nophototest'],
-    paec:       ['nophototest', 'template3', 'nophoto'],
+    /* Pacific, Intertrade, Autotrade and AE Trucking show the compact layout only.
+       The other templates are hidden, not removed: add 'template3', 'nophoto' back
+       to a line below to offer them again. */
+    paec:       ['nophototest'], /* ['nophototest', 'template3', 'nophoto'] */
     jumbobee:   ['template3', 'nophoto'],
     apc:        ['template3', 'nophoto', 'template3apc'],
-    intertrade: ['nophototest', 'template3', 'nophoto'],
-    autotrade:  ['nophototest', 'template3', 'nophoto'],
-    aet:        ['nophototest', 'template3', 'nophoto'],
+    intertrade: ['nophototest'], /* ['nophototest', 'template3', 'nophoto'] */
+    autotrade:  ['nophototest'], /* ['nophototest', 'template3', 'nophoto'] */
+    aet:        ['nophototest'], /* ['nophototest', 'template3', 'nophoto'] */
     ahl:        ['template3', 'nophoto']
   };
 
