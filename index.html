@@ -709,7 +709,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-11-06 10:05</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-11-10 16:45</div>
 
   <!-- Header -->
   <div class="header">
@@ -983,6 +983,9 @@
                 <input type="radio" name="template" value="template3apc" /> Template 4 &mdash; certifications &amp; socials
               </label>
               <label class="template-option">
+                <input type="radio" name="template" value="apctest" /> Test &mdash; socials &amp; JumboBee band
+              </label>
+              <label class="template-option">
                 <input type="radio" name="template" value="template1" /> Legacy template 1
               </label>
               <label class="template-option">
@@ -1223,7 +1226,7 @@
        to a line below to offer them again. */
     paec:       ['nophototest'], /* ['nophototest', 'template3', 'nophoto'] */
     jumbobee:   ['template3', 'nophoto'],
-    apc:        ['template3', 'nophoto', 'template3apc'],
+    apc:        ['template3', 'nophoto', 'template3apc', 'apctest'],
     intertrade: ['nophototest'], /* ['nophototest', 'template3', 'nophoto'] */
     autotrade:  ['nophototest'], /* ['nophototest', 'template3', 'nophoto'] */
     aet:        ['nophototest'], /* ['nophototest', 'template3', 'nophoto'] */
@@ -1771,9 +1774,14 @@
 </table>`;
   }
 
+  /* Layouts that draw a JumboBee band of their own, so the separate banner
+     would only double up. */
+  const BANNERLESS = ['apctest'];
+
   /* The banner rides under whichever layout the signature uses. */
   function withCta(html, d) {
     if (!d.ctaOn || CTA_COMPANIES.indexOf(d.company) === -1) return html;
+    if (BANNERLESS.indexOf(currentTemplate) !== -1) return html;
     return `<table cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:600px;border-collapse:collapse;">
   <tr><td>${html}</td></tr>
   <tr><td>${buildCtaHTML(d)}</td></tr>
@@ -2031,6 +2039,120 @@
 </table>`;
   }
 
+  /* ---- Test layout for Atlantic Project Cargo: socials along the top, the
+         certifications beside the contacts, and a JumboBee band underneath.
+         The band is part of this layout, so the separate CTA banner is left
+         off (see BANNERLESS) and never stacks on top of it. ---- */
+  function buildApcTestHTML(d) {
+    const NAVY  = '#222572';
+    const MUTED = '#989898';
+    const LINE  = '#DAD9D9';
+    const FF    = "'Montserrat',Helvetica,Arial,sans-serif";
+    const company = COMPANIES.apc;
+    const website = (d.website || company.website).replace(/^https?:\/\//, '');
+    const jbUrl   = /^https?:\/\//i.test(d.ctaUrl) ? d.ctaUrl : 'https://' + d.ctaUrl;
+    const mobile  = d.mobile || d.phone;
+    const telHref = 'tel:' + String(mobile).replace(/[^0-9+]/g, '');
+
+    /* The row ends with the JumboBee mark, which links to the same place as the button. */
+    const order = ['instagram', 'facebook', 'linkedin', 'youtube', 'x'];
+    const urls = {};
+    (SOCIALS.apc || []).forEach(x => { urls[x.icon] = x.url; });
+    const social = order.filter(k => urls[k]).map(k => ({ key: k, url: urls[k], label: k }));
+    social.push({ key: 'jumbobee', url: jbUrl, label: 'JumboBee' });
+    const socialCellsTest = social.map((x, i) =>
+      `<td style="padding-left:${i ? 7 : 0}px;line-height:0;font-size:0;"><a href="${escHtml(x.url)}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_SOCIAL}sig-social-t3-${x.key}.png" width="22" height="22" alt="${escHtml(x.label)}" border="0" style="display:block;width:22px;height:22px;border:0;outline:none;"></a></td>`
+    ).join('');
+
+    const certs = [
+      { file: 'sig-cert-opca.png', label: 'OPCA' },
+      { file: 'sig-cert-iata.png', label: 'IATA' },
+      { file: 'sig-cert-fmc.png',  label: 'FMC'  }
+    ];
+    const certCells = certs.map((c, i) =>
+      `<td style="padding-left:${i ? 7 : 0}px;line-height:0;font-size:0;"><img src="${A_ICONS}${c.file}" width="30" height="30" alt="${c.label}" border="0" style="display:block;width:30px;height:30px;border:0;outline:none;"></td>`
+    ).join('');
+
+    const extraBlock = d.hasExtra
+      ? `<div style="padding-top:6px;font-family:${FF};font-size:12px;line-height:18px;color:${NAVY};">${d.extraHTML}</div>`
+      : '';
+
+    /* Both cells carry the rules, so together they read as one line across the width. */
+    const ruled = `border-top:1px solid ${LINE};border-bottom:1px solid ${LINE};`;
+
+    return `<table cellpadding="0" cellspacing="0" border="0" width="600" bgcolor="#ffffff" style="width:600px;max-width:600px;border-collapse:collapse;background:#ffffff;font-family:${FF};">
+  <tr>
+    <td bgcolor="#ffffff" style="padding:18px 18px 0 18px;background:#ffffff;">
+      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">
+        <tr>
+          <td style="font-family:${FF};font-size:14px;line-height:26px;color:#000000;letter-spacing:0.28px;white-space:nowrap;vertical-align:middle;">Thank you for your time,</td>
+          <td align="right" style="text-align:right;vertical-align:middle;">
+            <table cellpadding="0" cellspacing="0" border="0" align="right" style="border-collapse:collapse;margin-left:auto;"><tr>${socialCellsTest}</tr></table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td bgcolor="#ffffff" style="padding:16px 18px 0 18px;background:#ffffff;">
+      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">
+        <tr>
+          <td width="210" style="width:210px;padding:22px 0;${ruled}vertical-align:top;">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">
+              <tr>
+                <td style="padding:0 0 16px 0;line-height:0;font-size:0;"><a href="${company.site}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}sig-logo-apc-t3.png" width="173" height="24" alt="${escHtml(company.name)}" border="0" style="display:block;width:173px;height:24px;border:0;outline:none;"></a></td>
+              </tr>
+              <tr>
+                <td style="padding:0 0 8px 0;font-family:${FF};font-size:10px;line-height:17px;color:${MUTED};letter-spacing:0.2px;">An Affiliate Atlantic Express Corp.</td>
+              </tr>
+              <tr>
+                <td>
+                  <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+                    <tr>
+                      <td style="padding-right:12px;font-family:${FF};font-size:10px;line-height:17px;color:${MUTED};letter-spacing:0.2px;vertical-align:middle;white-space:nowrap;">Member of</td>
+                      ${certCells}
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td style="padding:22px 0 22px 22px;${ruled}border-left:1px solid ${LINE};vertical-align:top;font-family:${FF};color:${NAVY};letter-spacing:0.26px;">
+            <div style="font-family:${FF};font-size:13px;line-height:17px;font-weight:500;color:${NAVY};padding:0 0 6px 0;">${escHtml(d.name)}, ${escHtml(d.title)}</div>
+            <div style="font-family:${FF};font-size:13px;line-height:20px;color:${NAVY};padding:0 0 6px 0;">${escHtml(d.address)}</div>
+            <div style="font-family:${FF};font-size:13px;line-height:20px;color:${NAVY};padding:0 0 6px 0;">Mobile line: <a href="${telHref}" style="color:${NAVY};text-decoration:none;">${escHtml(mobile)}</a></div>
+            <div style="font-family:${FF};font-size:13px;line-height:20px;color:${NAVY};"><a href="https://${escHtml(website)}" target="_blank" style="color:${NAVY};text-decoration:underline;">${escHtml(website)}</a></div>
+            ${extraBlock}
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td bgcolor="#ffffff" style="padding:16px 18px 18px 18px;background:#ffffff;">
+      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">
+        <tr>
+          <td style="vertical-align:middle;font-family:${FF};color:${NAVY};white-space:nowrap;">
+            <div style="font-family:${FF};font-size:14px;line-height:19px;font-weight:500;color:${NAVY};letter-spacing:0.28px;">JumboBee</div>
+            <div style="font-family:${FF};font-size:12px;line-height:17px;color:${NAVY};letter-spacing:0.24px;padding-top:4px;">The Heavy Equipment Marketplace</div>
+          </td>
+          <td align="center" width="196" style="width:196px;text-align:center;vertical-align:middle;line-height:0;font-size:0;"><a href="${escHtml(jbUrl)}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}sig-apc-machines.png" width="196" height="46" alt="JumboBee" border="0" style="display:block;width:196px;height:46px;border:0;outline:none;"></a></td>
+          <td align="right" style="text-align:right;vertical-align:middle;">
+            <table cellpadding="0" cellspacing="0" border="0" align="right" style="border-collapse:collapse;margin-left:auto;">
+              <tr>
+                <td bgcolor="${NAVY}" align="center" height="32" style="height:32px;background:${NAVY};border-radius:100px;padding:0 12px;text-align:center;">
+                  <a href="${escHtml(jbUrl)}" target="_blank" style="display:inline-block;font-family:${FF};font-size:12px;line-height:32px;font-weight:500;color:#ffffff;text-decoration:none;letter-spacing:0.24px;white-space:nowrap;">${escHtml(d.ctaLabel)}</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>`;
+  }
+
   /* Atlantic Express Corp. has branch offices with logos of their own. */
   const AEC_LOGOS = {
     aec:     { file: 'sig-logo-aec-light.png', w: 123, h: 34, alt: 'Atlantic Express Corp.' },
@@ -2118,10 +2240,11 @@
     template3:    buildTemplate3,
     nophoto:      buildNoPhotoHTML,
     nophototest:  buildNoPhotoTestHTML,
-    template3apc: buildT3ApcHTML
+    template3apc: buildT3ApcHTML,
+    apctest:      buildApcTestHTML
   };
   /* Styles that print no photo, so the Photo section is of no use to them. */
-  const PHOTOLESS = ['nophoto', 'nophototest', 'template3apc'];
+  const PHOTOLESS = ['nophoto', 'nophototest', 'template3apc', 'apctest'];
   function templateTarget(name) {
     if (name === 'template1') return copyTarget1;
     if (name === 'template2') return copyTarget2;
