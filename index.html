@@ -709,7 +709,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-11-16 13:05</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-11-16 14:20</div>
 
   <!-- Header -->
   <div class="header">
@@ -2051,10 +2051,12 @@
        so those two images have to stay on exactly this green. */
     const BAND   = '#BDCE82';
     const DGREEN = '#2E5630';
+    /* The hairline under the tagline is DGREEN at 40% over BAND, flattened so
+       it needs no rgba. */
+    const RULE = '#849E61';
     /* The band carries JumboBee's own creative, so its wording is fixed here
        rather than taken from the CTA fields. Only the link still comes from
        the CTA section, so a UTM link keeps working. */
-    const JB_CTA = 'VIEW EQUIPMENT';
     const FF    = "'Montserrat',Helvetica,Arial,sans-serif";
     const company = COMPANIES.apc;
     const website = (d.website || company.website).replace(/^https?:\/\//, '');
@@ -2140,25 +2142,25 @@
     <td bgcolor="#ffffff" style="padding:16px 18px 18px 18px;background:#ffffff;">
       <table cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="${BAND}" style="width:100%;border-collapse:collapse;background:${BAND};border-radius:6px;">
         <tr>
-          <td style="padding:8px 0 8px 12px;vertical-align:middle;font-family:${FF};white-space:nowrap;line-height:0;font-size:0;">
-            <a href="${escHtml(jbUrl)}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}sig-jb-wordmark-green.png" width="81" height="12" alt="JumboBee" border="0" style="display:block;width:81px;height:12px;border:0;outline:none;"></a>
-            <div style="font-family:${FF};font-size:9px;line-height:11px;color:${DGREEN};letter-spacing:0.18px;padding-top:4px;">The Heavy Equipment Marketplace</div>
-          </td>
-          <td width="1" style="width:1px;padding:0 12px;font-size:0;line-height:0;vertical-align:middle;">
-            <table cellpadding="0" cellspacing="0" border="0" width="1" style="width:1px;border-collapse:collapse;">
-              <tr><td width="1" height="30" bgcolor="${DGREEN}" style="width:1px;height:30px;background:${DGREEN};font-size:0;line-height:0;">&nbsp;</td></tr>
+          <td width="193" style="width:193px;padding:10px 0 8px 12px;vertical-align:middle;font-family:${FF};white-space:nowrap;">
+            <table cellpadding="0" cellspacing="0" border="0" width="193" style="width:193px;border-collapse:collapse;">
+              <tr>
+                <td style="padding:0 0 5px 0;line-height:0;font-size:0;"><a href="${escHtml(jbUrl)}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}sig-jb-wordmark-green.png" width="81" height="12" alt="JumboBee" border="0" style="display:block;width:81px;height:12px;border:0;outline:none;"></a></td>
+              </tr>
+              <tr>
+                <td style="padding:0 0 6px 0;font-family:${FF};font-size:8px;line-height:10px;color:${DGREEN};letter-spacing:0.16px;">The Heavy Equipment Marketplace</td>
+              </tr>
+              <tr>
+                <td style="padding:6px 0 0 0;border-top:1px solid ${RULE};font-family:${FF};font-size:10px;line-height:12px;color:${DGREEN};letter-spacing:0.2px;"><span style="font-style:italic;font-weight:600;color:${DGREEN};">Need Equipment?</span> Find It on <span style="font-style:italic;font-weight:600;color:${DGREEN};">JumboBee</span></td>
+              </tr>
             </table>
           </td>
-          <td style="vertical-align:middle;font-family:${FF};white-space:nowrap;">
-            <div style="font-family:${FF};font-size:11px;line-height:14px;font-weight:700;color:${DGREEN};letter-spacing:0.2px;">Need Equipment?</div>
-            <div style="font-family:${FF};font-size:11px;line-height:14px;color:${DGREEN};letter-spacing:0.2px;">Find It on <span style="font-weight:700;color:${DGREEN};">JumboBee.</span></div>
-          </td>
-          <td align="center" width="100%" style="width:100%;text-align:center;vertical-align:middle;line-height:0;font-size:0;"><a href="${escHtml(jbUrl)}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}sig-apc-machines-green.png" width="128" height="30" alt="JumboBee" border="0" style="display:block;width:128px;height:30px;border:0;outline:none;margin:0 auto;"></a></td>
-          <td align="right" style="padding:0 8px 0 0;text-align:right;vertical-align:middle;">
-            <table cellpadding="0" cellspacing="0" border="0" align="right" style="border-collapse:collapse;margin-left:auto;">
+          <td align="center" width="100%" style="width:100%;text-align:center;vertical-align:middle;line-height:0;font-size:0;"><a href="${escHtml(jbUrl)}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}sig-apc-machines-green.png" width="196" height="46" alt="JumboBee" border="0" style="display:block;width:196px;height:46px;border:0;outline:none;margin:0 auto;"></a></td>
+          <td align="right" width="96" style="width:96px;padding:0 16px 0 0;text-align:right;vertical-align:middle;">
+            <table cellpadding="0" cellspacing="0" border="0" width="80" align="right" style="width:80px;border-collapse:collapse;margin-left:auto;">
               <tr>
-                <td bgcolor="${DGREEN}" align="center" height="30" style="height:30px;background:${DGREEN};border-radius:6px;padding:0 10px;text-align:center;">
-                  <a href="${escHtml(jbUrl)}" target="_blank" style="display:block;font-family:${FF};font-size:10px;line-height:30px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.3px;white-space:nowrap;">${escHtml(JB_CTA)}&nbsp;&rsaquo;</a>
+                <td bgcolor="${DGREEN}" align="center" width="80" height="36" style="width:80px;height:36px;background:${DGREEN};border-radius:6px;padding:6px 8px;text-align:center;">
+                  <a href="${escHtml(jbUrl)}" target="_blank" style="display:block;font-family:${FF};font-size:10px;line-height:12px;font-weight:500;color:#ffffff;text-decoration:none;letter-spacing:0.2px;text-align:center;white-space:nowrap;">VIEW<br>EQUIPMENT</a>
                 </td>
               </tr>
             </table>
