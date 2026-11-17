@@ -709,7 +709,7 @@
 <body>
 
   <!-- Build/version marker — bump on every deploy so you can tell if the page updated -->
-  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-11-16 14:20</div>
+  <div id="buildBadge" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#8A8AA0;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:2px 8px;pointer-events:none;user-select:none;">build 2026-11-17 11:40</div>
 
   <!-- Header -->
   <div class="header">
@@ -2049,11 +2049,12 @@
     const LINE  = '#DAD9D9';
     /* The JumboBee band: its fill is baked into the wordmark and the machines,
        so those two images have to stay on exactly this green. */
-    const BAND   = '#BDCE82';
+    const BAND   = '#EBF4A5';
     const DGREEN = '#2E5630';
+    const BLACK  = '#000000';
     /* The hairline under the tagline is DGREEN at 40% over BAND, flattened so
        it needs no rgba. */
-    const RULE = '#849E61';
+    const RULE = '#9FB576';
     /* The band carries JumboBee's own creative, so its wording is fixed here
        rather than taken from the CTA fields. Only the link still comes from
        the CTA section, so a UTM link keeps working. */
@@ -2130,7 +2131,7 @@
           <td style="padding:22px 0 22px 22px;${ruled}border-left:1px solid ${LINE};vertical-align:top;font-family:${FF};color:${NAVY};letter-spacing:0.26px;">
             <div style="font-family:${FF};font-size:13px;line-height:17px;font-weight:500;color:${NAVY};padding:0 0 6px 0;">${escHtml(d.name)}, ${escHtml(d.title)}</div>
             <div style="font-family:${FF};font-size:13px;line-height:20px;color:${NAVY};padding:0 0 6px 0;">${escHtml(d.address)}</div>
-            <div style="font-family:${FF};font-size:13px;line-height:20px;color:${NAVY};padding:0 0 6px 0;">Mobile line: <a href="${telHref}" style="color:${NAVY};text-decoration:none;">${escHtml(mobile)}</a></div>
+            <div style="font-family:${FF};font-size:13px;line-height:20px;color:${NAVY};padding:0 0 6px 0;">Direct Line: <a href="${telHref}" style="color:${NAVY};text-decoration:none;">${escHtml(mobile)}</a></div>
             <div style="font-family:${FF};font-size:13px;line-height:20px;color:${NAVY};"><a href="https://${escHtml(website)}" target="_blank" style="color:${NAVY};text-decoration:underline;">${escHtml(website)}</a></div>
             ${extraBlock}
           </td>
@@ -2145,17 +2146,17 @@
           <td width="193" style="width:193px;padding:10px 0 8px 12px;vertical-align:middle;font-family:${FF};white-space:nowrap;">
             <table cellpadding="0" cellspacing="0" border="0" width="193" style="width:193px;border-collapse:collapse;">
               <tr>
-                <td style="padding:0 0 5px 0;line-height:0;font-size:0;"><a href="${escHtml(jbUrl)}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}sig-jb-wordmark-green.png" width="81" height="12" alt="JumboBee" border="0" style="display:block;width:81px;height:12px;border:0;outline:none;"></a></td>
+                <td style="padding:0 0 5px 0;line-height:0;font-size:0;"><a href="${escHtml(jbUrl)}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}sig-jb-wordmark-flat.png" width="81" height="12" alt="JumboBee" border="0" style="display:block;width:81px;height:12px;border:0;outline:none;"></a></td>
               </tr>
               <tr>
-                <td style="padding:0 0 6px 0;font-family:${FF};font-size:8px;line-height:10px;color:${DGREEN};letter-spacing:0.16px;">The Heavy Equipment Marketplace</td>
+                <td style="padding:0 0 6px 0;font-family:${FF};font-size:8px;line-height:10px;color:${BLACK};letter-spacing:0.16px;">The Heavy Equipment Marketplace</td>
               </tr>
               <tr>
-                <td style="padding:6px 0 0 0;border-top:1px solid ${RULE};font-family:${FF};font-size:10px;line-height:12px;color:${DGREEN};letter-spacing:0.2px;"><span style="font-style:italic;font-weight:600;color:${DGREEN};">Need Equipment?</span> Find It on <span style="font-style:italic;font-weight:600;color:${DGREEN};">JumboBee</span></td>
+                <td style="padding:6px 0 0 0;border-top:1px solid ${RULE};font-family:${FF};font-size:10px;line-height:12px;color:${BLACK};letter-spacing:0.2px;"><span style="font-style:italic;font-weight:600;color:${BLACK};">Need Equipment?</span> Find It on <span style="font-style:italic;font-weight:600;color:${BLACK};">JumboBee</span></td>
               </tr>
             </table>
           </td>
-          <td align="center" width="100%" style="width:100%;text-align:center;vertical-align:middle;line-height:0;font-size:0;"><a href="${escHtml(jbUrl)}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}sig-apc-machines-green.png" width="196" height="46" alt="JumboBee" border="0" style="display:block;width:196px;height:46px;border:0;outline:none;margin:0 auto;"></a></td>
+          <td align="center" width="100%" style="width:100%;text-align:center;vertical-align:middle;line-height:0;font-size:0;"><a href="${escHtml(jbUrl)}" target="_blank" style="display:block;border:0;text-decoration:none;"><img src="${A_LOGOS}sig-apc-machines-black.png" width="197" height="47" alt="JumboBee" border="0" style="display:block;width:197px;height:47px;border:0;outline:none;margin:0 auto;"></a></td>
           <td align="right" width="96" style="width:96px;padding:0 16px 0 0;text-align:right;vertical-align:middle;">
             <table cellpadding="0" cellspacing="0" border="0" width="80" align="right" style="width:80px;border-collapse:collapse;margin-left:auto;">
               <tr>
